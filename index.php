@@ -5,7 +5,7 @@
 	* @author Simon Skrødal
 	* @since  August 2015
 	*/
-	Response::result(array('status' => true, 'data' => $_SERVER));
+	error_log(json_encode($_SERVER));
 	
 	###			CONFIGS			###	
 	

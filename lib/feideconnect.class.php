@@ -7,39 +7,48 @@
 	*/
 	class FeideConnect {
 
-		protected $userName, $isAdmin, $userOrg, $isSuperAdmin, $config;
+		protected $config;
 
+		/**
+		 *
+		 */
 		function __construct($config) {
 			// Exits on OPTION call
 			$this->_checkCORS();
-			//
+			// Make sure we have a scope
+			if(!isset($_SERVER["HTTP_X_FEIDECONNECT_SCOPES"])) {
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (missing scope)');
+			}
+			// Check that username exists and is a Feide one... Function will exit if not.
+			_getFeideUsername();
+			// Connect username and pass
 			$this->config = $config;
 			// Exits on incorrect credentials
 			$this->_checkGateKeeperCredentials();
-			// Get Feide username (exits if not found)
-			$this->userName = $this->_getFeideUsername();
-			$this->isAdmin  = $this->_hasConnectScope("admin");
-			$this->userOrg  = explode('@', $this->userName); // Split username@org.no
-			$this->isSuperAdmin = ( strcasecmp($this->userOrg[1], "uninett.no") === 0 );
-			$this->userOrg  = explode('.', $this->userOrg[1]); // Split org.no
-			$this->userOrg  = $this->userOrg[0]; // org
+		}
+		
+		
+		##				SCOPES				##
+		
+		//
+		public function hasOauthScopeAdmin(){ return $this->_hasConnectScope("admin"); }
+		//
+		public function hasOauthScopeOrg(){ return $this->_hasConnectScope("org"); }
+		//
+		public function hasOauthScopeUser(){ return $this->_hasConnectScope("user"); }
+		
+		
+		##				SCOPES				##
+		// 
+		public function isSuperAdmin(){ return strcasecmp($this->userOrg(), "uninett.no") === 0; }		
+		// Feide username
+		public function userName() { return $this->_getFeideUsername(); }
+		// org.no
+		public function userOrg() { 
+			$userOrg = explode('@', $this->userName()); 
+			return $userOrg[1];
 		}
 
-		public function getUserName() {
-			return $this->userName;
-		}
-
-		public function isAdmin() {
-			return $this->isAdmin;
-		}
-
-		public function getUserOrg() {
-			return $this->userOrg;
-		}
-
-		public function isSuperAdmin(){
-			return $this->isSuperAdmin;
-		}
 
 
 		/**
@@ -64,33 +73,27 @@
 				// If not already an array, make it so. If it is not a comma separated list, we'll get a single array item.
 				$userid = explode(',', $userid);
 			}
-
+			// Fish for a Feide username
 			foreach($userid as $key => $value) {
 				if(strpos($value, 'feide:') !== false) {
 					$value     = explode(':', $value);
 					$userIdSec = $value[1];
 				}
 			}
-
-
+			// No Feide...
 			if(!isset($userIdSec)) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
 			}
-
-			// Either null or 'username@org.no'
+			// 'username@org.no'
 			return $userIdSec;
 		}
 
 
 		private function _hasConnectScope($scope) {
-			if(!isset($_SERVER["HTTP_X_FEIDECONNECT_SCOPES"])) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (missing scope)');
-			}
 			// Get the scope(s)
 			$scopes = $_SERVER["HTTP_X_FEIDECONNECT_SCOPES"];
 			// Make array
 			$scopes = explode(',', $scopes);
-
 			// True/false
 			return in_array($scope, $scopes);
 		}

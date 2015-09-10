@@ -49,7 +49,8 @@
 	}, 'List all available routes.');
 
 
-	$router->addAdminRoutes(array(
+	// ADMIN ROUTES
+	$router->addRoutes(array(
 		array('GET','/users/[i:id]', 'users#update', 'update_user'),
 		array('GET','/users/[i:id]', 'users#delete', 'delete_user')
 	));

@@ -53,7 +53,7 @@
 		 */
 		private function _getFeideUsername() {
 			if(!isset($_SERVER["HTTP_X_FEIDECONNECT_USERID_SEC"])) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (user not found)');
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
 			}
 
 			$userIdSec = NULL;
@@ -74,7 +74,7 @@
 
 
 			if(!isset($userIdSec)) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (user not found)');
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
 			}
 
 			// Either null or 'username@org.no'

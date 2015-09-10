@@ -22,14 +22,14 @@
 	### 	FEIDE CONNECT		###
 
 	$feide_connect_config 	= file_get_contents($FEIDE_CONNECT_CONFIG_PATH);
-	if($feide_connect_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found: Connect config.'); }
+	if($feide_connect_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Connect config.'); }
 	$feide        		= new FeideConnect(json_decode($feide_connect_config, true));
 	
 	###			RELAY			###
 	
 	require_once($BASE . '/lib/relay.class.php');
 	$relay_config 		= file_get_contents($RELAY_CONFIG_PATH);
-	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found: Relay config.'); }
+	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Relay config.'); }
 	$relay      		= new Kind(json_decode($relay_config, true));
 	
 	### 	  ALTO ROUTER		###
@@ -94,19 +94,6 @@
 	}
 
 	// -------------------- ./UTILS -------------------- //
-
-// UNUSED BELOW
-
-/*
-// Check if a folder with a:org exists on server (mostly for testing for now)
-	$router->map('GET', '/folder/[a:org]/', function ($orgFolderName) {
-		if(strcasecmp($orgFolderName, $GLOBALS['feide']->getUserOrg()) !== 0) {
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized');
-		}
-		Response::result($GLOBALS['connect']->findOrgFolderSco($orgFolderName));
-	});
-*/
-
 
 
 

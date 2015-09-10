@@ -47,13 +47,13 @@
 	/**
 	 * GET all REST routes
 	 */
-	$router->map('GET', '/', function () {
+	$Router->map('GET', '/', function () {
 		Response::result(array('status' => true, 'data' => $GLOBALS['Router']->getRoutes()));
 	}, 'All available routes.');
 
 
 	// SERVICE ROUTES
-	$router->addRoutes(array(
+	$Router->addRoutes(array(
 		array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['TechSmithRelay']->getServiceDetails())); }, 	'Workers, queue and version.'),
 		array('GET','/service/workers/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['TechSmithRelay']->getWorkers())); }, 			'Service workers.'),
 		array('GET','/service/queue/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['TechSmithRelay']->getQueue())); }, 			'Service queue.'),
@@ -64,7 +64,7 @@
 	// ADMIN ROUTES if scope allows
 	if($FeideConnect->hasOauthScopeAdmin()) {
 		// Add all routes
-		$router->addRoutes(array(
+		$Router->addRoutes(array(
 			// STORAGE
 				// (todo)
 			// USER
@@ -91,7 +91,7 @@
 	// ORG ROUTES if scope allows
 	if($FeideConnect->hasOauthScopeAdmin() || $FeideConnect->hasOauthScopeOrg()) {
 		// Add all routes
-		$router->addRoutes(array(
+		$Router->addRoutes(array(
 			// STORAGE
 				// (todo)
 			// USERS
@@ -114,7 +114,7 @@
 	// USER ROUTES (/me/) if scope allows
 	if($FeideConnect->hasOauthScopeUser()) {
 		// Add all routes
-		$router->addRoutes(array(
+		$Router->addRoutes(array(
 			// STORAGE
 				// (todo)
 			// USERS
@@ -131,7 +131,7 @@
 	/**
 	 * GET complete dump of subscriber-info for service [i:id]
 	 */
-	$router->map('GET', '/service/[i:serviceId]/subscribers/', function ($serviceId) {
+	$Router->map('GET', '/service/[i:serviceId]/subscribers/', function ($serviceId) {
 		Response::result($GLOBALS['kind']->getServiceSubscribers($serviceId));
 	}, 'Get subscription data for all subscribers.');
 
@@ -139,7 +139,7 @@
 	/**
 	 * GET subscriber-info for org [a:org] for service [i:id]
 	 */
-	$router->map('GET', '/service/[i:serviceId]/org/[*:orgId]/', function ($serviceId, $orgId) {
+	$Router->map('GET', '/service/[i:serviceId]/org/[*:orgId]/', function ($serviceId, $orgId) {
 		Response::result($GLOBALS['kind']->getServiceOrgSubscriber($serviceId, $orgId));
 	}, 'Get subscription data for selected org subscribers.');
 
@@ -170,7 +170,7 @@
 // ---------------------- MATCH AND EXECUTE REQUESTED ROUTE ----------------------
 
 	
-	$match = $router->match();
+	$match = $Router->match();
 
 	if($match && is_callable($match['target'])) {
 		sanitizeInput();

@@ -20,7 +20,7 @@
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (missing scope)');
 			}
 			// Check that username exists and is a Feide one... Function will exit if not.
-			_getFeideUsername();
+			$this->_getFeideUsername();
 			// Connect username and pass
 			$this->config = $config;
 			// Exits on incorrect credentials

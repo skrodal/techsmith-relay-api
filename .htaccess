@@ -1,0 +1,5 @@
+RewriteEngine On
+# Remember slash at the end
+RewriteBase /api/techsmith-relay/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.php [L]

@@ -32,6 +32,8 @@
 	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Relay config.'); }
 	$relay      		= new Relay(json_decode($relay_config, true));
 	
+	Response::result(array('status' => true, 'data' => $_SERVER));
+	
 	### 	  ALTO ROUTER		###
 
 	require_once($BASE . '/lib/router.class.php');			// http://altorouter.com

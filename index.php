@@ -5,7 +5,7 @@
 	* @author Simon Skrødal
 	* @since  August 2015
 	*/
-	
+	Response::result(array('status' => true, 'data' => $_SERVER));
 	
 	###			CONFIGS			###	
 	
@@ -32,7 +32,7 @@
 	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Relay config.'); }
 	$relay      		= new Relay(json_decode($relay_config, true));
 	
-	Response::result(array('status' => true, 'data' => $_SERVER));
+	
 	
 	### 	  ALTO ROUTER		###
 

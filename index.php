@@ -3,9 +3,8 @@
    /**
 	*
 	* @author Simon Skrødal
-	* @since  August 2015
+	* @since  September 2015
 	*/
-	error_log(json_encode($_SERVER));
 	
 	###			CONFIGS			###	
 	
@@ -32,8 +31,6 @@
 	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Relay config.'); }
 	$relay      		= new Relay(json_decode($relay_config, true));
 	
-	
-	
 	### 	  ALTO ROUTER		###
 
 	require_once($BASE . '/lib/router.class.php');			// http://altorouter.com
@@ -50,6 +47,13 @@
 	$router->map('GET', '/', function () {
 		Response::result(array('status' => true, 'data' => $GLOBALS['router']->getRoutes()));
 	}, 'List all available routes.');
+
+
+	$router->addAdminRoutes(array(
+		array('GET','/users/[i:id]', 'users#update', 'update_user'),
+		array('GET','/users/[i:id]', 'users#delete', 'delete_user')
+	));
+
 
 
 	/**

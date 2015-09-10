@@ -19,7 +19,7 @@
 
 		function __construct($config) {
 			$this->config        = $config;
-			$this->apiurl        = $this->config['uri'];
+			$this->apiurl        = "Forget it";
 		}
 
 		/** PUBLIC SCOPE **/

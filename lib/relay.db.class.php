@@ -23,7 +23,7 @@ class RelayDB {
 		// 
 		$this->connect();
 		// Run query
-		$query = mssql_query($sql);
+		$query = mssql_query($sql, $this->conn);
 		// On error
 		if($query === FALSE){ Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed.'); }
 		// Response

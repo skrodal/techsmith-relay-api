@@ -33,7 +33,7 @@ class RelayDB {
 
 		// Loop rows and add to response array
 		if (mssql_num_rows($query) > 0) {
-		    while ($row = mssql_fetch_array($query)) {
+		    while ($row = mssql_fetch_assoc($query)) {
 		        $response[] = $row;
 		        error_log(print_r($response, true));
 		    }

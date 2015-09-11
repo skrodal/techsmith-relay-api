@@ -20,7 +20,7 @@ class Relay {
 	public function getUser($feideUserName){
 		$this->_logger("Feide Username: " . $feideUserName, __LINE__, __FUNCTION__);
 		$feideUserName = 'simon1@uninett.no';
-		return $this->relayDB->query("SELECT * FROM INFORMATION_SCHEMA.TABLES");
+		return $this->relayDB->query("Select * From INFORMATION_SCHEMA.COLUMNS Where TABLE_NAME = 'tblUser'");
 	}
 
 

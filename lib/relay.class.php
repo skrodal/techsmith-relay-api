@@ -18,7 +18,7 @@ class Relay {
 
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
-		return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
+		return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'", 'userinfo');
 
 		// SELECT CAST([column_name] AS TEXT) AS column_0 FROM table_name
 	}

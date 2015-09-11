@@ -19,7 +19,7 @@ class RelayDB {
 	/**
 	 * 
 	 */
-	public function query($sql){
+	public function query($sql, $dataName){
 		// 
 		$this->connect();
 		// Run query
@@ -34,7 +34,7 @@ class RelayDB {
 		// Loop rows and add to response array
 		if (mssql_num_rows($query) > 0) {
 		    while ($row = mssql_fetch_assoc($query)) {
-		        $response[] = $row;
+		        $response[$dataName][] = $row;
 		        error_log(print_r($response, true));
 		    }
 		}

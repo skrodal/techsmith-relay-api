@@ -57,7 +57,7 @@ class RelayDB {
 		//
 		if(!mssql_select_db($this->config['db'])) { Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed.'); }
 
-		_logger("DB CONNECTED", __LINE__, __FUNCTION__);
+		$this->_logger("DB CONNECTED", __LINE__, __FUNCTION__);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class RelayDB {
 		if($this->conn !== FALSE) {
 			mssql_close($this->conn);	
 		}
-		_logger("DB CLOSED", __LINE__, __FUNCTION__);
+		$this->_logger("DB CLOSED", __LINE__, __FUNCTION__);
 	}
 
 

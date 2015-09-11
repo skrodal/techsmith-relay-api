@@ -31,9 +31,6 @@ class RelayDB {
 
 		$this->_logger("Rows returned: " . mssql_num_rows($query), __LINE__, __FUNCTION__);
 
-		error_log(print_r( mssql_fetch_object($query ), true ));
-
-		
 		// Loop rows and add to response array
 		if (mssql_num_rows($query) > 0) {
 		    while ($row = mssql_fetch_object($query)) {

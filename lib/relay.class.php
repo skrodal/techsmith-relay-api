@@ -18,9 +18,9 @@ class Relay {
 
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
-		$this->_logger("Query is " . "SELECT * FROM tblUser WHERE userName = '$feideUserName'", __LINE__, __FUNCTION__);
+		$this->_logger("Query is " . "SELECT * FROM dbo.tblUser WHERE userName = '$feideUserName'", __LINE__, __FUNCTION__);
 		$feideUserName = 'simon1@uninett.no';
-		return $this->relayDB->query("SELECT * FROM tblUser WHERE userName = '$feideUserName'");
+		return $this->relayDB->query("SELECT * FROM dbo.tblUser WHERE userName = '$feideUserName'");
 	}
 
 

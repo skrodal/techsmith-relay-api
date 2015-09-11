@@ -32,12 +32,11 @@
 	require_once($BASE . '/lib/relay.db.class.php');
 	$relay_config = file_get_contents($RELAY_CONFIG_PATH);
 	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Relay config.'); }
-	$relayDB = new RelayDB(json_decode($relay_config, true));
 	
 	###			RELAY			###
 	
 	require_once($BASE . '/lib/relay.class.php');
-	$relay	= new Relay();
+	$relay	= new Relay(new RelayDB(json_decode($relay_config, true)));
 	
 	### 	  ALTO ROUTER		###
 

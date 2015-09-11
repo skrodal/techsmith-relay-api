@@ -9,19 +9,30 @@
 
 class Relay {
 	private $DEBUG = false;
+	private $relayDB;
 
-	function __construct() {
-		$relayDB->connect();
+
+	function __construct($DB) {
+		$this->relayDB = $DB;
+		$this->relayDB->connect();
 		error_log("Connected");
 
 	}
 
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
-		$response = $relayDB->query("SELECT * FROM tblUser WHERE userName LIKE '$feideUserName'");
-		$relayDB->close();
+		$response = $this->relayDB->query("SELECT * FROM tblUser WHERE userName LIKE '$feideUserName'");
+		$this->relayDB->close();
 		return $response;
 	}
+
+
+
+
+
+
+
+
 
 
 	// ---------------------------- UTILS ----------------------------
@@ -35,7 +46,4 @@ class Relay {
 
 	// ---------------------------- ./UTILS ----------------------------
 	
-	
-
-
 }

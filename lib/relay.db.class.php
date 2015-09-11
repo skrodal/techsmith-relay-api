@@ -8,8 +8,7 @@
 
 
 class RelayDB {
-	private $DEBUG = false;
-	private $conn; private $config;
+	private $conn, $config; 
 
 	function __construct($config) {
 		$this->config = $config;

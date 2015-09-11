@@ -14,16 +14,11 @@ class Relay {
 
 	function __construct($DB) {
 		$this->relayDB = $DB;
-		$this->relayDB->connect();
-		error_log("Connected");
-
 	}
 
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
-		$response = $this->relayDB->query("SELECT * FROM tblUser WHERE userName LIKE '$feideUserName'");
-		$this->relayDB->close();
-		return $response;
+		return $this->relayDB->query("SELECT * FROM tblUser WHERE userName LIKE '$feideUserName'");
 	}
 
 

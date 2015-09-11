@@ -113,10 +113,10 @@
 
 			// Gatekeeper. user/pwd is passed along by the Connect Gatekeeper and must matched that of the registered API:
 			if( 	( strcmp ($_SERVER["PHP_AUTH_USER"], $this->config['user']) !== 0 ) || 
-					( strcmp ($_SERVER["PHP_AUTH_PW"],  $this->config['passwd']) !== 0 ) ) {
+				( strcmp ($_SERVER["PHP_AUTH_PW"],  $this->config['passwd']) !== 0 ) ) {
 				// The status code will be set in the header
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (Incorrect API Gatekeeper Credentials)');
-			}
 		}
-
 	}
+
+}

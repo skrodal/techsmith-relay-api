@@ -7,7 +7,7 @@
 	*/
 	
 	class Response {
-	
+		
 		public static function result($result) {
 			// Ensure no caching occurs on server (correct for HTTP/1.1)
 			header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -25,7 +25,7 @@
 			// Return response
 			exit(json_encode( $result ));
 		}
-	
+		
 		public static function error($code, $error) {
 			// Ensure no caching occurs on server (correct for HTTP/1.1)
 			header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -39,12 +39,12 @@
 			//
 			header('content-type: application/json; charset=utf-8');
 			http_response_code($code);
-	
+			
 			exit( json_encode(
 				array(
 					'status' => false,
 					'message' => $error
-				)
-			));
+					)
+				));
 		}
 	}

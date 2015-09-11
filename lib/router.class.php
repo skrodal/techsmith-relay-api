@@ -16,7 +16,7 @@
 			'*'  => '.+?',
 			'**' => '.++',
 			''   => '[^/\.]++'
-		);
+			);
 		/**
 		 * Create router in one call from config.
 		 *
@@ -192,35 +192,35 @@
 						} elseif (false === $regex) {
 							$c = $n;
 							$regex = $c === '[' || $c === '(' || $c === '.';
-							if (false === $regex && false !== isset($_route[$i+1])) {
-								$n = $_route[$i + 1];
-								$regex = $n === '?' || $n === '+' || $n === '*' || $n === '{';
+								if (false === $regex && false !== isset($_route[$i+1])) {
+									$n = $_route[$i + 1];
+									$regex = $n === '?' || $n === '+' || $n === '*' || $n === '{';
+								}
+								if (false === $regex && $c !== '/' && (!isset($requestUrl[$j]) || $c !== $requestUrl[$j])) {
+									continue 2;
+								}
+								$j++;
 							}
-							if (false === $regex && $c !== '/' && (!isset($requestUrl[$j]) || $c !== $requestUrl[$j])) {
-								continue 2;
+							$route .= $_route[$i++];
+						}
+						$regex = $this->compileRoute($route);
+						$match = preg_match($regex, $requestUrl, $params);
+					}
+					if(($match == true || $match > 0)) {
+						if($params) {
+							foreach($params as $key => $value) {
+								if(is_numeric($key)) unset($params[$key]);
 							}
-							$j++;
 						}
-						$route .= $_route[$i++];
+						return array(
+							'target' => $target,
+							'params' => $params,
+							'name' => $name
+							);
 					}
-					$regex = $this->compileRoute($route);
-					$match = preg_match($regex, $requestUrl, $params);
 				}
-				if(($match == true || $match > 0)) {
-					if($params) {
-						foreach($params as $key => $value) {
-							if(is_numeric($key)) unset($params[$key]);
-						}
-					}
-					return array(
-						'target' => $target,
-						'params' => $params,
-						'name' => $name
-					);
-				}
+				return false;
 			}
-			return false;
-		}
 		/**
 		 * Compile the regex for a given route (EXPENSIVE)
 		 */
@@ -239,13 +239,13 @@
 					$pattern = '(?:'
 						. ($pre !== '' ? $pre : null)
 						. '('
-						. ($param !== '' ? "?P<$param>" : null)
-						. $type
-						. '))'
-						. ($optional !== '' ? '?' : null);
-					$route = str_replace($block, $pattern, $route);
-				}
-			}
-			return "`^$route$`u";
-		}
-	}
+							. ($param !== '' ? "?P<$param>" : null)
+							. $type
+							. '))'
+. ($optional !== '' ? '?' : null);
+$route = str_replace($block, $pattern, $route);
+}
+}
+return "`^$route$`u";
+}
+}

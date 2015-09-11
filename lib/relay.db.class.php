@@ -39,7 +39,7 @@ class RelayDB {
 		// Close link
 		$this->close();
 		//
-		return $result;
+		return $response;
 	}
 
 

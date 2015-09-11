@@ -8,7 +8,7 @@
 
 
 class Relay {
-	private $DEBUG = false;
+	private $DEBUG = true;
 	private $relayDB;
 
 
@@ -18,6 +18,7 @@ class Relay {
 
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
+		$this->_logger("Feide Username: " . $feideUserName, __LINE__, __FUNCTION__);
 		return $this->relayDB->query("SELECT * FROM tblUser WHERE userName LIKE '$feideUserName'");
 	}
 

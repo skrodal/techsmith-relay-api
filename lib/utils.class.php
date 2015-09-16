@@ -6,11 +6,8 @@
  */
 
 class Utils {
-	static $DEBUG = true;
 
 	public static function log($text, $line, $function) {
-		if(Utils::DEBUG) {
-			error_log($function . '(' . $line . '): ' . $text);
-		}
+		error_log($function . '(' . $line . '): ' . $text);
 	}
 } 

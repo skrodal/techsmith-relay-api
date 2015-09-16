@@ -75,24 +75,24 @@
 			// STORAGE
 				// (todo)
 			// USER
-			array('GET','/user/[*:userName]/', 								function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($userName))); }, 					'User account details (Scope: admin).'),
-			array('GET','/user/[*:userName]/presentations/', 				function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
-			array('GET','/user/[*:userName]/presentations/count/', 			function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
+			array('GET','/user/[*:userName]/', 						function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($userName))); }, 					'User account details (Scope: admin).'),
+			array('GET','/user/[*:userName]/presentations/', 		function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
+			array('GET','/user/[*:userName]/presentations/count/', 	function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
 			// USERS
-			array('GET','/global/users/', 									function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUsers())); }, 								'All users (Scope: admin).'),
-			array('GET','/global/users/count/', 							function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
-			array('GET','/global/users/employees/', 						function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
-			array('GET','/global/users/employees/count/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: admin).'),
-			array('GET','/global/users/students/', 							function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudents())); }, 							'All students (Scope: admin).'),
-			array('GET','/global/users/students/count/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudentCount())); }, 						'Total student count (Scope: admin).'),
+			array('GET','/global/users/', 							function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUsers())); }, 								'All users (Scope: admin).'),
+			array('GET','/global/users/count/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
+			array('GET','/global/users/employees/', 				function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
+			array('GET','/global/users/employees/count/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: admin).'),
+			array('GET','/global/users/students/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudents())); }, 							'All students (Scope: admin).'),
+			array('GET','/global/users/students/count/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudentCount())); }, 						'Total student count (Scope: admin).'),
 			// PRESENTATIONS
-			array('GET','/global/presentations/', 							function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalPresentations())); }, 						'All presentations (Scope: admin).'),
-			array('GET','/global/presentations/count/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalPresentationCount())); }, 					'Total presentation count (Scope: admin).'),
-			array('GET','/global/presentations/employees/', 				function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployeePresentations())); }, 				'All employee presentations (Scope: admin).'),
-			array('GET','/global/presentations/employees/count/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (Scope: admin).'),
-			array('GET','/global/presentations/students/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
-			array('GET','/global/presentations/students/count/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).')
-			));
+			array('GET','/global/presentations/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalPresentations())); }, 						'All presentations (Scope: admin).'),
+			array('GET','/global/presentations/count/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalPresentationCount())); }, 					'Total presentation count (Scope: admin).'),
+			array('GET','/global/presentations/employees/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployeePresentations())); }, 				'All employee presentations (Scope: admin).'),
+			array('GET','/global/presentations/employees/count/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (Scope: admin).'),
+			array('GET','/global/presentations/students/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
+			array('GET','/global/presentations/students/count/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).')
+		));
 }
 
 	// ORG ROUTES if scope allows
@@ -102,20 +102,20 @@ if($FeideConnect->hasOauthScopeAdmin() || $FeideConnect->hasOauthScopeOrg()) {
 			// STORAGE
 				// (todo)
 			// USERS
-		array('GET','/org/[*:orgId]/users/', 							function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUsers($org))); }, 							'All users at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/users/count/', 						function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUserCount($org))); }, 						'Total user count at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/users/employees/', 					function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployees($org))); }, 						'All employees at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/users/employees/count/', 			function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeeCount($org))); }, 					'Total employees count at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/users/students/', 					function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudents($org))); }, 						'All students at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/users/students/count/', 			function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentCount($org))); }, 					'Total students count at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/users/', 						 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUsers($org))); }, 							'All users at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/users/count/', 					 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUserCount($org))); }, 						'Total user count at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/users/employees/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployees($org))); }, 						'All employees at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/users/employees/count/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeeCount($org))); }, 					'Total employees count at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/users/students/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudents($org))); }, 						'All students at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/users/students/count/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentCount($org))); }, 					'Total students count at org (Scope: admin/org).'),
 			// PRESENTATIONS
-		array('GET','/org/[*:orgId]/presentations/', 					function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentations($org))); }, 					'All presentations at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/presentations/count/', 				function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentationCount($org))); }, 				'Total presentations at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/presentations/employees/', 			function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentations($org))); }, 			'All employee presentations at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/presentations/employees/count/', 	function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentationCount($org))); }, 		'Total employee presentations at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/presentations/students/', 			function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentations($org))); }, 			'All student presentations at org (Scope: admin/org).'),
-		array('GET','/org/[*:orgId]/presentations/students/count/', 	function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentationCount($org))); }, 		'Total student presentations at org (Scope: admin/org).')
-		));
+		array('GET','/org/[*:orgId]/presentations/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentations($org))); }, 					'All presentations at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/presentations/count/', 			 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentationCount($org))); }, 				'Total presentations at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/presentations/employees/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentations($org))); }, 			'All employee presentations at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/presentations/employees/count/', function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentationCount($org))); }, 		'Total employee presentations at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/presentations/students/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentations($org))); }, 			'All student presentations at org (Scope: admin/org).'),
+		array('GET','/org/[*:orgId]/presentations/students/count/',  function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentationCount($org))); }, 		'Total student presentations at org (Scope: admin/org).')
+	));
 }
 
 	// USER ROUTES (/me/) if scope allows
@@ -125,10 +125,15 @@ if($FeideConnect->hasOauthScopeUser()) {
 			// STORAGE
 				// (todo)
 			// USERS
-		array('GET','/me/', 											function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName()))); }, 		            'User account details (Scope: user).'),
-		array('GET','/me/presentations/', 								function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($GLOBALS['FeideConnect']->userName()))); }, 		'User presentations (Scope: user).'),
-		array('GET','/me/presentations/count/', 						function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($GLOBALS['FeideConnect']->userName()))); },  'User presentation count (Scope: user).')
-		));	
+		array('GET','/me/', 					function(){
+			$result = $GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName());
+			error_log(json_encode($result));
+			Response::result(array('status' => true, 'data' => $result));
+			// Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName())));
+		}, 		            'User account details (Scope: user).'),
+		array('GET','/me/presentations/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($GLOBALS['FeideConnect']->userName()))); }, 		'User presentations (Scope: user).'),
+		array('GET','/me/presentations/count/', function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($GLOBALS['FeideConnect']->userName()))); },  'User presentation count (Scope: user).')
+	));
 }
 
 
@@ -159,7 +164,7 @@ function verifyOrgAccess($orgName){
 
 	// ---------------------- MATCH AND EXECUTE REQUESTED ROUTE ----------------------
 
-	
+
 	$match = $Router->match();
 
 	if($match && is_callable($match['target'])) {

@@ -72,6 +72,6 @@
 			if($this->conn !== false) {
 				mssql_close($this->conn);
 			}
-			$this->_logger("DB CLOSED", __LINE__, __FUNCTION__);
+			Utils::log("DB CLOSED", __LINE__, __FUNCTION__);
 		}
 	}

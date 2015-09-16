@@ -18,8 +18,7 @@ class Relay {
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
 		$response = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-		$this->_logger(print_r($response, true), __LINE__, __FUNCTION__);
-		return $response;
+		return json_encode($response);
 	}
 
 	public function getUserPresentations($feideUserName){

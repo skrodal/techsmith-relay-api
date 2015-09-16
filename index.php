@@ -122,12 +122,14 @@ if($FeideConnect->hasOauthScopeAdmin() || $FeideConnect->hasOauthScopeOrg()) {
 if($FeideConnect->hasOauthScopeUser()) {
 		// Add all routes
 	$Router->addRoutes(array(
-			// STORAGE
-				// (todo)
-			// USERS
+		// STORAGE
+			// (todo)
+		// USERS
 		array('GET','/me/', 					function(){
-			Response::result(array('status' => true, (array)$GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName())));
+			Response::result($GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName()));
 		}, 		            'User account details (Scope: user).'),
+
+
 		array('GET','/me/presentations/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($GLOBALS['FeideConnect']->userName()))); }, 		'User presentations (Scope: user).'),
 		array('GET','/me/presentations/count/', function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($GLOBALS['FeideConnect']->userName()))); },  'User presentation count (Scope: user).')
 	));

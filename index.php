@@ -128,7 +128,7 @@ if($FeideConnect->hasOauthScopeUser()) {
 		array('GET','/me/', 					function(){
 			$result = $GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName());
 			error_log(print_r($result, true));
-			Response::result(array('status' => true, 'data' => $result));
+			Response::result(array('status' => true, 'data' => (array)$result));
 			// Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName())));
 		}, 		            'User account details (Scope: user).'),
 		array('GET','/me/presentations/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($GLOBALS['FeideConnect']->userName()))); }, 		'User presentations (Scope: user).'),

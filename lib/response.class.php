@@ -23,7 +23,7 @@
 			//
 			http_response_code(200);
 			// Return response
-			exit(json_encode( $result ));
+			exit(json_encode( $result, JSON_FORCE_OBJECT ));
 		}
 		
 		public static function error($code, $error) {

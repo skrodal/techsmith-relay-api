@@ -19,6 +19,7 @@
 			$query   = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
 			$userOjb = array();
 			if(!empty($query)) {
+				error_log($query[0]['userDisplayName']);
 				$userObj['name']     = $query[0]['userDisplayName'];
 				$userObj['email']    = $query[0]['userEmail'];
 				$userObj['username'] = $query[0]['userName'];

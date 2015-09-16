@@ -24,6 +24,8 @@
 	require_once($BASE . '/lib/response.class.php');		// Result or error responses
 	require_once($BASE . '/lib/feideconnect.class.php');	// Checks CORS and pulls FeideConnect info from headers
 
+	require_once($BASE . '/lib/utils.class.php');
+
 	### 	FEIDE CONNECT		###
 
 	$feide_connect_config 	= file_get_contents($FEIDE_CONNECT_CONFIG_PATH);

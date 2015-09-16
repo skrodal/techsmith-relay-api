@@ -29,14 +29,16 @@
 		}
 
 
+
+
+
+
+
+
 		// ---------------------------- UTILS ----------------------------
 
 
-		private function _logger($text, $line, $function) {
-			if($this->DEBUG) {
-				error_log($function . '(' . $line . '): ' . $text);
-			}
-		}
+
 
 		// ---------------------------- ./UTILS ----------------------------
 

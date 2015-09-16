@@ -22,7 +22,6 @@
 			header('content-type: application/json; charset=utf-8');
 			//
 			http_response_code(200);
-			error_log(json_encode( $result ));
 			// Return response
 			exit(json_encode( $result ));
 		}

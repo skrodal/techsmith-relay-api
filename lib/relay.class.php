@@ -17,14 +17,8 @@
 		// /me/ and /user/[*:userName]/
 		public function getUser($feideUserName) {
 			$query   = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			$userObj = array();
-			if(!empty($query)) {
-				$userObj['name']     = $query[0]['userDisplayName'];
-				$userObj['email']    = $query[0]['userEmail'];
-				$userObj['username'] = $query[0]['userName'];
-			}
-			$this->_logger(print_r($userObj, true), __LINE__, __FUNCTION__);
-			return $userObj;
+			$this->_logger(print_r($query, true), __LINE__, __FUNCTION__);
+			return array('data' => $query);
 		}
 
 		public function getUserPresentations($feideUserName) {

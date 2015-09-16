@@ -27,7 +27,7 @@ class RelayDB {
 		// On error
 		if($query === FALSE){ Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed.'); }
 		// Response
-		$response = array();
+		$response = [];
 
 		$this->_logger("Rows returned: " . mssql_num_rows($query), __LINE__, __FUNCTION__);
 

@@ -34,6 +34,7 @@ class RelayDB {
 		if (mssql_num_rows($query) > 0) {
 		    while ($row = mssql_fetch_row($query)) {
 		        $response[] = $row;
+			    $this->_logger("Rows returned: " . $response, __LINE__, __FUNCTION__);
 		    }
 		}
 		// Free the query result

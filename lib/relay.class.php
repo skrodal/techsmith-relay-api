@@ -11,19 +11,14 @@ class Relay {
 	private $DEBUG = true;
 	private $relayDB;
 
-
 	function __construct($DB) {
 		$this->relayDB = $DB;
 	}
 
 	// /me/ and /user/[*:userName]/
 	public function getUser($feideUserName){
-		return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'", 'userinfo');
-
-		// SELECT CAST([column_name] AS TEXT) AS column_0 FROM table_name
+		return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
 	}
-
-// SELECT CAST(field1 AS TEXT) AS field1 FROM table
 
 	// ---------------------------- UTILS ----------------------------
 

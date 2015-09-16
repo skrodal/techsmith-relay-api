@@ -17,7 +17,7 @@
 		// /me/ and /user/[*:userName]/
 		public function getUser($feideUserName) {
 			$query = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			return $query;
+			return empty($query) ? array() : $query[0];
 		}
 
 		public function getUserPresentations($feideUserName) {

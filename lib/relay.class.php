@@ -23,7 +23,7 @@
 				$userObj['email']    = $query[0]['userEmail'];
 				$userObj['username'] = $query[0]['userName'];
 			}
-
+			$this->_logger(print_r($userObj, true), __LINE__, __FUNCTION__);
 			return $userObj;
 		}
 

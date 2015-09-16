@@ -17,7 +17,7 @@
 		// /me/ and /user/[*:userName]/
 		public function getUser($feideUserName) {
 			$query   = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			$this->_logger(print_r($query[0], true), __LINE__, __FUNCTION__);
+			$this->_logger(json_encode($query[0]), __LINE__, __FUNCTION__);
 			return $query[0];
 		}
 

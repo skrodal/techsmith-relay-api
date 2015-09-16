@@ -18,7 +18,7 @@
 		public function getUser($feideUserName) {
 			$query   = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
 			$this->_logger(print_r($query, true), __LINE__, __FUNCTION__);
-			return array('data' => $query);
+			return array('data' => $query[0]);
 		}
 
 		public function getUserPresentations($feideUserName) {

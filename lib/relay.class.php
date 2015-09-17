@@ -20,6 +20,12 @@
 			return empty($query) ? array() : $query[0];
 		}
 
+		/**
+		 * TODO: Could possibly be achieved using a single DB query
+		 * @param $feideUserName
+		 *
+		 * @return array
+		 */
 		public function getUserPresentations($feideUserName) {
 			/*
 			presUser_userId
@@ -33,27 +39,22 @@
 			presUploaded
 			createdOn
 			createdByUser
-
-			SELECT
-
-			FROM
-                users u
-            INNER JOIN properties p
-    	        ON u.id = p.userID
-			WHERE
-                p.property = <some value>
 			*/
 
 			// Get this user's userId first
 			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
 			$userId = $userId[0]['userId'] ? $userId[0]['userId'] : null;
-
 			// Then presentations
-			return $userId !== null ? $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE presUser_userId = $userId ") : array();
+			return $userId !== null ?
+				$this->relayDB->query("
+					SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+					FROM tblPresentation
+					WHERE presUser_userId = $userId ")
+				: array();
 		}
 
 		public function getUserPresentationCount($feideUserName) {
-			return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
+			return sizeof( $this->getUserPresentations($feideUserName) );
 		}
 
 

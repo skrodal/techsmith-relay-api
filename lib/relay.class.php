@@ -73,9 +73,11 @@
 		 * @return int
 		 */
 		public function getUserPresentationCount($feideUserName) {
-			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			if(empty($userId)) return [];
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presUser_userId = $userId[0]['userId']");
+			// $userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
+			$userEmail = $this->relayDB->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
+			if(empty($userEmail)) return [];
+			$userEmail = $userEmail[0]['userEmail'];
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = $$userEmail")[0]['computed'];
 		}
 
 		#

@@ -55,16 +55,14 @@
 			Utils::log($feideUserName, __LINE__, __FUNCTION__);
 			// Get this user's userId first
 			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			$userId = !empty($userId) ? $userId[0]['userId'] : null;
+			if(empty($userId)) return [];
 			Utils::log($userId, __LINE__, __FUNCTION__);
 
 			// Then presentations
-			return !is_null($userId) ?
-				$this->relayDB->query("
-					SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
-					FROM tblPresentation
-					WHERE presUser_userId = $userId ")
-				: [];
+			return $this->relayDB->query("
+						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+						FROM tblPresentation
+						WHERE presUser_userId = $userId[0]['userId'] ");
 		}
 
 		/**
@@ -75,7 +73,9 @@
 		 * @return int
 		 */
 		public function getUserPresentationCount($feideUserName) {
-			return sizeof( $this->getUserPresentations($feideUserName) );
+			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
+			if(empty($userId)) return [];
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presUser_userId = $userId[0]['userId']");
 		}
 
 		#
@@ -84,11 +84,36 @@
 		# /global/users/*/
 		#
 		public function getGlobalUsers() {
-			return $this->relayDB->query("SELECT * FROM tblUser");
+			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
 		}
 		public function getGlobalUserCount() {
-			return sizeof($this->relayDB->query("SELECT * FROM tblUser"));
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser");
 		}
+
+		#
+		# GLOBAL PRESENTATIONS ENDPOINTS
+		#
+		# /global/presentations/*/
+		#
+		public function getGlobalPresentations() {
+			return $this->relayDB->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
+		}
+		public function getGlobalPresentationCount() {
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation");
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		/**
 		 * For dev purposes only. Requires Admin scope and superadmin role (i.e. uninett employee).

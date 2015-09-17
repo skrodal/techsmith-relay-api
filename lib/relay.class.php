@@ -14,6 +14,22 @@
 			$this->feideConnect = $connect;
 		}
 
+		#
+		# SERVICE ENDPOINTS
+		#
+		# /service/*/
+		#
+		public function getVersion() { return $this->relayDB->query("SELECT * FROM tblVersion"); }
+		public function getWorkers() { return $this->relayDB->query("SELECT * FROM tblEndpoint"); }
+		public function getUsageData() { return $this->relayDB->query("SELECT * FROM tblUsageData"); }
+		public function getQueue() { return $this->relayDB->query("SELECT * FROM tblJob"); }
+
+		#
+		# USER ENDPOINTS
+		#
+		# /me/*/
+		# /user/*/
+
 		/**
 		 * /me/
 		 * /user/[*:userName]/
@@ -56,7 +72,7 @@
 		 * @return int
 		 */
 		public function getUserPresentationCount($feideUserName) {
-			return array(sizeof( $this->getUserPresentations($feideUserName) ));
+			return sizeof( $this->getUserPresentations($feideUserName) );
 		}
 
 

@@ -86,8 +86,9 @@
 		public function getGlobalUsers() {
 			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
 		}
+
 		public function getGlobalUserCount() {
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser");
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
 		}
 
 		#

@@ -20,13 +20,53 @@
 		# /service/*/
 		#
 		// /service/ endpoint - not sure if needed...
-		public function getService() { return array('message' => 'TODO'); }
+		//public function getService() { return array('message' => 'TODO'); }
 		public function getServiceVersion() { return $this->relayDB->query("SELECT * FROM tblVersion"); }
 		public function getServiceWorkers() { return $this->relayDB->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
 		public function getServiceQueue() { return $this->relayDB->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
 
 		#
-		# USER ENDPOINTS
+		# GLOBAL USERS ENDPOINTS (requires admin-scope)
+		#
+		# /global/users/*/
+		#
+		public function getGlobalUsers() {
+			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
+		}
+
+		public function getGlobalUserCount() {
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
+		}
+
+		#
+		# GLOBAL PRESENTATIONS ENDPOINTS (requires admin-scope)
+		#
+		# /global/presentations/*/
+		#
+
+		// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
+		public function getGlobalPresentations() {
+			return $this->relayDB->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
+		}
+		public function getGlobalPresentationCount() {
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
+		}
+
+		#
+		# ORG USERS ENDPOINTS (requires minimum org-scope)
+		#
+		# /global/users/*/
+		#
+		public function getOrgUsers($org) {
+			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
+		}
+
+		public function getOrgUserCount($org) {
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
+		}
+
+		#
+		# USER ENDPOINTS  (requires minimum user-scope)
 		#
 		# /me/*/
 		# /user/*/
@@ -79,35 +119,6 @@
 			$userEmail = $userEmail[0]['userEmail'];
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['computed'];
 		}
-
-		#
-		# GLOBAL USERS ENDPOINTS
-		#
-		# /global/users/*/
-		#
-		public function getGlobalUsers() {
-			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
-		}
-
-		public function getGlobalUserCount() {
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
-		}
-
-		#
-		# GLOBAL PRESENTATIONS ENDPOINTS
-		#
-		# /global/presentations/*/
-		#
-
-		// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
-		public function getGlobalPresentations() {
-			return $this->relayDB->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
-		}
-		public function getGlobalPresentationCount() {
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
-		}
-
-
 
 
 

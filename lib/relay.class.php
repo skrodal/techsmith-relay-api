@@ -77,7 +77,7 @@
 			$userEmail = $this->relayDB->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
 			if(empty($userEmail)) return [];
 			$userEmail = $userEmail[0]['userEmail'];
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = $$userEmail")[0]['computed'];
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['computed'];
 		}
 
 		#

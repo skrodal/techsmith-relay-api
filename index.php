@@ -127,9 +127,9 @@
 			// STORAGE
 				// (todo)
 			// USERS
-			array('GET','/me/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($GLOBALS['FeideConnect']->userName()))); }, 		            'User account details (Scope: user).'),
-			array('GET','/me/presentations/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($GLOBALS['FeideConnect']->userName()))); }, 		'User presentations (Scope: user).'),
-			array('GET','/me/presentations/count/', function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($GLOBALS['FeideConnect']->userName()))); },  'User presentation count (Scope: user).')
+			array('GET','/me/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($GLOBALS['feideConnect']->userName()))); }, 		            'User account details (Scope: user).'),
+			array('GET','/me/presentations/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($GLOBALS['feideConnect']->userName()))); }, 		'User presentations (Scope: user).'),
+			array('GET','/me/presentations/count/', function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($GLOBALS['feideConnect']->userName()))); },  'User presentation count (Scope: user).')
 		]);
 	}
 

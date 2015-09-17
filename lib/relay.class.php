@@ -79,12 +79,16 @@
 		}
 
 		#
-		# USER ENDPOINTS
+		# GLOBAL USERS ENDPOINTS
 		#
-		# /me/*/
-		# /user/*/
+		# /global/users/*/
 		#
-
+		public function getGlobalUsers() {
+			return $this->relayDB->query("SELECT * FROM tblUser");
+		}
+		public function getGlobalUserCount() {
+			return sizeof($this->relayDB->query("SELECT * FROM tblUser"));
+		}
 
 		/**
 		 * For dev purposes only. Requires Admin scope and superadmin role (i.e. uninett employee).

@@ -52,17 +52,16 @@
 		 * @return array
 		 */
 		public function getUserPresentations($feideUserName) {
-			Utils::log($feideUserName, __LINE__, __FUNCTION__);
 			// Get this user's userId first
-			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			if(empty($userId)) return [];
-			Utils::log($userId, __LINE__, __FUNCTION__);
-
-			// Then presentations
+			// $userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
+			// Use user's email for now - userId is often missing in presentation records.
+			$userEmail = $this->relayDB->query("SELECT userId FROM tblUser WHERE userEmail = '$feideUserName'");
+			if(empty($userEmail)) return [];
+			// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
 			return $this->relayDB->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 						FROM tblPresentation
-						WHERE presUser_userId = $userId[0]['userId'] ");
+						WHERE presPresenterEmail = '$userEmail[0][\'userEmail\']' ");
 		}
 
 		/**
@@ -96,6 +95,8 @@
 		#
 		# /global/presentations/*/
 		#
+
+		// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
 		public function getGlobalPresentations() {
 			return $this->relayDB->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
 		}

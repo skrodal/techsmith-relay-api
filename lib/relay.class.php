@@ -46,9 +46,10 @@
 
 			// Get this user's userId first
 			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			$userId = $userId[0]['userId'];
+			$userId = $userId[0]['userId'] ? $userId[0]['userId'] : null;
+
 			// Then presentations
-			return $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE presUser_userId = (int)$userId ");
+			return $userId !== null ? $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE presUser_userId = $userId ") : array();
 		}
 
 		public function getUserPresentationCount($feideUserName) {

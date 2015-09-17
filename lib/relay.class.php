@@ -55,7 +55,7 @@
 			Utils::log($feideUserName, __LINE__, __FUNCTION__);
 			// Get this user's userId first
 			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			$userId = $userId[0]['userId'] ? $userId[0]['userId'] : null;
+			$userId = !empty($userId) ? $userId[0]['userId'] : null;
 			Utils::log($userId, __LINE__, __FUNCTION__);
 
 			// Then presentations

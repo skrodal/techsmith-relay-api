@@ -63,7 +63,6 @@
 
 	// SERVICE ROUTES
 	$Router->addRoutes([
-		// Kills memory limit:
 		array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUsageData())); }, 	'Workers, queue and version.'),
 		array('GET','/service/workers/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getWorkers())); }, 	'Service workers.'),
 		array('GET','/service/queue/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getQueue())); }, 		'Service queue.'),

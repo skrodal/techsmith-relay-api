@@ -22,7 +22,7 @@
 		public function getVersion() { return $this->relayDB->query("SELECT * FROM tblVersion"); }
 		public function getWorkers() { return $this->relayDB->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
 		// Kills memory limit!
-		public function getUsageData() { return $this->relayDB->query("SELECT * FROM tblUsageData"); }
+		public function getUsageData() { return $this->relayDB->query("SELECT TOP 10 * FROM tblUsageData"); }
 		public function getQueue() { return $this->relayDB->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
 
 		#

@@ -55,7 +55,7 @@
 		#
 		# ORG USERS ENDPOINTS (requires minimum org-scope)
 		#
-		# /global/users/*/
+		# /org/{org.no}/users/*/
 		#
 		public function getOrgUsers($org) {
 			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
@@ -63,6 +63,22 @@
 
 		public function getOrgUserCount($org) {
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
+		}
+
+		#
+		# ORG PRESENTATIONS ENDPOINTS (requires minimum org-scope)
+		#
+		# /org/{org.no}/presentations/*/
+		#
+		public function getOrgPresentations($org) {
+			return $this->relayDB->query("
+						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+						FROM tblPresentation
+						WHERE presPresenterEmail LIKE '%$org%' ");
+		}
+
+		public function getOrgPresentationCount($org) {
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
 		#

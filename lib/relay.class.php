@@ -16,7 +16,7 @@
 
 		// /me/ and /user/[*:userName]/
 		public function getUser($feideUserName) {
-			$query = $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
+			$query = $this->relayDB->query("SELECT userName, userDisplayName, userEmail, userTechSmithId FROM tblUser WHERE userName = '$feideUserName'");
 			return empty($query) ? array() : $query[0];
 		}
 
@@ -44,20 +44,11 @@
                 p.property = <some value>
 			*/
 
-			$userId = $this->relayDB->query("SELECT userTechSmithId FROM tblUser WHERE userName = '$feideUserName'");
-			return $userId;
-			$userId = $userId[0]['userTechSmithId'];
-
-			// return $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE createdByUser = '$feideUserName'");
-			return $this->relayDB->query("
-				SELECT
-					presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
-				FROM
-					tblPresentation p
-				INNER JOIN tblUser u
-					ON u.userName = '$feideUserName'
-				WHERE
-					createdByUser = '$feideUserName'");
+			// Get this user's userId first
+			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
+			$userId = $userId[0]['userId'];
+			// Then presentations
+			return $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE presUser_userId = (int)$userId ");
 		}
 
 		public function getUserPresentationCount($feideUserName) {

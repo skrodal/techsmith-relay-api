@@ -77,9 +77,9 @@
 			// STORAGE
 				// (todo)
 			// USER
-			array('GET','/user/[*:userName]/', 						function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($userName))); }, 					'User account details (Scope: admin).'),
-			array('GET','/user/[*:userName]/presentations/', 		function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
-			array('GET','/user/[*:userName]/presentations/count/', 	function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
+			array('GET','/user/[:userName]/', 						function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($userName))); }, 					'User account details (Scope: admin).'),
+			array('GET','/user/[:userName]/presentations/', 		function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
+			array('GET','/user/[:userName]/presentations/count/', 	function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
 			// USERS
 			array('GET','/global/users/', 							function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUsers())); }, 								'All users (Scope: admin).'),
 			array('GET','/global/users/count/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
@@ -104,19 +104,19 @@
 			// STORAGE
 				// (todo)
 			// USERS
-			array('GET','/org/[*:orgId]/users/', 						 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUsers($org))); }, 							'All users at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/users/count/', 					 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUserCount($org))); }, 						'Total user count at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/users/employees/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployees($org))); }, 						'All employees at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/users/employees/count/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeeCount($org))); }, 					'Total employees count at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/users/students/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudents($org))); }, 						'All students at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/users/students/count/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentCount($org))); }, 					'Total students count at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/users/', 						 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUsers($org))); }, 							'All users at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/users/count/', 					 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUserCount($org))); }, 						'Total user count at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/users/employees/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployees($org))); }, 						'All employees at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/users/employees/count/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeeCount($org))); }, 					'Total employees count at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/users/students/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudents($org))); }, 						'All students at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/users/students/count/', 		     function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentCount($org))); }, 					'Total students count at org (Scope: admin/org).'),
 				// PRESENTATIONS
-			array('GET','/org/[*:orgId]/presentations/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentations($org))); }, 					'All presentations at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/presentations/count/', 			 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentationCount($org))); }, 				'Total presentations at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/presentations/employees/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentations($org))); }, 			'All employee presentations at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/presentations/employees/count/', function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentationCount($org))); }, 		'Total employee presentations at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/presentations/students/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentations($org))); }, 			'All student presentations at org (Scope: admin/org).'),
-			array('GET','/org/[*:orgId]/presentations/students/count/',  function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentationCount($org))); }, 		'Total student presentations at org (Scope: admin/org).')
+			array('GET','/org/[:orgId]/presentations/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentations($org))); }, 					'All presentations at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/presentations/count/', 			 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentationCount($org))); }, 				'Total presentations at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/presentations/employees/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentations($org))); }, 			'All employee presentations at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/presentations/employees/count/',  function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentationCount($org))); }, 		'Total employee presentations at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/presentations/students/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentations($org))); }, 			'All student presentations at org (Scope: admin/org).'),
+			array('GET','/org/[:orgId]/presentations/students/count/',   function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentationCount($org))); }, 		'Total student presentations at org (Scope: admin/org).')
 		]);
 	}
 

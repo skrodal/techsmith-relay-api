@@ -55,13 +55,14 @@
 			// Get this user's userId first
 			// $userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
 			// Use user's email for now - userId is often missing in presentation records.
-			$userEmail = $this->relayDB->query("SELECT userId FROM tblUser WHERE userEmail = '$feideUserName'");
+			$userEmail = $this->relayDB->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
 			if(empty($userEmail)) return [];
+			$userEmail = $userEmail[0]['userEmail'];
 			// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
 			return $this->relayDB->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 						FROM tblPresentation
-						WHERE presPresenterEmail = '$userEmail[0][\'userEmail\']' ");
+						WHERE presPresenterEmail = '$userEmail' ");
 		}
 
 		/**

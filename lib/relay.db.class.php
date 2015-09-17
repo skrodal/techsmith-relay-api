@@ -34,7 +34,7 @@
 			if(mssql_num_rows($query) > 0) {
 				while($row = mssql_fetch_assoc($query)) {
 					$response[] = $row;
-					Utils::log(print_r($row, true), __LINE__, __FUNCTION__);
+					// Utils::log(print_r($row, true), __LINE__, __FUNCTION__);
 				}
 			}
 			// Free the query result

@@ -30,6 +30,7 @@
 		#
 		# /me/*/
 		# /user/*/
+		#
 
 		/**
 		 * /me/
@@ -39,23 +40,23 @@
 		 */
 		public function getUser($feideUserName) {
 			$query = $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			return $query;
-			return empty($query) ? array() : $query[0];
+			return empty($query) ? [] : $query[0];
 		}
 
 		/**
-		 *
 		 * /me/presentations/
-		 * /user/[*:userName]/presentations
+		 * /user/[*:userName]/presentations/
 		 *
 		 * TODO: Could possibly be achieved using a single DB query
 		 * @param $feideUserName
 		 * @return array
 		 */
 		public function getUserPresentations($feideUserName) {
+			error_log($feideUserName);
 			// Get this user's userId first
 			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
 			$userId = $userId[0]['userId'] ? $userId[0]['userId'] : null;
+			error_log($userId);
 			// Then presentations
 			return $userId !== null ?
 				$this->relayDB->query("
@@ -66,7 +67,6 @@
 		}
 
 		/**
-		 *
 		 * /me/presentations/count/
 		 * /user/[*:userName]/presentations/count/
 		 *
@@ -76,6 +76,13 @@
 		public function getUserPresentationCount($feideUserName) {
 			return sizeof( $this->getUserPresentations($feideUserName) );
 		}
+
+		#
+		# USER ENDPOINTS
+		#
+		# /me/*/
+		# /user/*/
+		#
 
 
 		/**

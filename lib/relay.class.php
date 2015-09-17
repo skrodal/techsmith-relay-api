@@ -21,7 +21,30 @@
 		}
 
 		public function getUserPresentations($feideUserName) {
-			return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
+			/*
+			presUser_userId
+			presPresenterName
+			presPresenterEmail
+			presTitle
+			presDescription
+			presDuration
+			presMaxResolution
+			presPlatform
+			presUploaded
+			createdOn
+			createdByUser
+
+			SELECT
+
+			FROM
+                users u
+            INNER JOIN properties p
+    	        ON u.id = p.userID
+			WHERE
+                p.property = <some value>
+			*/
+
+			return $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE createdByUser = '$feideUserName'");
 		}
 
 		public function getUserPresentationCount($feideUserName) {

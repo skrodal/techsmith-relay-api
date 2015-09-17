@@ -63,10 +63,10 @@
 
 	// SERVICE ROUTES
 	$Router->addRoutes([
-		array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUsageData())); }, 	'Workers, queue and version.'),
-		array('GET','/service/workers/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getWorkers())); }, 	'Service workers.'),
-		array('GET','/service/queue/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getQueue())); }, 		'Service queue.'),
-		array('GET','/service/version/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getVersion())); }, 	'Service version.')
+		array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getService())); }, 	    'Workers, queue and version.'),
+		array('GET','/service/workers/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getServiceWorkers())); }, 'Service workers.'),
+		array('GET','/service/queue/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getServiceQueue())); }, 	'Service queue.'),
+		array('GET','/service/version/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getServiceVersion())); }, 'Service version.')
 	]);
 
 

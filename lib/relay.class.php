@@ -19,11 +19,11 @@
 		#
 		# /service/*/
 		#
-		public function getVersion() { return $this->relayDB->query("SELECT * FROM tblVersion"); }
-		public function getWorkers() { return $this->relayDB->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
-		// Kills memory limit!
-		public function getUsageData() { return $this->relayDB->query("SELECT TOP 10 * FROM tblJob"); }
-		public function getQueue() { return $this->relayDB->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
+		// /service/ endpoint - not sure if needed...
+		public function getService() { return array('message' => 'TODO'); }
+		public function getServiceVersion() { return $this->relayDB->query("SELECT * FROM tblVersion"); }
+		public function getServiceWorkers() { return $this->relayDB->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
+		public function getServiceQueue() { return $this->relayDB->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
 
 		#
 		# USER ENDPOINTS
@@ -39,6 +39,7 @@
 		 */
 		public function getUser($feideUserName) {
 			$query = $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
+			return $query;
 			return empty($query) ? array() : $query[0];
 		}
 
@@ -58,7 +59,7 @@
 			// Then presentations
 			return $userId !== null ?
 				$this->relayDB->query("
-					SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+					SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 					FROM tblPresentation
 					WHERE presUser_userId = $userId ")
 				: array();

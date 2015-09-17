@@ -52,11 +52,12 @@
 		 * @return array
 		 */
 		public function getUserPresentations($feideUserName) {
-			error_log($feideUserName);
+			Utils::log($feideUserName, __LINE__, __FUNCTION__);
 			// Get this user's userId first
 			$userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
 			$userId = $userId[0]['userId'] ? $userId[0]['userId'] : null;
-			error_log($userId);
+			Utils::log($userId, __LINE__, __FUNCTION__);
+
 			// Then presentations
 			return $userId !== null ?
 				$this->relayDB->query("

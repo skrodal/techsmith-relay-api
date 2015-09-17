@@ -46,8 +46,9 @@
 	### 	  ALTO ROUTER		###
 
 	require_once($BASE . '/lib/router.class.php');			// http://altorouter.com
-	$Router = new Router();
-	$Router->setBasePath($API_BASE_PATH);
+	$router = new Router();
+	$router->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++' ));
+	$router->setBasePath($API_BASE_PATH);
 
 
 // ---------------------- DEFINE ROUTES ----------------------
@@ -56,13 +57,13 @@
 	/**
 	 * GET all REST routes
 	 */
-	$Router->map('GET', '/', function () {
+	$router->map('GET', '/', function () {
 		Response::result(array('status' => true, 'data' => $GLOBALS['Router']->getRoutes()));
 	}, 'All available routes.');
 
 
 	// SERVICE ROUTES
-	$Router->addRoutes([
+	$router->addRoutes([
 		array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getService())); }, 	    'Workers, queue and version.'),
 		array('GET','/service/workers/', 	function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getServiceWorkers())); }, 'Service workers.'),
 		array('GET','/service/queue/', 		function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getServiceQueue())); }, 	'Service queue.'),
@@ -73,13 +74,13 @@
 	// ADMIN ROUTES if scope allows
 	if($feideConnect->hasOauthScopeAdmin()) {
 		// Add all routes
-		$Router->addRoutes([
+		$router->addRoutes([
 			// STORAGE
 				// (todo)
 			// USER
-			array('GET','/user/[:userName]/', 						function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($userName))); }, 					'User account details (Scope: admin).'),
-			array('GET','/user/[:userName]/presentations/', 		function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
-			array('GET','/user/[:userName]/presentations/count/', 	function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
+			array('GET','/user/[user:userName]/', 						function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUser($userName))); }, 					'User account details (Scope: admin).'),
+			array('GET','/user/[user:userName]/presentations/', 		function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
+			array('GET','/user/[user:userName]/presentations/count/', 	function($userName){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
 			// USERS
 			array('GET','/global/users/', 							function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUsers())); }, 								'All users (Scope: admin).'),
 			array('GET','/global/users/count/', 					function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
@@ -100,30 +101,30 @@
 	// ORG ROUTES if scope allows
 	if($feideConnect->hasOauthScopeAdmin() || $feideConnect->hasOauthScopeOrg()) {
 		// Add all routes
-		$Router->addRoutes([
+		$router->addRoutes([
 			// STORAGE
 				// (todo)
 			// USERS
-			array('GET','/org/[:orgId]/users/', 						 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUsers($org))); }, 							'All users at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/users/count/', 					 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUserCount($org))); }, 						'Total user count at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/users/employees/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployees($org))); }, 						'All employees at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/users/employees/count/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeeCount($org))); }, 					'Total employees count at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/users/students/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudents($org))); }, 						'All students at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/users/students/count/', 		     function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentCount($org))); }, 					'Total students count at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/', 						     function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUsers($orgId))); }, 							'All users at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/count/', 					 function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgUserCount($orgId))); }, 						'Total user count at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/employees/', 				 function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployees($orgId))); }, 						'All employees at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/employees/count/', 		     function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeeCount($orgId))); }, 					'Total employees count at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/students/', 				 function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudents($orgId))); }, 						'All students at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/students/count/', 		     function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentCount($orgId))); }, 					'Total students count at org (Scope: admin/org).'),
 				// PRESENTATIONS
-			array('GET','/org/[:orgId]/presentations/', 				 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentations($org))); }, 					'All presentations at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/presentations/count/', 			 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentationCount($org))); }, 				'Total presentations at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/presentations/employees/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentations($org))); }, 			'All employee presentations at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/presentations/employees/count/',  function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentationCount($org))); }, 		'Total employee presentations at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/presentations/students/', 		 function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentations($org))); }, 			'All student presentations at org (Scope: admin/org).'),
-			array('GET','/org/[:orgId]/presentations/students/count/',   function($org){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentationCount($org))); }, 		'Total student presentations at org (Scope: admin/org).')
+			array('GET','/org/[org:orgId]/presentations/', 				     function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentations($orgId))); }, 					'All presentations at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/presentations/count/', 			 function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgPresentationCount($orgId))); }, 				'Total presentations at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/presentations/employees/', 		 function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentations($orgId))); }, 			'All employee presentations at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/presentations/employees/count/',   function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgEmployeePresentationCount($orgId))); }, 		'Total employee presentations at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/presentations/students/', 		 function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentations($orgId))); }, 			'All student presentations at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/presentations/students/count/',    function($orgId){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getOrgStudentPresentationCount($orgId))); }, 		'Total student presentations at org (Scope: admin/org).')
 		]);
 	}
 
 	// USER ROUTES (/me/) if scope allows
 	if($feideConnect->hasOauthScopeUser()) {
 			// Add all routes
-		$Router->addRoutes([
+		$router->addRoutes([
 			// STORAGE
 				// (todo)
 			// USERS
@@ -136,7 +137,7 @@
 
 	// DEV ROUTES FOR TESTING
 	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
-		$Router->addRoutes([
+		$router->addRoutes([
 			array('GET','/dev/table/[a:tableName]/schema/',	function($table_name){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getTableSchema($table_name))); }, 'Table schema.')
 		]);
 	}
@@ -170,7 +171,7 @@
 	// ---------------------- MATCH AND EXECUTE REQUESTED ROUTE ----------------------
 
 
-	$match = $Router->match();
+	$match = $router->match();
 
 	if($match && is_callable($match['target'])) {
 		sanitizeInput();

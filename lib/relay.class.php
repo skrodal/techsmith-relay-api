@@ -40,7 +40,7 @@
 		 */
 		public function getUser($feideUserName) {
 			$query = $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			return empty($query) ? [] : $query[0];
+			return !empty($query) ? $query[0] : [];
 		}
 
 		/**
@@ -59,12 +59,12 @@
 			Utils::log($userId, __LINE__, __FUNCTION__);
 
 			// Then presentations
-			return $userId !== null ?
+			return !is_null($userId) ?
 				$this->relayDB->query("
 					SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 					FROM tblPresentation
 					WHERE presUser_userId = $userId ")
-				: array();
+				: [];
 		}
 
 		/**

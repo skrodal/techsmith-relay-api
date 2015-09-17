@@ -7,11 +7,11 @@
 	 * @since  August 2015
 	 */
 	class Relay {
-		private $DEBUG = true;
-		private $relayDB;
+		private $relayDB, $feideConnect;
 
-		function __construct($DB) {
+		function __construct(RelayDB $DB, FeideConnect $connect) {
 			$this->relayDB = $DB;
+			$this->feideConnect = $connect;
 		}
 
 		// /me/ and /user/[*:userName]/
@@ -26,6 +26,16 @@
 
 		public function getUserPresentationCount($feideUserName) {
 			return $this->relayDB->query("SELECT userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
+		}
+
+
+
+		public function getTableSchema($table_name){
+			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
+				return $this->relayDB->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
+			}
+			// Else
+			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
 		}
 
 

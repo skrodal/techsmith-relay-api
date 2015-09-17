@@ -27,21 +27,20 @@
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed.');
 			}
 			// Response
-			$response = [];
+			$response = array();
 			//
 			Utils::log("Rows returned: " . mssql_num_rows($query), __LINE__, __FUNCTION__);
 			// Loop rows and add to response array
 			if(mssql_num_rows($query) > 0) {
 				while($row = mssql_fetch_assoc($query)) {
 					$response[] = $row;
-					Utils::log(print_r($response, true), __LINE__, __FUNCTION__);
+					Utils::log(print_r($row, true), __LINE__, __FUNCTION__);
 				}
 			}
 			// Free the query result
 			mssql_free_result($query);
 			// Close link
 			$this->close();
-
 			//
 			return $response;
 		}

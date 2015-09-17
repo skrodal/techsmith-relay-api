@@ -6,8 +6,11 @@
  */
 
 class Utils {
+	// Turn logging on/off
+	private static $DEBUG = true;
 
 	public static function log($text, $line, $function) {
-		error_log($function . '(' . $line . '): ' . $text);
+		if(self::$DEBUG)
+			error_log($function . '(' . $line . '): ' . $text);
 	}
 } 

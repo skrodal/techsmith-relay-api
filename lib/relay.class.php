@@ -100,7 +100,7 @@
 			return $this->relayDB->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
 		}
 		public function getGlobalPresentationCount() {
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation");
+			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
 		}
 
 

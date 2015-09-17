@@ -44,7 +44,20 @@
                 p.property = <some value>
 			*/
 
-			return $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE createdByUser = '$feideUserName'");
+			$userId = $this->relayDB->query("SELECT userTechSmithId FROM tblUser WHERE userName = '$feideUserName'");
+			return $userId;
+			$userId = $userId[0]['userTechSmithId'];
+
+			// return $this->relayDB->query("SELECT presTitle, presDescription, presDuration FROM tblPresentation WHERE createdByUser = '$feideUserName'");
+			return $this->relayDB->query("
+				SELECT
+					presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+				FROM
+					tblPresentation p
+				INNER JOIN tblUser u
+					ON u.userName = '$feideUserName'
+				WHERE
+					createdByUser = '$feideUserName'");
 		}
 
 		public function getUserPresentationCount($feideUserName) {

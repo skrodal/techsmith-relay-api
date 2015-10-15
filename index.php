@@ -47,7 +47,7 @@
 
 	require_once($BASE . '/lib/router.class.php');			// http://altorouter.com
 	$router = new Router();
-	$router->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++' ));
+	$router->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++', 'presentation' => '[0-9A-Za-z.]++' )); // Todo: 'presentation' regex when known how to implement delete function (presId format)
 	$router->setBasePath($API_BASE_PATH);
 
 
@@ -116,7 +116,7 @@
  /* DONE */ array('GET','/org/[org:orgId]/users/', 			                 function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgUsers($orgId))); }, 							'All users at org (Scope: admin/org).'),
  /* DONE */ array('GET','/org/[org:orgId]/users/count/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgUserCount($orgId))); }, 						'Total user count at org (Scope: admin/org).'),
 			//array('GET','/org/[org:orgId]/users/employees/', 				 function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgEmployees($orgId))); }, 						'All employees at org (Scope: admin/org).'),
-			//array('GET','/org/[org:orgId]/users/employees/count/', 		     function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgEmployeeCount($orgId))); }, 					'Total employees count at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/employees/count/', 		     function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgEmployeeCount($orgId))); }, 					'Total employees count at org (Scope: admin/org).'),
 			//array('GET','/org/[org:orgId]/users/students/', 				 function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgStudents($orgId))); }, 						'All students at org (Scope: admin/org).'),
 			//array('GET','/org/[org:orgId]/users/students/count/', 		     function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgStudentCount($orgId))); }, 					'Total students count at org (Scope: admin/org).'),
 			// PRESENTATIONS
@@ -136,9 +136,10 @@
 			// STORAGE
 				// (todo)
 			// USERS
- /* DONE */ array('GET','/me/', 					                    function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
- /* DONE */ array('GET','/me/presentations/', 		                    function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUserPresentations($feideConnect->userName()))); }, 	'User presentations (Scope: user).'),
- /* DONE */ array('GET','/me/presentations/count/',                     function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUserPresentationCount($feideConnect->userName()))); }, 'User presentation count (Scope: user).')
+ /* DONE */ array('GET','/me/', 					                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
+ /* DONE */ array('GET','/me/presentations/', 		                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUserPresentations($feideConnect->userName()))); }, 	'User presentations (Scope: user).'),
+ /* DONE */ array('GET','/me/presentations/count/',                             function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUserPresentationCount($feideConnect->userName()))); }, 'User presentation count (Scope: user).'),
+		   // TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $feideConnect->userName()))); }, 'Delete user presentation (Scope: user).')
 		]);
 	}
 

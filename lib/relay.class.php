@@ -67,6 +67,15 @@
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
 		}
 
+		// TODO: Work in progress....
+		public function getOrgEmployeeCount($org) {
+			$this->verifyOrgAccess($org);
+			// 1. Get entire set of user profile table
+			$tblProfiles = $this->relayDB->query("SELECT COUNT(*) FROM usprProfile_profId")[0]['computed'];
+
+			return $tblProfiles;
+		}
+
 		#
 		# ORG PRESENTATIONS ENDPOINTS (requires minimum org-scope)
 		#

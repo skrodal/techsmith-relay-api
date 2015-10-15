@@ -103,15 +103,13 @@
 			$this->verifyOrgAccess($org);
 
 			$tblOrgEmployees = $this->relayDB->query("
-							SELECT userId, userName, userDisplayName, userEmail
-								FROM   tblUser
-								WHERE userId IN
-								(SELECT usprUser_userId
-                   					FROM   tblUserProfile
-                   					WHERE  tblUser.userName LIKE '%$org%'
-			       					AND tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
+							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId
+								FROM   	tblUser, tblUserProfile
+								WHERE  	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
 
 			return $tblOrgEmployees;
+
 		}
 
 		public function getOrgEmployeeCount($org){

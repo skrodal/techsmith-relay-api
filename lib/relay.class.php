@@ -84,11 +84,12 @@
 			// 1. Get entire set of user profile table
 			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
 			// 2. Get all users from this org
-			$tblOrgUsers = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%' ");
+			$tblOrgUsers = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'");
 			// Count array
 			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
 			// Loop entire set of user profiles list and match with users at this org
 			foreach($tblProfiles as $userObj => $userInfo){
+				error_log($userInfo['usprUser_userId']);
 				if(in_array($userInfo['usprUser_userId'], $tblOrgUsers)){
 					switch($userInfo['usprProfile_profId']) {
 						case $this->relayDB->employeeProfileId():

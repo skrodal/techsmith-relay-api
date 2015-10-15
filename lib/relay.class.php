@@ -126,11 +126,11 @@
 		public function getOrgEmployeeCount($org){
 			$this->verifyOrgAccess($org);
 			$employeeCount = $this->relayDB->query("
-							SELECT userName
+							SELECT COUNT(*)
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId())[0]['computed'];
 			return $employeeCount;
 		}
 

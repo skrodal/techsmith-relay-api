@@ -136,10 +136,22 @@
 
 			return $tblOrgEmployees;
 		}
-
+/*
 		public function getOrgStudentCount($org){
 			$studentCount = $this->getOrgUserCountByAffiliation($org);
 			return $studentCount['students'];
+		}
+*/
+
+		public function getOrgStudentCount($org){
+			$this->verifyOrgAccess($org);
+			$studentCount = $this->relayDB->query("
+							SELECT SELECT COUNT(*)
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId())[0]['computed'];
+			return $studentCount;
 		}
 
 		/**

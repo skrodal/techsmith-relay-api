@@ -174,6 +174,15 @@
 						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
+		public function getOrgStudentPresentationCount($org){
+			$this->verifyOrgAccess($org);
+			return $this->relayDB->query("
+						SELECT COUNT(*)
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relayDB->studentProfileId() . "
+						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
+		}
+
 		#
 		# USER ENDPOINTS  (requires minimum user-scope)
 		#

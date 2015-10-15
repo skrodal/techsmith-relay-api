@@ -47,10 +47,10 @@
 
 
 		public function employeeProfileId() {
-			return (int)$this->config->employeeProfileId;
+			return (int)$this->config['employeeProfileId'];
 		}
 		public function studentProfileId() {
-			return (int)$this->config->studentProfileId;
+			return (int)$this->config['studentProfileId'];
 		}
 
 		/**

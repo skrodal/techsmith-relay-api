@@ -105,9 +105,9 @@
 			$tblOrgEmployees = $this->relayDB->query("
 							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId
 								FROM   	tblUser, tblUserProfile
-								WHERE  	tblUser.userName LIKE '%$org%'");
-
-								// AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
 
 			return $tblOrgEmployees;
 

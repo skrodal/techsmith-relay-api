@@ -68,13 +68,36 @@
 		}
 
 		// TODO: Work in progress....
+		/*
+            {
+                "usprId": 95,
+                "usprUser_userId": 96,
+                "usprProfile_profId": 3,
+                "usprAddedViaGroup": 0,
+                "createdOn": "May 14 2013 11:28:55:443AM",
+                "createdByUser": "relayadmin",
+                "modifiedOn": "May 14 2013 11:28:55:443AM",
+                "modifiedByUser": "relayadmin",
+                "modifiedByModule": "w3wp",
+                "modificationCount": 0
+            },
+		 */
 		public function getOrgEmployeeCount($org) {
 			$this->verifyOrgAccess($org);
 			// 1. Get entire set of user profile table
-			$tblProfiles = $this->relayDB->query("SELECT * FROM tblUserProfile");
-			// usprProfile_profId
+			// $tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
+			// 2. Get all users from this org
+			$tblOrgUsers = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%' ");
 
-			return $tblProfiles;
+			// $this->relayDB->employeeProfileId();
+			// $this->relayDB->studentProfileId();
+			//
+			$affiliationCount = array('employees' => 0, 'students' => 0);
+
+			return $tblOrgUsers;
+
+
+			//return $tblProfiles;
 		}
 
 		#

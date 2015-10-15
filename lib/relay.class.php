@@ -83,14 +83,13 @@
 			$this->verifyOrgAccess($org);
 			// 1. Get entire set of user profile table
 			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
-			// 2. Get all users from this org
-			$tblOrgUsers = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'");
+			// 2. Get all users from this org (get values only as indexed array, we don't need the key "userId")
+			$tblOrgUsers = array_values( $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'") );
 			// Count array
 			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
 			// Loop entire set of user profiles list and match with users at this org
 			foreach($tblProfiles as $userObj => $userInfo){
-
-				if(array_search($userInfo['usprUser_userId'], $tblOrgUsers) !== FALSE){
+				if(in_array($userInfo['usprUser_userId'], $tblOrgUsers)){
 					switch($userInfo['usprProfile_profId']) {
 						case $this->relayDB->employeeProfileId():
 							$affiliationCount['employees']++;

@@ -130,7 +130,7 @@
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId());
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
 			return $employeeCount;
 		}
 

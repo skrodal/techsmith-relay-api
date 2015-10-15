@@ -52,6 +52,37 @@
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
 		}
 
+		// GLOBALS EMPLOYEE
+
+		public function getGlobalEmployeePresentations() {
+			return $this->relayDB->query("
+						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId());
+		}
+
+		public function getGlobalEmployeePresentationCount(){
+			return $this->relayDB->query("
+						SELECT COUNT(*)
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId())[0]['computed'];
+		}
+
+		// GLOBALS STUDENT
+		public function getGlobalStudentPresentations() {
+			return $this->relayDB->query("
+						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relayDB->studentProfileId());
+		}
+
+		public function getGlobalStudentPresentationCount(){
+			return $this->relayDB->query("
+						SELECT COUNT(*)
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relayDB->studentProfileId())[0]['computed'];
+		}
+
 		#
 		# ORG USERS ENDPOINTS (requires minimum org-scope)
 		#
@@ -139,7 +170,8 @@
 			return $this->relayDB->query("
 						SELECT COUNT(*)
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId())[0]['computed'];
+						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId() . "
+						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
 		#

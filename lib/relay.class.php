@@ -98,10 +98,16 @@
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
 		}
 
-		// TODO: WORK IN PROGRESS
+		/**
+		 * Retrieves all employees at given org that exist in DB.
+		 * Note that both users with and without content will be fetched.
+		 *
+		 * @param $org
+		 * @return array
+		 */
 		public function getOrgEmployees($org){
 			$this->verifyOrgAccess($org);
-
+			// Join user/profiles table and get those users from $org with employeeProfileId only
 			$tblOrgEmployees = $this->relayDB->query("
 							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId
 								FROM   	tblUser, tblUserProfile
@@ -110,12 +116,25 @@
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
 
 			return $tblOrgEmployees;
-
 		}
 
 		public function getOrgEmployeeCount($org){
 			$employeeCount = $this->getOrgUserCountByAffiliation($org);
 			return $employeeCount['employees'];
+		}
+
+
+		public function getOrgStudents($org){
+			$this->verifyOrgAccess($org);
+			// Join user/profiles table and get those users from $org with employeeProfileId only
+			$tblOrgEmployees = $this->relayDB->query("
+							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId());
+
+			return $tblOrgEmployees;
 		}
 
 		public function getOrgStudentCount($org){

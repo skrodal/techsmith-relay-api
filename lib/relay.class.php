@@ -81,17 +81,14 @@
 		 */
 		public function getOrgEmployeeCount($org) {
 			$this->verifyOrgAccess($org);
+			$org = 'uio.no';
 			// 1. Get entire set of user profile table
 			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
-			// 2. Get all users from this org (get values only as indexed array, we don't need the key "userId")
+			// 2. Get all users from this org (IDs only)
 			$tblOrgUsersRaw = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'");
 			$tblOrgUserIds = array();
-			//
-			foreach($tblOrgUsersRaw as $index => $value) {
-				$tblOrgUserIds[] = $value['userId'];
-			}
-			error_log(print_r($tblOrgUserIds,1));
-
+			// Extract a simpler, indexed, array representation of user IDs
+			foreach($tblOrgUsersRaw as $index => $value) { $tblOrgUserIds[] = $value['userId']; }
 			// Count array
 			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
 			// Loop entire set of user profiles list and match with users at this org

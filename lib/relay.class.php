@@ -124,7 +124,7 @@
 		public function getOrgPresentations($org) {
 			$this->verifyOrgAccess($org);
 			return $this->relayDB->query("
-						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
 						FROM tblPresentation
 						WHERE presPresenterEmail LIKE '%$org%' ");
 		}
@@ -132,6 +132,14 @@
 		public function getOrgPresentationCount($org) {
 			$this->verifyOrgAccess($org);
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['computed'];
+		}
+
+		public function getOrgEmployeePresentationCount($org){
+			$this->verifyOrgAccess($org);
+			return $this->relayDB->query("
+						SELECT COUNT(*)
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId())[0]['computed'];
 		}
 
 		#

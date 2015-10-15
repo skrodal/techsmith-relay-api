@@ -84,16 +84,20 @@
 			// 1. Get entire set of user profile table
 			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
 			// 2. Get all users from this org (get values only as indexed array, we don't need the key "userId")
-			$tblOrgUsers = array_values( $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'") );
+			$tblOrgUsersRaw = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'");
+			$tblOrgUserIds = array();
+			//
+			foreach($tblOrgUsersRaw as $index => $value) {
+				$tblOrgUserIds[] = $value['userId'];
+			}
+			error_log(print_r($tblOrgUserIds,1));
 
-			error_log(print_r($tblOrgUsers,1));
-			
 			// Count array
 			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
 			// Loop entire set of user profiles list and match with users at this org
 			foreach($tblProfiles as $userObj => $userInfo){
 				// If current userId exist in orgs list of user IDs, we have a match
-				if(in_array($userInfo['usprUser_userId'], $tblOrgUsers)){
+				if(in_array($userInfo['usprUser_userId'], $tblOrgUserIds)){
 					// Get the profile ID for current user and see if we're dealing with a student or employee
 					switch($userInfo['usprProfile_profId']) {
 						case $this->relayDB->employeeProfileId():

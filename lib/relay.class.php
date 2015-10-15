@@ -117,12 +117,22 @@
 
 			return $tblOrgEmployees;
 		}
-
+/*
 		public function getOrgEmployeeCount($org){
 			$employeeCount = $this->getOrgUserCountByAffiliation($org);
 			return $employeeCount['employees'];
 		}
-
+*/
+		public function getOrgEmployeeCount($org){
+			$this->verifyOrgAccess($org);
+			$employeeCount = $this->relayDB->query("
+							SELECT COUNT(*)
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId())[0]['computed'];
+			return $employeeCount;
+		}
 
 		public function getOrgStudents($org){
 			$this->verifyOrgAccess($org);
@@ -161,6 +171,12 @@
 		 * @return array
 		 */
 		public function getOrgUserCountByAffiliation($org) {
+			$employeeCount = $this->getOrgEmployeeCount($org);
+			$studentCount = $this->getOrgStudentCount($org);
+			return array('employees' => $employeeCount, 'students' => $studentCount);
+		}
+		/*
+		public function getOrgUserCountByAffiliation($org) {
 			$this->verifyOrgAccess($org);
 			// 1. Get entire set of user profile table
 			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
@@ -192,6 +208,7 @@
 
 			return $affiliationCount;
 		}
+		*/
 
 		#
 		# ORG PRESENTATIONS ENDPOINTS (requires minimum org-scope)

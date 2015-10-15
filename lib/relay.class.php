@@ -71,7 +71,8 @@
 		public function getOrgEmployeeCount($org) {
 			$this->verifyOrgAccess($org);
 			// 1. Get entire set of user profile table
-			$tblProfiles = $this->relayDB->query("SELECT COUNT(*) FROM usprProfile_profId")[0]['computed'];
+			$tblProfiles = $this->relayDB->query("SELECT * FROM tblUserProfile");
+			// usprProfile_profId
 
 			return $tblProfiles;
 		}

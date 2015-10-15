@@ -86,7 +86,8 @@
 			// 2. Get all users from this org (get values only as indexed array, we don't need the key "userId")
 			$tblOrgUsers = array_values( $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'") );
 
-			return(gettype($tblOrgUsers));
+			error_log(print_r($tblOrgUsers,1));
+			
 			// Count array
 			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
 			// Loop entire set of user profiles list and match with users at this org

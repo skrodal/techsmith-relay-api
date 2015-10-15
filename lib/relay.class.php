@@ -89,8 +89,8 @@
 			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
 			// Loop entire set of user profiles list and match with users at this org
 			foreach($tblProfiles as $userObj => $userInfo){
-				error_log($userInfo['usprProfile_profId']);
-				if(in_array($userInfo['usprUser_userId'], $tblOrgUsers)){
+
+				if(array_search($userInfo['usprUser_userId'], $tblOrgUsers) !== FALSE){
 					switch($userInfo['usprProfile_profId']) {
 						case $this->relayDB->employeeProfileId():
 							$affiliationCount['employees']++;

@@ -263,8 +263,8 @@
 		 */
 		public function getUserPresentations($feideUserName) {
 			return $this->relayDB->query("
-						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
-							   	userEmail, userName
+						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser,
+								userEmail, userName
 						FROM 	tblPresentation,
 								tblUser
 						WHERE 	tblUser.userName = '$feideUserName'

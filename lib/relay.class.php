@@ -26,7 +26,7 @@
 		public function getServiceQueue() { return $this->relayDB->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
 
 		#
-		# GLOBAL USERS ENDPOINTS (requires admin-scope)
+		# GLOBAL USERS ENDPOINTS (requires admin-scope) AND Role of Superadmin
 		#
 		# /global/users/*/
 		#
@@ -58,10 +58,12 @@
 		# /org/{org.no}/users/*/
 		#
 		public function getOrgUsers($org) {
+			$this->verifyOrgAccess($org);
 			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
 		}
 
 		public function getOrgUserCount($org) {
+			$this->verifyOrgAccess($org);
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
 		}
 
@@ -71,6 +73,7 @@
 		# /org/{org.no}/presentations/*/
 		#
 		public function getOrgPresentations($org) {
+			$this->verifyOrgAccess($org);
 			return $this->relayDB->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 						FROM tblPresentation
@@ -78,6 +81,7 @@
 		}
 
 		public function getOrgPresentationCount($org) {
+			$this->verifyOrgAccess($org);
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
@@ -171,7 +175,16 @@
 		// ---------------------------- UTILS ----------------------------
 
 
-
+		/**
+		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
+		 * @param $orgName
+		 */
+		function verifyOrgAccess($orgName){
+			// If NOT superadmin AND requested org data is not for home org
+			if(!$this->feideConnect->isSuperAdmin() && strcasecmp($orgName, $this->feideConnect->userOrg()) !== 0) {
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
+			}
+		}
 
 		// ---------------------------- ./UTILS ----------------------------
 

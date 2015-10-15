@@ -40,7 +40,10 @@
 		
 		##				SCOPES				##
 		// 
-		public function isSuperAdmin(){ return strcasecmp($this->userOrg(), "uninett.no") === 0; }		
+		public function isSuperAdmin(){ return strcasecmp($this->userOrg(), "uninett.no") === 0; }
+
+		// TODO: isOrgAdmin -> need to connect to Kind API for this!
+
 		// Feide username
 		public function userName() { return $this->_getFeideUsername(); }
 		// org.no

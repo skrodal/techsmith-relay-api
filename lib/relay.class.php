@@ -117,12 +117,7 @@
 
 			return $tblOrgEmployees;
 		}
-/*
-		public function getOrgEmployeeCount($org){
-			$employeeCount = $this->getOrgUserCountByAffiliation($org);
-			return $employeeCount['employees'];
-		}
-*/
+
 		public function getOrgEmployeeCount($org){
 			$this->verifyOrgAccess($org);
 			$employeeCount = $this->relayDB->query("
@@ -146,12 +141,6 @@
 
 			return $tblOrgEmployees;
 		}
-/*
-		public function getOrgStudentCount($org){
-			$studentCount = $this->getOrgUserCountByAffiliation($org);
-			return $studentCount['students'];
-		}
-*/
 
 		public function getOrgStudentCount($org){
 			$this->verifyOrgAccess($org);
@@ -273,6 +262,15 @@
 		 * @return array
 		 */
 		public function getUserPresentations($feideUserName) {
+			return $this->relayDB->query("
+						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
+							   	userEmail, userName
+						FROM 	tblPresentation,
+								tblUser
+						WHERE 	tblUser.userName = '$feideUserName'
+						AND 	tblPresentation.presPresenterEmail = tblUser.userEmail");
+
+			/*
 			// Get this user's userId first
 			// $userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
 			// Use user's email for now - userId is often missing in presentation records.
@@ -284,6 +282,7 @@
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 						FROM tblPresentation
 						WHERE presPresenterEmail = '$userEmail' ");
+			*/
 		}
 
 		/**

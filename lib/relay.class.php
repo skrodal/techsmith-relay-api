@@ -104,12 +104,12 @@
 
 			$tblOrgEmployees = $this->relayDB->query("
 							SELECT userId, userName, userDisplayName, userEmail
-							FROM   tblUser
-							WHERE userName LIKE '%$org%'
-							AND WHERE EXISTS (SELECT usprUser_userId, usprProfile_profId
-                   			FROM   tblUserProfile
-                   			WHERE  tblUser.userId = tblUserProfile.usprUser_userId
-			       			AND tblUserProfile = " . $this->relayDB->employeeProfileId());
+								FROM   tblUser
+								WHERE EXISTS (SELECT usprUser_userId, usprProfile_profId
+                   					FROM   tblUserProfile
+                   					WHERE  tblUser.userId = tblUserProfile.usprUser_userId
+                   						AND tblUser.userName LIKE '%$org%'
+			       						AND tblUserProfile = " . $this->relayDB->employeeProfileId());
 
 			return $tblOrgEmployees;
 		}

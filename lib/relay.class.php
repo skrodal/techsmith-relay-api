@@ -67,21 +67,24 @@
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
 		}
 
-		// TODO: Work in progress....
-		/*
-		    // SAMPLE $tblProfiles
-            {
-                "usprUser_userId": 96,
-                "usprProfile_profId": 3,
-            },
-			// SAMPLE tblOrgUsers
-			{
-				"userId": 584
-            },
+		public function getOrgEmployeeCount($org){
+			$employeeCount = $this->getOrgUserCountByAffiliation($org);
+			return $employeeCount['employees'];
+		}
+
+		public function getOrgStudentCount($org){
+			$studentCount = $this->getOrgUserCountByAffiliation($org);
+			return $studentCount['students'];
+		}
+
+		/**
+		 * Gets affiliation count (students and employees) for requested org.
+		 *
+		 * @param $org
+		 * @return array
 		 */
-		public function getOrgEmployeeCount($org) {
+		public function getOrgUserCountByAffiliation($org) {
 			$this->verifyOrgAccess($org);
-			$org = 'uio.no';
 			// 1. Get entire set of user profile table
 			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
 			// 2. Get all users from this org (IDs only)

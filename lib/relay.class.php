@@ -98,6 +98,22 @@
 			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
 		}
 
+		// TODO: WORK IN PROGRESS
+		public function getOrgEmployees($org){
+			$this->verifyOrgAccess($org);
+
+			$tblOrgEmployees = $this->relayDB->query("
+							SELECT userId, userName, userDisplayName, userEmail
+							FROM   tblUser
+							WHERE userName LIKE '%$org%'
+							AND WHERE EXISTS (SELECT usprUser_userId, usprProfile_profId
+                   			FROM   tblUserProfile
+                   			WHERE  tblUser.userId = tblUserProfile.usprUser_userId
+			       			AND tblUserProfile = " . $this->relayDB->employeeProfileId());
+
+			return $tblOrgEmployees;
+		}
+
 		public function getOrgEmployeeCount($org){
 			$employeeCount = $this->getOrgUserCountByAffiliation($org);
 			return $employeeCount['employees'];

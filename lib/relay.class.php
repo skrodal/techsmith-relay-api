@@ -257,32 +257,20 @@
 		 * /me/presentations/
 		 * /user/[*:userName]/presentations/
 		 *
-		 * TODO: Could possibly be achieved using a single DB query
+		 *
 		 * @param $feideUserName
 		 * @return array
 		 */
 		public function getUserPresentations($feideUserName) {
+			// NOTE: This query returns ALL presentations; also those deleted.
+			$feideUserName = 'hallen@uninett.no';
 			return $this->relayDB->query("
-						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, tblPresentation.createdOn, tblPresentation.createdByUser,
+						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, presProfile_profId, tblPresentation.createdOn, tblPresentation.createdByUser,
 								userEmail, userName
 						FROM 	tblPresentation,
 								tblUser
 						WHERE 	tblUser.userName = '$feideUserName'
 						AND 	tblPresentation.presPresenterEmail = tblUser.userEmail");
-
-			/*
-			// Get this user's userId first
-			// $userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			// Use user's email for now - userId is often missing in presentation records.
-			$userEmail = $this->relayDB->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			if(empty($userEmail)) return [];
-			$userEmail = $userEmail[0]['userEmail'];
-			// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
-			return $this->relayDB->query("
-						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
-						FROM tblPresentation
-						WHERE presPresenterEmail = '$userEmail' ");
-			*/
 		}
 
 		/**

@@ -255,7 +255,11 @@
 				WHERE tblUser.userId = tblUserProfile.usprUser_userId
 				AND userName = '$feideUserName'");
 
-
+			// Convert affiliation code to text
+			if(!empty($query)){
+				$query[0]['userAffiliation'] = ( $query[0]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
+			}
+			
 			return !empty($query) ? $query[0] : [];
 		}
 

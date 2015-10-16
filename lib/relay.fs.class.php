@@ -34,7 +34,7 @@
 			//
 			$isEmployee = strcasecmp ( $userAcc['affiliation'], 'employee') == 0;
 			//
-			$screencast_user_root = $isEmployee ? $RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName : $RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName
+			$screencast_user_root = $isEmployee ? $RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName : $RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName;
 
 			if(!file_exists( $screencast_user_root )) { return "Fant ikke noe innhold for bruker " . $feideUserName; }
 

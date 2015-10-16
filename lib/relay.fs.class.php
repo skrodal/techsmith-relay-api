@@ -30,7 +30,7 @@
 
 			$this->relay->getUser($feideUserName);
 
-
+/*
 
 			$isEmployee = true;
 			// Establish root directories for this user
@@ -88,7 +88,7 @@
 						// error_log(dirname($screencast_presentation_url));
 						//filesize($filename)
 						*/
-
+/*
 						$screencast_user_media = array(
 							'pc'        => dirname($screencast_presentation_url) . '/' . $fileHTML,
 							'nettbrett' => dirname($screencast_presentation_url) . '/' . $fileTablet,
@@ -137,6 +137,7 @@
 			}
 			//
 			return apc_fetch('getRelayUserMedia.' . $feideUserName);
+*/
 		}
 
 

@@ -291,14 +291,6 @@
 
 
 
-		/**
-		 * CLIENT DATA
-		 */
-
-		public function getClientStats(){
-			return $this->relayDB->query("SELECT clntId, clntIpAddress, clntComputerName, clntVersion, clntDiagnostics, clntLastAccess, clntUser_userId, createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount  FROM tblClient");
-		}
-
 
 
 

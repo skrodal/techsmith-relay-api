@@ -103,7 +103,7 @@
 			/* DONE */ array('GET','/global/presentations/students/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
 			/* DONE */ array('GET','/global/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).'),
 		    // CLIENTS
-			/* DONE */ array('GET','/global/clients/stats/', 	                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getClientStats())); }, 			                    'Client (Relay Recorder) data.')
+			/* Tested, but no useful info to be grabbed from tblClient. */
 		]);
 	}
 

@@ -23,7 +23,9 @@
 			//
 			http_response_code(200);
 			// Return response
-			exit(json_encode( $result ));
+			$response = json_encode( $result, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE );
+			error_log(json_last_error_msg());
+			exit($response);
 		}
 		
 		public static function error($code, $error) {

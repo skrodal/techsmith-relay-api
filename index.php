@@ -37,11 +37,17 @@
 	require_once($BASE . '/lib/relay.db.class.php');
 	$relay_config = file_get_contents($RELAY_CONFIG_PATH);
 	if($relay_config === FALSE) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Relay config.'); }
+	$relayDB = new RelayDB(json_decode($relay_config, true));
 
 	###			RELAY			###
 
 	require_once($BASE . '/lib/relay.class.php');
-	$relay	= new Relay(new RelayDB(json_decode($relay_config, true)), $feideConnect);
+	$relay	= new Relay($relayDB, $feideConnect);
+
+	###			RELAY FS		###
+
+	require_once($BASE . '/lib/relay.fs.class.php');
+	$relayFS = new RelayFS($relay, $feideConnect);
 
 	### 	  ALTO ROUTER		###
 

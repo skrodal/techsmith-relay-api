@@ -14,8 +14,10 @@
 		function __construct($config) {
 			$this->config = $config;
 		}
+
 		/**
-		 *
+		 * @param $sql
+		 * @return array
 		 */
 		public function query($sql) {
 			//

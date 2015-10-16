@@ -250,7 +250,11 @@
 		 */
 		public function getUser($feideUserName) {
 			$query = $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			return !empty($query) ? $query[0] : [];
+
+			if(empty($query)) {
+				Response::error(404, 'User not found');
+			}
+			return $query[0];
 		}
 
 		/**

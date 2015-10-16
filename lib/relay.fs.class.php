@@ -32,7 +32,7 @@
 			// Return empty if no user found
 			if(empty($userAcc)) return [];
 			//
-			$isEmployee = strcasecmp ( $userAcc['affiliation'], 'employee') == 0;
+			$isEmployee = strcasecmp ( $userAcc['userAffiliation'], 'employee') == 0;
 			//
 			$screencastUserRoot = $isEmployee ? $RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName : $RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName;
 

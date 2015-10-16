@@ -259,7 +259,7 @@
 			if(!empty($query)){
 				$query[0]['userAffiliation'] = ( $query[0]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
 			}
-			
+
 			return !empty($query) ? $query[0] : [];
 		}
 

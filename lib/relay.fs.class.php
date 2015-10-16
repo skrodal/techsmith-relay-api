@@ -25,25 +25,26 @@
 		}
 
 
-		function getRelayUserMedia($feideUserName){
+		 function getRelayUserMedia($feideUserName){
 			global $RELAY_CONFIG;
 			// Get user account info
 			$userAcc = $this->relay->getUser($feideUserName);
 			// Return empty if no user found
 			if(empty($userAcc)) return [];
+			//
+			$isEmployee = strcasecmp ( $userAcc['affiliation'], 'employee') == 0;
+			//
+			$screencast_user_root = $isEmployee ? $RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName : $RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName
 
+			if(!file_exists( $screencast_user_root )) { return "Fant ikke noe innhold for bruker " . $feideUserName; }
 
-
+			return $userAcc;
 /*
 
-			$isEmployee = true;
-			// Establish root directories for this user
-			if(strpos($feideAffiliation, 'employee') 	   !== false) { $screencast_user_root = $RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName; }
-			else if (strpos($feideAffiliation, 'student') !== false) { $screencast_user_root = $RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName; $isEmployee = false; }
-			else { $response['details'] = "Missing affiliation for user " . $feideUserName; return $response;}
+
 
 			// Ensure that user has content
-			if(!file_exists( $screencast_user_root )) { $response['details'] = "Fant ikke noe innhold for bruker " . $feideUserName; return $response; }
+
 			//
 			$response['status'] = true;
 			// Caching...

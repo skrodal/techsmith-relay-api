@@ -291,8 +291,13 @@
 
 
 
+		/**
+		 * CLIENT DATA
+		 */
 
-
+		public function getClientStats(){
+			return $this->relayDB->query("SELECT * FROM tblClient");
+		}
 
 
 

@@ -101,7 +101,9 @@
 			/* DONE */ array('GET','/global/presentations/employees/', 		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalEmployeePresentations())); }, 				'All employee presentations (Scope: admin).'),
 			/* DONE */ array('GET','/global/presentations/employees/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (Scope: admin).'),
 			/* DONE */ array('GET','/global/presentations/students/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
-			/* DONE */ array('GET','/global/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).')
+			/* DONE */ array('GET','/global/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).'),
+		    // CLIENTS
+			/* DONE */ array('GET','/global/clients/stats/', 	                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->getClientStats())); }, 			                    'Client (Relay Recorder) data.')
 		]);
 	}
 

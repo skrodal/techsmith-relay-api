@@ -27,8 +27,12 @@
 
 		function getRelayUserMedia($feideUserName){
 			global $RELAY_CONFIG;
+			// Get user account info
+			$userAcc = $this->relay->getUser($feideUserName);
+			// Return empty if no user found
+			if(empty($userAcc)) return [];
 
-			$this->relay->getUser($feideUserName);
+
 
 /*
 

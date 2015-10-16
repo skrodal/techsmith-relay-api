@@ -26,7 +26,6 @@
 
 
 		 function getRelayUserMedia($feideUserName){
-			global $RELAY_CONFIG;
 			// Get user account info
 			$userAcc = $this->relay->getUser($feideUserName);
 			// Return empty if no user found
@@ -34,7 +33,7 @@
 			//
 			$isEmployee = strcasecmp ( $userAcc['userAffiliation'], 'employee') == 0;
 			//
-			$screencastUserRoot = $isEmployee ? $RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName : $RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName;
+			$screencastUserRoot = $isEmployee ? $this->RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] . $feideUserName : $this->RELAY_CONFIG['SCREENCAST_STUDENT_PATH'] . $feideUserName;
 
 error_log($screencastUserRoot);
 			if(!file_exists( $screencastUserRoot )) { return "Fant ikke noe innhold for bruker " . $feideUserName; }

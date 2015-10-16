@@ -263,6 +263,7 @@
 		 */
 		public function getUserPresentations($feideUserName) {
 			// NOTE: This query returns ALL presentations; also those deleted.
+			// TODO: Need to find a quick way to check which presentations are deleted
 			return $this->relayDB->query("
 						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, presProfile_profId, tblPresentation.createdOn, tblPresentation.createdByUser,
 								userEmail, userName
@@ -312,7 +313,13 @@
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
 		}
 
-
+		public function getTableDump($table_name){
+			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
+				return $this->relayDB->query("SELECT TOP(50) * FROM $table_name");
+			}
+			// Else
+			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
+		}
 
 
 

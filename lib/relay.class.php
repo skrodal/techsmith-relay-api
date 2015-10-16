@@ -263,7 +263,6 @@
 		 */
 		public function getUserPresentations($feideUserName) {
 			// NOTE: This query returns ALL presentations; also those deleted.
-			$feideUserName = 'hallen@uninett.no';
 			return $this->relayDB->query("
 						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, presProfile_profId, tblPresentation.createdOn, tblPresentation.createdByUser,
 								userEmail, userName

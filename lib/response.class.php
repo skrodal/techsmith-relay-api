@@ -21,10 +21,9 @@
 			//
 			header('content-type: application/json; charset=utf-8');
 			//
-			error_log(json_last_error());
 			http_response_code(200);
 			// Return response
-			exit(json_encode( $result ));
+			exit(json_encode( $result, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE ));
 		}
 		
 		public static function error($code, $error) {

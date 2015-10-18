@@ -90,6 +90,18 @@
 		#
 		public function getOrgUsers($org) {
 			$this->verifyOrgAccess($org);
+			$query = $this->relayDB->query("
+				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
+				FROM tblUser, tblUserProfile
+				WHERE tblUser.userId = tblUserProfile.usprUser_userId
+				AND userName LIKE '%$org%' ");
+
+			// Convert affiliation code to text
+			if(!empty($query)){
+				foreach($query as $user => $info) {
+					$info['userAffiliation'] = ( $info['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
+				}
+			}
 			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
 		}
 

@@ -116,8 +116,8 @@
 			} else {
 				return [];
 			}
-			
-			return $query;
+			// Re-index array
+			return array_values($query);
 		}
 
 		public function getOrgUserCount($org) {

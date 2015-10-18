@@ -97,12 +97,26 @@
 				AND userName LIKE '%$org%' ");
 
 			// Convert affiliation code to text
+			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
+			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and delete any entries
+			// that don't match our requested profiles.
 			if(!empty($query)){
-				foreach($query as $key => $user) {
-					$query[$key]['userAffiliation'] = ( $query[$key]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
+				foreach($query as $key => $info) {
+					switch($query[$key]['userAffiliation']){
+						case $this->relayDB->employeeProfileId():
+							$query[$key]['userAffiliation'] = 'employee';
+							break;
+						case $this->relayDB->studentProfileId():
+							$query[$key]['userAffiliation'] = 'student';
+							break;
+						default:
+							unset($query[$key]);
+					}
 				}
+			} else {
+				return [];
 			}
-			// return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
+			
 			return $query;
 		}
 
@@ -177,40 +191,6 @@
 			$studentCount = $this->getOrgStudentCount($org);
 			return array('employees' => $employeeCount, 'students' => $studentCount);
 		}
-		/*
-		public function getOrgUserCountByAffiliation($org) {
-			$this->verifyOrgAccess($org);
-			// 1. Get entire set of user profile table
-			$tblProfiles = $this->relayDB->query("SELECT usprUser_userId, usprProfile_profId FROM tblUserProfile");
-			// 2. Get all users from this org (IDs only)
-			$tblOrgUsersRaw = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName LIKE '%$org%'");
-			$tblOrgUserIds = array();
-			// Extract a simpler, indexed, array representation of user IDs
-			foreach($tblOrgUsersRaw as $index => $value) { $tblOrgUserIds[] = $value['userId']; }
-			// Count array
-			$affiliationCount = array('employees' => 0, 'students' => 0, 'unknown' => 0);
-			// Loop entire set of user profiles list and match with users at this org
-			foreach($tblProfiles as $userObj => $userInfo){
-				// If current userId exist in orgs list of user IDs, we have a match
-				if(in_array($userInfo['usprUser_userId'], $tblOrgUserIds)){
-					// Get the profile ID for current user and see if we're dealing with a student or employee
-					switch($userInfo['usprProfile_profId']) {
-						case $this->relayDB->employeeProfileId():
-							$affiliationCount['employees']++;
-							break;
-						case $this->relayDB->studentProfileId():
-							$affiliationCount['students']++;
-							break;
-						default:
-							$affiliationCount['unknown']++;
-							break;
-					}
-				}
-			}
-
-			return $affiliationCount;
-		}
-		*/
 
 		#
 		# ORG PRESENTATIONS ENDPOINTS (requires minimum org-scope)
@@ -282,14 +262,10 @@
 							$query[$key]['userAffiliation'] = 'student';
 							return $query[$key];
 					}
-					// $query[$key]['userAffiliation'] = ( $query[$key]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
 				}
 			} else {
 				return [];
 			}
-
-			// Some test users have more than one profile, which means that response can hold more than one entry.
-			// return !empty($query) ? $query[0] : [];
 		}
 
 		/**

@@ -98,10 +98,9 @@
 
 			// Convert affiliation code to text
 			if(!empty($query)){
-				foreach($query as $user => $info) {
-					$info['userAffiliation'] = ( $info['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
+				foreach($query as $key => $user) {
+					$query[$key]['userAffiliation'] = ( $query[$key]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
 				}
-				return $query;
 			}
 			// return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
 			return $query;

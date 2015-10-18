@@ -126,7 +126,7 @@
  /* DONE */ array('GET','/org/[org:orgId]/users/count/affiliation/',         function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgUserCountByAffiliation($orgId))); }, 		'Total user count at org by affiliation (Scope: admin/org).'),
  /* DONE */ array('GET','/org/[org:orgId]/users/employees/', 				 function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgEmployees($orgId))); }, 						'All employees at org (Scope: admin/org).'),
  /* DONE */ array('GET','/org/[org:orgId]/users/count/employees/', 		     function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgEmployeeCount($orgId))); }, 					'Total employees count at org (Scope: admin/org).'),
-/* DONE */ array('GET','/org/[org:orgId]/users/students/', 				 function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgStudents($orgId))); }, 						'All students at org (Scope: admin/org).'),
+/* DONE */ array('GET','/org/[org:orgId]/users/students/', 				 function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgStudents($orgId))); }, 						    'All students at org (Scope: admin/org).'),
  /* DONE */ array('GET','/org/[org:orgId]/users/count/students/', 		     function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgStudentCount($orgId))); }, 					'Total students count at org (Scope: admin/org).'),
 			// PRESENTATIONS
  /* DONE */ array('GET','/org/[org:orgId]/presentations/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->getOrgPresentations($orgId))); }, 					'All presentations at org (Scope: admin/org).'),
@@ -145,8 +145,8 @@
 			// STORAGE
 				// (todo)
 			// USERS
- /* DONE */ //array('GET','/me/', 					                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
-/* TEST WITH FS */ array('GET','/me/', 					                            function(){ global $relayFS, $feideConnect; Response::result(array('status' => true, 'data' => $relayFS->getRelayUserMedia($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
+ /* DONE */ array('GET','/me/', 					                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
+/* TEST WITH FS */ //array('GET','/me/', 					                            function(){ global $relayFS, $feideConnect; Response::result(array('status' => true, 'data' => $relayFS->getRelayUserMedia($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
  /* DONE */ array('GET','/me/presentations/', 		                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUserPresentations($feideConnect->userName()))); }, 	'User presentations (Scope: user).'),
  /* DONE */ array('GET','/me/presentations/count/',                             function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->getUserPresentationCount($feideConnect->userName()))); }, 'User presentation count (Scope: user).'),
 		   // TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $feideConnect->userName()))); }, 'Delete user presentation (Scope: user).')

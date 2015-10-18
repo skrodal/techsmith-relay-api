@@ -135,14 +135,17 @@
 		public function getOrgEmployees($org){
 			$this->verifyOrgAccess($org);
 			// Join user/profiles table and get those users from $org with employeeProfileId only
-			$tblOrgEmployees = $this->relayDB->query("
-							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId
+			$query = $this->relayDB->query("
+							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
-
-			return $tblOrgEmployees;
+			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
+			foreach($query as $key => $info){
+				$query[$key]['userAffiliation'] = 'employee';
+			}
+			return $query;
 		}
 
 		public function getOrgEmployeeCount($org){
@@ -159,14 +162,17 @@
 		public function getOrgStudents($org){
 			$this->verifyOrgAccess($org);
 			// Join user/profiles table and get those users from $org with employeeProfileId only
-			$tblOrgEmployees = $this->relayDB->query("
-							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId
+			$query = $this->relayDB->query("
+							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId());
-
-			return $tblOrgEmployees;
+			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
+			foreach($query as $key => $info){
+				$query[$key]['userAffiliation'] = 'student';
+			}
+			return $query;
 		}
 
 		public function getOrgStudentCount($org){

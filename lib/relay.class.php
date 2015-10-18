@@ -101,8 +101,10 @@
 				foreach($query as $user => $info) {
 					$info['userAffiliation'] = ( $info['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
 				}
+				return $query;
 			}
-			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
+			// return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser WHERE userName LIKE '%$org%' ");
+			return $query;
 		}
 
 		public function getOrgUserCount($org) {
@@ -272,7 +274,8 @@
 				$query[0]['userAffiliation'] = ( $query[0]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
 			}
 
-			return !empty($query) ? $query[0] : [];
+			// return !empty($query) ? $query[0] : [];
+			return $query;
 		}
 
 		/**

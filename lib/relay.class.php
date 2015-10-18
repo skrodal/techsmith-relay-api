@@ -269,12 +269,27 @@
 				AND userName = '$feideUserName'");
 
 			// Convert affiliation code to text
+			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
+			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and return entry
+			// as soon as we have a match.
 			if(!empty($query)){
-				$query[0]['userAffiliation'] = ( $query[0]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
+				foreach($query as $key => $info) {
+					switch($query[$key][['userAffiliation']]){
+						case $this->relayDB->employeeProfileId():
+							$query[$key]['userAffiliation'] = 'employee';
+							return $query[$key];
+						case $this->relayDB->studentProfileId():
+							$query[$key]['userAffiliation'] = 'student';
+							return $query[$key];
+					}
+					// $query[$key]['userAffiliation'] = ( $query[$key]['userAffiliation'] == $this->relayDB->employeeProfileId() ) ? 'employee' : 'student';
+				}
+			} else {
+				return [];
 			}
 
+			// Some test users have more than one profile, which means that response can hold more than one entry.
 			// return !empty($query) ? $query[0] : [];
-			return $query;
 		}
 
 		/**

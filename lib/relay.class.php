@@ -274,7 +274,7 @@
 			// as soon as we have a match.
 			if(!empty($query)){
 				foreach($query as $key => $info) {
-					switch($query[$key][['userAffiliation']]){
+					switch($query[$key]['userAffiliation']){
 						case $this->relayDB->employeeProfileId():
 							$query[$key]['userAffiliation'] = 'employee';
 							return $query[$key];

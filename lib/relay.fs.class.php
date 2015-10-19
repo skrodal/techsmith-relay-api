@@ -167,6 +167,10 @@
 						'email'    => (String)$screencastUserXml->presenter->email,
 						'username' => (String)$screencastUserXml->presenter->userName
 					),
+					'recorded_by'   => array(
+						'name'     => (String)$screencastUserXml->recordedBy->displayName,
+						'email'    => (String)$screencastUserXml->recordedBy->email
+					),
 					'server_path' => $xml_path,
 					'files'       => $screencastUserMedia,
 					'preview'     => $screencastMediaPreview,

@@ -98,7 +98,7 @@
 
 							$thumbnailDir = new RecursiveDirectoryIterator($xml_path);
 							$thumbnailIterator = new RecursiveIteratorIterator($thumbnailDir);
-							$thumbnails = new RegexIterator($thumbnailIterator, '/^.+\.jpg$/i', RecursiveRegexIterator::GET_MATCH);
+							$thumbnails = iterator_to_array( new RegexIterator($thumbnailIterator, '/^.+\.jpg$/i', RecursiveRegexIterator::GET_MATCH) );
 
 							// If any, grab the first one
 							if(isset($thumbnails[0])) {

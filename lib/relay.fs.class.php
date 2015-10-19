@@ -61,10 +61,9 @@
 				$screencastUserMedia       = NULL;
 				$thumbnails                = NULL;
 				$screencastMediaResolution = NULL;
-
+				$screencastMediaPreview    = NULL;
 				// Are we working on a path with alternative username (no '@')?
 				$isAltUsername = strpos($xml_path, $feideUserNameAlt) !== false;
-
 				// Iterate XMLs pertaining to a single presentation, up to 4 XMLs per folder
 				foreach($xml_files as $xml_file) {
 					try {
@@ -92,8 +91,6 @@
 						if(!is_file($xml_path . '/' . $encoding_filename)) {
 							$screencastUserMedia[$encoding_preset] = str_ireplace(".mp4", ".html", $screencastUserMedia[$encoding_preset]);
 						}
-
-						$screencastMediaPreview = NULL;
 						// Find a jpeg file in subfolder, any will do
 						if(!isset($thumbnails)) {
 							// Add all jpegs to array
@@ -135,7 +132,7 @@
 
 
 				// Recreate a new representation of relevant metadata, one for each presentation
-				$response['media'][] = array(
+				$response[] = array(
 					'title'       => (String)$screencastUserXml->title,
 					'description' => (String)$screencastUserXml->description,
 					'presenter'   => array(
@@ -166,6 +163,7 @@
 					)
 				);
 			}
+
 			return $response;
 		}
 

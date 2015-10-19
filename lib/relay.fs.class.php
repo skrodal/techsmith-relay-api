@@ -98,6 +98,7 @@
 							// If any, grab the first one
 							if(isset($thumbnails[0])) {
 								$screencastMediaPreview = $screencastPresentationBaseURL . str_replace($xml_path, "", $thumbnails[0]);
+								error_log($screencastMediaPreview);
 							}
 						}
 						$screencastMediaResolution = isset($screencastMediaResolution) ? $screencastMediaResolution : explode("x", $screencastUserXml->sourceRecording->resolution);

@@ -203,6 +203,7 @@
 			$iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
 			//
 			foreach($iterator as $fileinfo) {
+				error_log($fileinfo->getExtension());
 				if(strcasecmp($fileinfo->getExtension(), "jpg") == 0) {
 					return $fileinfo->getPathname();
 				}

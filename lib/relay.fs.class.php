@@ -26,6 +26,9 @@
 
 
 		function getRelayUserMedia($feideUserName) {
+			//
+			$screencastUserXMLs = NULL;
+			$response           = NULL;
 			// Get user account info (in separate API call)
 			$userAcc = $this->relay->getUser($feideUserName);
 			// In v.4.4.1 update '@' is stripped from username in publish path. Hence the need to check two folders per user.
@@ -48,7 +51,6 @@
 				return "Fant ikke noe innhold for bruker " . $feideUserName;
 			}
 
-			$screencastUserXMLs = NULL;
 			foreach($screencastUserRoots as $folder) {
 				$this->getUserXMLsRecursive($folder, "xml", $screencastUserXMLs);
 			}
@@ -91,6 +93,7 @@
 							$screencastUserMedia[$encoding_preset] = str_ireplace(".mp4", ".html", $screencastUserMedia[$encoding_preset]);
 						}
 
+						$screencastMediaPreview = NULL;
 						// Find a jpeg file in subfolder, any will do
 						if(!isset($thumbnails)) {
 							// Add all jpegs to array
@@ -163,6 +166,7 @@
 					)
 				);
 			}
+			return $response;
 		}
 
 

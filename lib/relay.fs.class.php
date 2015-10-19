@@ -100,12 +100,15 @@
 							$thumbnailIterator = new RecursiveIteratorIterator($thumbnailDir);
 							$thumbnails = iterator_to_array( new RegexIterator($thumbnailIterator, '/^.+\.jpg$/i', RecursiveRegexIterator::GET_MATCH) );
 
+							error_log(json_encode($thumbnails));
+
 							// If any, grab the first one
 							if(isset($thumbnails[0])) {
 								$screencastMediaPreview = $screencastPresentationBaseURL . str_replace($xml_path, "", $thumbnails[0]);
 								error_log($screencastMediaPreview);
 							}
 						}
+						// If not already set in a previous iteration
 						$screencastMediaResolution = isset($screencastMediaResolution) ? $screencastMediaResolution : explode("x", $screencastUserXml->sourceRecording->resolution);
 					} catch(Exception $e) {
 						$response['status']  = false;

@@ -94,7 +94,12 @@
 						// Find a jpeg file in subfolder, any will do
 						if(!isset($thumbnails)) {
 							// Add all jpegs to array
-							$thumbnails = $this->glob_recursive($xml_path . '/*.jpg');
+							// $thumbnails = $this->glob_recursive($xml_path . '/*.jpg');
+
+							$thumbnailDir = new RecursiveDirectoryIterator($xml_path);
+							$thumbnailIterator = new RecursiveIteratorIterator($thumbnailDir);
+							$thumbnails = new RegexIterator($thumbnailIterator, '/^.+\.jpg$/i', RecursiveRegexIterator::GET_MATCH);
+
 							// If any, grab the first one
 							if(isset($thumbnails[0])) {
 								$screencastMediaPreview = $screencastPresentationBaseURL . str_replace($xml_path, "", $thumbnails[0]);

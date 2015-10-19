@@ -198,7 +198,7 @@
 			foreach(glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
 				$files = array_merge($files, $this->glob_recursive($dir . '/' . basename($pattern), $flags));
 			}
-
+			error_log(json_encode($files));
 			return $files;
 		}
 

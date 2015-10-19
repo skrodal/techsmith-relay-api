@@ -59,7 +59,7 @@
 			foreach($screencastUserXMLs as $xml_path => $xml_files) {
 				// Reset a few variables for each presentation loop
 				$screencastUserMedia       = NULL;
-				$thumbnails                = NULL;
+				$thumbnail                 = NULL;
 				$screencastMediaResolution = NULL;
 				$screencastMediaPreview    = NULL;
 				// Are we working on a path with alternative username (no '@')?
@@ -92,15 +92,11 @@
 							$screencastUserMedia[$encoding_preset] = str_ireplace(".mp4", ".html", $screencastUserMedia[$encoding_preset]);
 						}
 						// Find a jpeg file in subfolder, any will do
-						if(!isset($thumbnails)) {
-							// Add all jpegs to array
-							$thumbnails = $this->getThumbnails($xml_path);
-							error_log(json_encode($thumbnails));
-
+						if(!isset($thumbnail)) {
+							$thumbnail = $this->getThumbnail($xml_path);
 							// If any, grab the first one
-							if(isset($thumbnails[0])) {
-								$screencastMediaPreview = $screencastPresentationBaseURL . str_replace($xml_path, "", $thumbnails[0]);
-								error_log($screencastMediaPreview);
+							if(isset($thumbnail)) {
+								$screencastMediaPreview = $screencastPresentationBaseURL . str_replace($xml_path, "", $thumbnail);
 							}
 						}
 						// If not already set in a previous iteration
@@ -195,18 +191,24 @@
 			}
 		}
 
-		// Does not support flag GLOB_BRACE
-		private function getThumbnails($path) {
-			$directory = new RecursiveDirectoryIterator($path,RecursiveDirectoryIterator::SKIP_DOTS);
-			$iterator = new RecursiveIteratorIterator($directory,RecursiveIteratorIterator::LEAVES_ONLY);
-			$thumbNails = [];
+		/**
+		 * Returns path to a jpeg or false if not found.
+		 *
+		 * @param $path
+		 *
+		 * @return bool
+		 */
+		private function getThumbnail($path) {
+			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+			$iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
 
-			foreach ($iterator as $fileinfo) {
-				if (strncasecmp( $fileinfo->getExtension(), "jpg" ) == 0) {
-					$thumbNails[] = $fileinfo->getPathname();
+			foreach($iterator as $fileinfo) {
+				if(strncasecmp($fileinfo->getExtension(), "jpg") == 0) {
+					return $fileinfo->getPathname();
 				}
 			}
-			return $thumbNails;
+
+			return false;
 		}
 
 		/**

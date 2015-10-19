@@ -25,18 +25,18 @@
 		}
 
 
-		function getRelayUserMedia($feideUserName) {
+		function getRelayUserMediaCount($feideUserName) {
 			//
 			$screencastUserXMLs = NULL;
 			$response           = NULL;
 			// Get user account info (in separate API call)
 			$userAcc = $this->relay->getUser($feideUserName);
-			// In v.4.4.1 update '@' is stripped from username in publish path. Hence the need to check two folders per user.
-			$feideUserNameAlt = str_replace('@', '', $feideUserName);
 			// Return empty if no user found
 			if(empty($userAcc)) {
 				return [];
 			}
+			// In v.4.4.1 update '@' is stripped from username in publish path. Hence the need to check two folders per user.
+			$feideUserNameAlt = str_replace('@', '', $feideUserName);
 			// Grabbed from assigned profile in Relay
 			$isEmployee = strcasecmp($userAcc['userAffiliation'], 'employee') == 0;
 			// /ansatt/ or /student/
@@ -48,7 +48,40 @@
 			);
 			// Ensure that user has content in at least one of the user folders
 			if(!file_exists($screencastUserRoots[0]) && !file_exists($screencastUserRoots[1])) {
-				return "Fant ikke noe innhold for bruker " . $feideUserName;
+				return [];
+			}
+
+			foreach($screencastUserRoots as $folder) {
+				$this->getUserXMLsRecursive($folder, "xml", $screencastUserXMLs);
+			}
+			return sizeof($screencastUserXMLs);
+		}
+
+
+		function getRelayUserMedia($feideUserName) {
+			//
+			$screencastUserXMLs = NULL;
+			$response           = NULL;
+			// Get user account info (in separate API call)
+			$userAcc = $this->relay->getUser($feideUserName);
+			// Return empty if no user found
+			if(empty($userAcc)) {
+				return [];
+			}
+			// In v.4.4.1 update '@' is stripped from username in publish path. Hence the need to check two folders per user.
+			$feideUserNameAlt = str_replace('@', '', $feideUserName);
+			// Grabbed from assigned profile in Relay
+			$isEmployee = strcasecmp($userAcc['userAffiliation'], 'employee') == 0;
+			// /ansatt/ or /student/
+			$screencastUserRoot = $isEmployee ? $this->RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] : $this->RELAY_CONFIG['SCREENCAST_STUDENT_PATH'];
+			// Two potential user folders since Relay 4.4.1
+			$screencastUserRoots = array(
+				$screencastUserRoot . $feideUserName,
+				$screencastUserRoot . $feideUserNameAlt
+			);
+			// Ensure that user has content in at least one of the user folders
+			if(!file_exists($screencastUserRoots[0]) && !file_exists($screencastUserRoots[1])) {
+				return [];
 			}
 
 			foreach($screencastUserRoots as $folder) {
@@ -162,7 +195,9 @@
 		}
 
 
-		/******* HELPERS *******/
+		##############################################################################
+		# HELPERS
+		##############################################################################
 
 		/**
 		 * Recursive GLOB that grabs all user XML files and places these in

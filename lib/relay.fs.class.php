@@ -199,9 +199,10 @@
 		private function getThumbnails($path) {
 			$directory = new RecursiveDirectoryIterator($path,RecursiveDirectoryIterator::SKIP_DOTS);
 			$iterator = new RecursiveIteratorIterator($directory,RecursiveIteratorIterator::LEAVES_ONLY);
+			$thumbNails = [];
 
 			foreach ($iterator as $fileinfo) {
-				if (in_array($fileinfo->getExtension(), 'jpg')) {
+				if (strncasecmp( $fileinfo->getExtension(), "jpg" ) == 0) {
 					$thumbNails[] = $fileinfo->getPathname();
 				}
 			}

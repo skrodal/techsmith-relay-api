@@ -23,7 +23,7 @@
 			//
 			http_response_code(200);
 			// Return response
-			$response = json_encode( $result );
+			$response = json_encode( $result, JSON_UNESCAPED_UNICODE );
 			// error_log(json_last_error_msg());
 			exit($response);
 		}

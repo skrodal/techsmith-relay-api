@@ -91,14 +91,6 @@
 						if(!is_file($xml_path . '/' . $encoding_filename)) {
 							$screencastUserMedia[$encoding_preset] = str_ireplace(".mp4", ".html", $screencastUserMedia[$encoding_preset]);
 						}
-						// Find a jpeg file in subfolder, any will do
-						if(!isset($thumbnail)) {
-							$thumbnail = $this->getThumbnail($xml_path);
-							// If any, grab the first one
-							if(isset($thumbnail)) {
-								$screencastMediaPreview = $screencastPresentationBaseURL . str_replace($xml_path, "", $thumbnail);
-							}
-						}
 						// If not already set in a previous iteration
 						$screencastMediaResolution = isset($screencastMediaResolution) ? $screencastMediaResolution : explode("x", $screencastUserXml->sourceRecording->resolution);
 					} catch(Exception $e) {
@@ -117,6 +109,7 @@
 					if(strpos($format, 'PC (Flash)') !== false) {
 						$screencastUserMedia['embed']    = str_replace(".html", "", $url) . "/index.html";
 						$screencastUserMedia['download'] = str_replace(".html", "", $url) . "/media/video.mp4";
+						$screencastMediaPreview          = str_replace(".html", "", $url) . "/media/video_thumb.jpg";
 						// End here, we got our target
 						break;
 					}
@@ -125,6 +118,7 @@
 					if(strpos($url, '_39.html') !== false) {
 						$screencastUserMedia['embed']    = str_replace(".html", "", $url) . "/index.html";
 						$screencastUserMedia['download'] = str_replace(".html", "", $url) . "/media/video.mp4";
+						$screencastMediaPreview          = str_replace(".html", "", $url) . "/media/video_thumb.jpg";
 						// End here, we got our target
 						break;
 					}
@@ -190,27 +184,7 @@
 				}
 			}
 		}
-
-		/**
-		 * Returns path to a jpeg or false if not found.
-		 *
-		 * @param $path
-		 *
-		 * @return bool
-		 */
-		private function getThumbnail($path) {
-			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
-			$iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
-			//
-			foreach($iterator as $fileinfo) {
-				error_log($fileinfo->getExtension());
-				if(strcasecmp($fileinfo->getExtension(), "jpg") == 0) {
-					return $fileinfo->getPathname();
-				}
-			}
-			return null;
-		}
-
+		
 		/**
 		 * Utility function:
 		 *    Format milliseconds to the H:M:SS format. Useful since Relay recording duration is given in ms...

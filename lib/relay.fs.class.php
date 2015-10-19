@@ -201,14 +201,13 @@
 		private function getThumbnail($path) {
 			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
 			$iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
-
+			//
 			foreach($iterator as $fileinfo) {
-				if(strncasecmp($fileinfo->getExtension(), "jpg") == 0) {
+				if(strcasecmp($fileinfo->getExtension(), "jpg") == 0) {
 					return $fileinfo->getPathname();
 				}
 			}
-
-			return false;
+			return null;
 		}
 
 		/**

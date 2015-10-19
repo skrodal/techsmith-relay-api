@@ -94,12 +94,7 @@
 						// Find a jpeg file in subfolder, any will do
 						if(!isset($thumbnails)) {
 							// Add all jpegs to array
-							// $thumbnails = $this->glob_recursive($xml_path . '/*.jpg');
-
-							$thumbnailDir = new RecursiveDirectoryIterator($xml_path);
-							$thumbnailIterator = new RecursiveIteratorIterator($thumbnailDir);
-							$thumbnails = iterator_to_array( new RegexIterator($thumbnailIterator, '/^.+\.jpg$/i', RecursiveRegexIterator::GET_MATCH) );
-
+							$thumbnails = $this->getThumbnails($xml_path);
 							error_log(json_encode($thumbnails));
 
 							// If any, grab the first one
@@ -201,13 +196,16 @@
 		}
 
 		// Does not support flag GLOB_BRACE
-		private function glob_recursive($pattern, $flags = 0) {
-			$files = glob($pattern, $flags);
-			foreach(glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
-				$files = array_merge($files, $this->glob_recursive($dir . '/' . basename($pattern), $flags));
+		private function getThumbnails($path) {
+			$directory = new RecursiveDirectoryIterator($path,RecursiveDirectoryIterator::SKIP_DOTS);
+			$iterator = new RecursiveIteratorIterator($directory,RecursiveIteratorIterator::LEAVES_ONLY);
+
+			foreach ($iterator as $fileinfo) {
+				if (in_array($fileinfo->getExtension(), 'jpg')) {
+					$thumbNails[] = $fileinfo->getPathname();
+				}
 			}
-			error_log(json_encode($files));
-			return $files;
+			return $thumbNails;
 		}
 
 		/**

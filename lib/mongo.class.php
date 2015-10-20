@@ -7,6 +7,13 @@
 	 */
 	class Mongo {
 
+		public static function insert($collection, $document){
+			// Connect
+			$mongoClient = new \MongoClient();
+			// Select/create a database (test) and collection (testCollection)
+			$collection = $mongoClient->relaydb->$collection;
+			$collection->insert($document);
+		}
 		/**
 		 * @param $id
 		 * @param $document

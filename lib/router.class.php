@@ -1,5 +1,5 @@
 <?php
-
+	namespace UNINETT\RelayAPI;
 	/**
 	 * Class Router
 	 *
@@ -48,8 +48,7 @@
 		 *
 		 * @param array $routes
 		 *
-		 * @throws Exception
-		 * @return void
+		 * @throws \Exception
 		 * @author Koen Punt
 		 */
 		public function addRoutes($routes){
@@ -84,7 +83,7 @@
 		 * @param mixed  $target The target where this route should point to. Can be anything.
 		 * @param string $name   Optional name of this route. Supply if you want to reverse route this url in your application.
 		 *
-		 * @throws Exception
+		 * @throws \Exception
 		 */
 		public function map($method, $route, $target, $name = null) {
 			$this->routes[] = array($method, $route, $target, $name);
@@ -106,7 +105,7 @@
 		 * @param string $routeName The name of the route.
 		 * @param array  $params    @params Associative array of parameters to replace placeholders with.
 		 *
-		 * @throws Exception
+		 * @throws \Exception
 		 * @return string The URL of the route with named parameters in place.
 		 */
 		public function generate($routeName, array $params = array()) {

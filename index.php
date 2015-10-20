@@ -1,5 +1,5 @@
 <?php
-
+	namespace UNINETT\RelayAPI;
    /**
 	* Accepts following scopes:
 	*	- admin
@@ -10,9 +10,7 @@
 	*/
 
 	###			CONFIGS			###
-
 	$CONFIG_ROOT = '/var/www/etc/techsmith-relay/';
-
 
 	$API_BASE_PATH 				= '/api/techsmith-relay';								// Remember to update .htacces as well!
 	$FEIDE_CONNECT_CONFIG_PATH 	= $CONFIG_ROOT . 'feideconnect_config.js';

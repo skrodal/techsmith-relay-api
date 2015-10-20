@@ -1,5 +1,6 @@
 <?php
 
+	namespace UNINETT\RelayAPI;
 	/**
 	 * Class to extract information pertaining to eCampus services from Kind.
 	 *

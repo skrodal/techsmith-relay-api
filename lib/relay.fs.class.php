@@ -1,5 +1,5 @@
 <?php
-
+	namespace UNINETT\RelayAPI;
 	/**
 	 * @author Simon Skrødal
 	 * @date   16/10/2015
@@ -156,6 +156,7 @@
 						break;
 					}
 				}
+
 
 
 				// Recreate a new representation of relevant metadata, one for each presentation

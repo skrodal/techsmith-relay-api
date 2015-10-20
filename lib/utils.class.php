@@ -1,4 +1,5 @@
 <?php
+	namespace UNINETT\RelayAPI;
 /**
  * @author Simon Skrødal
  * @date 16/09/15

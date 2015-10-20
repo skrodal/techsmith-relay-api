@@ -1,4 +1,5 @@
 <?php
+	namespace UNINETT\RelayAPI;
 	/**
 	 * Handles DB Connection and queries
 	 *
@@ -17,6 +18,7 @@
 
 		/**
 		 * @param $sql
+		 *
 		 * @return array
 		 */
 		public function query($sql) {
@@ -43,14 +45,15 @@
 			mssql_free_result($query);
 			// Close link
 			$this->close();
+
 			//
 			return $response;
 		}
 
-
 		public function employeeProfileId() {
 			return (int)$this->config['employeeProfileId'];
 		}
+
 		public function studentProfileId() {
 			return (int)$this->config['studentProfileId'];
 		}

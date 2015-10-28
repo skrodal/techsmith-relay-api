@@ -335,7 +335,7 @@
 
 		public function getTableDump($table_name){
 			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
-				return $this->relayDB->query("SELECT LAST(20) * FROM $table_name");
+				return $this->relayDB->query("SELECT TOP(20) * FROM $table_name ORDER BY fileId DESC");
 			}
 			// Else
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');

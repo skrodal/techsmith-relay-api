@@ -333,9 +333,9 @@
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
 		}
 
-		public function getTableDump($table_name){
+		public function getTableDump($table_name, $top = 50){
 			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
-				return $this->relayDB->query("SELECT TOP(50) * FROM $table_name");
+				return $this->relayDB->query("SELECT TOP($top) * FROM $table_name");
 			}
 			// Else
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');

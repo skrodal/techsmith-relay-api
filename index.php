@@ -174,7 +174,8 @@
 	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
 		$router->addRoutes([
 			/* DONE */ array('GET','/dev/table/[a:tableName]/schema/',	            function($table_name){ global $Relay; Response::result(array('status' => true, 'data' => $Relay->getTableSchema($table_name))); }, 'Table schema.'),
-			/* DONE */ array('GET','/dev/table/[a:tableName]/dump/',	            function($table_name){ global $Relay; Response::result(array('status' => true, 'data' => $Relay->getTableDump($table_name))); }, 'Table dump - top 50.')
+			/* DONE */ array('GET','/dev/table/[a:tableName]/dump/',	            function($table_name){ global $Relay; Response::result(array('status' => true, 'data' => $Relay->getTableDump($table_name, 50))); }, 'Table dump. Top 50.'),
+		    /* DONE */ array('GET','/dev/table/[a:tableName]/dump/top/[i:top]',	    function($table_name, $top){ global $Relay; Response::result(array('status' => true, 'data' => $Relay->getTableDump($table_name, $top))); }, 'Table dump. Top $top.')
 		]);
 	}
 

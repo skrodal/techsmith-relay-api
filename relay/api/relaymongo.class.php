@@ -3,6 +3,7 @@
 
 	use Relay\Auth\FeideConnect;
 	use Relay\Database\RelayMongoConnection;
+	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
 
 	/**

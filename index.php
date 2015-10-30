@@ -54,6 +54,8 @@
 	// hardcode in API, judging by 'uninett.no' in username (I prefer the latter). The client can actually call this API to find out if user has role(s)
 	// super or org or user. simon@uninett.no should get:
 	// { roles : [super, org, user] }
+
+	// TODO: Some global routes, e.g. user counts, may as well be public.
 	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
 		// Add all routes
 		$router->addRoutes([
@@ -67,12 +69,17 @@
 			// USERS
 			/* DONE */ array('GET','/global/users/', 							    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
 			/* DONE */ array('GET','/global/users/count/', 					        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
+
+
+			// Mongo
+			/* DONE */ array('GET','/mongo/users/count/', 					        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count from MongoDB (Scope: admin).'),
+
 			// Use DB call and match with profile ID==ansatt (relay.db.class has employeeProfileID!!!)
 			array('GET','/global/users/employees/', 				                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
-			array('GET','/global/users/employees/count/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/employees/count/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: admin).'),
 			// Use DB call and match with profile ID==student
 			array('GET','/global/users/students/', 					                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 							'All students (Scope: admin).'),
-			array('GET','/global/users/students/count/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						'Total student count (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/students/count/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						'Total student count (Scope: admin).'),
 			// PRESENTATIONS
 			/* DONE */ array('GET','/global/presentations/', 				        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentations())); }, 						'All presentations (Scope: admin).'),
 			/* DONE */ array('GET','/global/presentations/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentationCount())); }, 					'Total presentation count (Scope: admin).'),

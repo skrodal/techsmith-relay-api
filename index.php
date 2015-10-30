@@ -10,7 +10,7 @@
 
 	namespace Relay;
 	###	   LOAD DEPENDENCIES	###
-	require_once('src/autoload.php');
+	require_once('relay/autoload.php');
 
 	use Relay\Auth\FeideConnect;
 	use Relay\Api\Relay;

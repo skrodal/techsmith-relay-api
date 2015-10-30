@@ -7,12 +7,12 @@
 
 	// Define the paths to the directories holding class files
 	$paths = array(
-		'api',
-		'auth',
 		'config',
-		'database',
 		'utils',
-		'vendor'
+		'vendor',
+		'auth',
+		'api',
+		'database'
 	);
 	// Add the paths to the class directories to the include path.
 	set_include_path(dirname(__DIR__) . PATH_SEPARATOR . implode(PATH_SEPARATOR, $paths));

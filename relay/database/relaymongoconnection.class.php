@@ -52,7 +52,7 @@
 
 		private function getConnection(){
 			try {
-				return new MongoClient("mongodb://" . $this->config['user'] . ":" . $this->config['pass'] . "@127.0.0.1/" . $this->db);
+				return new MongoClient("mongodb://" . $this->config['user'] . ":" . $this->config['pass'] . "@127.0.0.1");
 			} catch (MongoConnectionException $e){
 				Utils::log($e->getMessage());
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (MongoDB).');

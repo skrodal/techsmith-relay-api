@@ -3,6 +3,7 @@
 
 	use Relay\Auth\FeideConnect;
 	use Relay\Database\RelayMongoConnection;
+	use Relay\Utils\Utils;
 
 	/**
 	 * Serves API routes requesting data from UNINETTs TechSmith RelaySQL Harvesting Service.
@@ -23,6 +24,8 @@
 			$this->relayMongoConnection = new RelayMongoConnection();
 			$this->relaySQL = $rs;
 			$this->feideConnect = $fc;
+
+			Utils::log($this->relayMongoConnection->countAll('users'));
 		}
 
 		public function getGlobalUserCount() {

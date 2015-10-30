@@ -17,11 +17,8 @@
 		private $connection, $config;
 
 		function __construct() {
-			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
-			// Sanity
-			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL config.'); }
-			// Connect username and pass
-			$this->config = json_decode($this->config, true);
+			// Get connection conf
+			$this->config = $this->getConfig();
 		}
 
 		/**
@@ -31,7 +28,7 @@
 		 */
 		public function query($sql) {
 			//
-			$this->connect();
+			$this->connection = $this->getConnection();
 			// Run query
 			$query = mssql_query($sql, $this->connection);
 			// On error
@@ -52,7 +49,7 @@
 			// Free the query result
 			mssql_free_result($query);
 			// Close link
-			$this->close();
+			$this->closeConnection();
 
 			//
 			return $response;
@@ -69,11 +66,11 @@
 		/**
 		 *    Open MSSQL connection
 		 */
-		private function connect() {
+		private function getConnection() {
 			//
-			$this->connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
+			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
 			//
-			if(!$this->connection) {
+			if(!$connection) {
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (SQL).');
 			}
 			//
@@ -82,15 +79,24 @@
 			}
 
 			Utils::log("DB CONNECTED", __CLASS__ , __FUNCTION__, __LINE__);
+			return $connection;
 		}
 
 		/**
 		 *    Close MSSQL connection
 		 */
-		private function close() {
+		private function closeConnection() {
 			if($this->connection !== false) {
 				mssql_close($this->connection);
 			}
 			Utils::log("DB CLOSED", __CLASS__ , __FUNCTION__, __LINE__);
+		}
+
+		private function getConfig(){
+			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
+			// Sanity
+			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL config.'); }
+			// Connect username and pass
+			return json_decode($this->config, true);
 		}
 	}

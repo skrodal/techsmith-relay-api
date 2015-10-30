@@ -2,6 +2,7 @@
 	namespace Relay\Database;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
+	use Relay\Conf\Config;
 	/**
 	 * Handles DB Connection and queries
 	 *

@@ -2,6 +2,7 @@
 
 	namespace Relay\Api;
 
+	use Relay\Auth\FeideConnect;
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
 	/**

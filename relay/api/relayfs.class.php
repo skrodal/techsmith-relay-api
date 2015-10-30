@@ -1,5 +1,7 @@
 <?php
 	namespace Relay\Api;
+	use Relay\Auth\FeideConnect;
+	use Relay\Api\RelaySQL;
 	use Relay\Conf\Config;
 
 	/**
@@ -15,11 +17,11 @@
 	 */
 	class RelayFS {
 
-		private $relay, $feideConnect;
+		private $relaySQL, $feideConnect;
 
-		function __construct(RelaySQL $relay, FeideConnect $connect) {
-			$this->relay        = $relay;
-			$this->feideConnect = $connect;
+		function __construct(RelaySQL $rs, FeideConnect $fc) {
+			$this->relaySQL        = $rs;
+			$this->feideConnect = $fc;
 		}
 
 

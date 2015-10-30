@@ -21,14 +21,16 @@
 		private $relayMongo;
 
 		function __construct(FeideConnect $fc) {
+			#
+			$this->feideConnect = $fc;
+
 			# SQL Class
-			$this->relaySQL = new RelaySQL($fc);
+			$this->relaySQL = new RelaySQL($this->feideConnect);
 			# Mongo Class
 			$this->relayMongo = new RelayMongo();
 			# FS Class
-			$this->relayFS = new RelayFS($fc);
-			#
-			$this->feideConnect = $fc;
+			$this->relayFS = new RelayFS($this->relaySQL, $this->feideConnect);
+
 		}
 
 

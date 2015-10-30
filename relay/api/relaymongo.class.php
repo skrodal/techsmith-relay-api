@@ -25,32 +25,31 @@
 			$this->relayMongoConnection = new RelayMongoConnection();
 			$this->relaySQL = $rs;
 			$this->feideConnect = $fc;
-
-			foreach($cursor as $item){
-				$return[$i] = array(
-					'_id'=>$item['_id'],
-					'nCode'=>$item['nCode'],
-					'pId'=>$item['pId'],
-					'nText'=>$item['nText'],
-					'longText'=>$item['longText'],
-					'nStatus'=>$item['nStatus'],
-					'nVType'=>$item['nVType'],
-					'pushDate'=>$item['pushDate'],
-					'updateFlag'=>$item['updateFlag'],
-					'counter' => $i
-				);
-				$i++;
-			}
-			$response = [];
-			$test = $this->relayMongoConnection->find("presentations", ['username' => 'simon@uninett.no']);
-			foreach($test as $document){
-				array_push($response, $document);
-			}
-			$test->reset();
-			Response::result(array('status' => true, 'data' => $response ));
 		}
 
+		/**
+		 * Same as $this->relaySQL->getGlobalUserCount(), really... wonder which is faster... -> TODO
+		 *
+		 * @return int
+		 */
 		public function getGlobalUserCount() {
-			//return $this->relayMongoConnection->collection->;
+			return $this->relayMongoConnection->countAll('users');
+		}
+
+		public function test(){
+			// Simple test to get all presentations *on disk* for a specific user.
+			$response = [];
+			$criteria = ['username' => 'simon@uninett.no'];
+			$test = $this->relayMongoConnection->find("presentations", $criteria);
+			// Iterate the cursor
+			foreach($test as $document){
+				// Push document (array) into response array
+				array_push($response, $document);
+			}
+			// Close the cursor (apparently recommended)
+			$test->reset();
+			// Response
+			// Response::result(array('status' => true, 'data' => $response ));
+			return $response;
 		}
 	}

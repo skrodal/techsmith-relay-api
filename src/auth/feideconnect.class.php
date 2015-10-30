@@ -1,6 +1,9 @@
 <?php
 
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Auth;
+
+	use Relay\Config\Config;
+	use Relay\Utils\Response;
    /**
 	*
 	* @author Simon Skrødal
@@ -10,10 +13,12 @@
 
 		protected $config;
 
-		/**
-		 *
-		 */
-		function __construct($config) {
+		function __construct() {
+			$this->config = file_get_contents(Config::get('auth')['feide_connect']);
+			// Sanity
+			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Connect config.'); }
+			// Connect username and pass
+			$this->config = json_decode($this->config, true);
 			// Exits on OPTION call
 			$this->_checkCORS();
 			// Make sure we have a scope
@@ -22,8 +27,6 @@
 			}
 			// Check that username exists and is a Feide one... Function will exit if not.
 			$this->_getFeideUsername();
-			// Connect username and pass
-			$this->config = $config;
 			// Exits on incorrect credentials
 			$this->_checkGateKeeperCredentials();
 		}

@@ -1,5 +1,7 @@
 <?php
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Database;
+	use Relay\Utils\Response;
+	use Relay\Utils\Utils;
 	/**
 	 * Handles DB Connection and queries
 	 *
@@ -9,11 +11,16 @@
 
 	ini_set('mssql.charset', 'UTF-8');
 
-	class RelayDB {
-		private $conn, $config;
+	class RelaySQLConnection {
+
+		private $connection, $config;
 
 		function __construct($config) {
-			$this->config = $config;
+			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
+			// Sanity
+			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL config.'); }
+			// Connect username and pass
+			$this->config = json_decode($this->config, true);
 		}
 
 		/**
@@ -25,10 +32,10 @@
 			//
 			$this->connect();
 			// Run query
-			$query = mssql_query($sql, $this->conn);
+			$query = mssql_query($sql, $this->connection);
 			// On error
 			if($query === false) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed.');
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed (SQL).');
 			}
 			// Response
 			$response = array();
@@ -63,14 +70,14 @@
 		 */
 		private function connect() {
 			//
-			$this->conn = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
+			$this->connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
 			//
-			if(!$this->conn) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed.');
+			if(!$this->connection) {
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (SQL).');
 			}
 			//
 			if(!mssql_select_db($this->config['db'])) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed.');
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed (SQL).');
 			}
 
 			Utils::log("DB CONNECTED", __LINE__, __FUNCTION__);
@@ -80,8 +87,8 @@
 		 *    Close MSSQL connection
 		 */
 		private function close() {
-			if($this->conn !== false) {
-				mssql_close($this->conn);
+			if($this->connection !== false) {
+				mssql_close($this->connection);
 			}
 			Utils::log("DB CLOSED", __LINE__, __FUNCTION__);
 		}

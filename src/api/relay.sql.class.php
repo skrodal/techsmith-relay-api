@@ -1,18 +1,24 @@
 <?php
 
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Api;
+
+	use Relay\Database\RelaySQLConnection;
+	use Relay\Utils\Response;
 	/**
-	 * Class to extract information pertaining to eCampus services from Kind.
+	 * Serves API routes requesting data from the TechSmith RelaySQL SQL DB.
 	 *
 	 * @author Simon Skrodal
-	 * @since  August 2015
+	 * @since  September 2015
 	 */
-	class Relay {
-		private $relayDB, $feideConnect;
 
-		function __construct(RelayDB $DB, FeideConnect $connect) {
-			$this->relayDB = $DB;
-			$this->feideConnect = $connect;
+
+	class RelaySQL {
+		private $relaySQLConnection, $feideConnect;
+
+		function __construct(FeideConnect $fc) {
+			//
+			$this->relaySQLConnection = new RelaySQLConnection();
+			$this->feideConnect = $fc;
 		}
 
 		#
@@ -22,9 +28,9 @@
 		#
 		// /service/ endpoint - not sure if needed...
 		//public function getService() { return array('message' => 'TODO'); }
-		public function getServiceVersion() { return $this->relayDB->query("SELECT * FROM tblVersion"); }
-		public function getServiceWorkers() { return $this->relayDB->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
-		public function getServiceQueue() { return $this->relayDB->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
+		public function getServiceVersion() { return $this->relaySQLConnection->query("SELECT * FROM tblVersion"); }
+		public function getServiceWorkers() { return $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
+		public function getServiceQueue() { return $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
 
 		#
 		# GLOBAL USERS ENDPOINTS (requires admin-scope) AND Role of Superadmin
@@ -32,11 +38,11 @@
 		# /global/users/*/
 		#
 		public function getGlobalUsers() {
-			return $this->relayDB->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
+			return $this->relaySQLConnection->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
 		}
 
 		public function getGlobalUserCount() {
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
 		}
 
 		#
@@ -47,41 +53,41 @@
 
 		// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
 		public function getGlobalPresentations() {
-			return $this->relayDB->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
+			return $this->relaySQLConnection->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
 		}
 		public function getGlobalPresentationCount() {
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
 		}
 
 		// GLOBALS EMPLOYEE
 
 		public function getGlobalEmployeePresentations() {
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId());
+						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
 		}
 
 		public function getGlobalEmployeePresentationCount(){
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT COUNT(*)
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId())[0]['computed'];
+						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['computed'];
 		}
 
 		// GLOBALS STUDENT
 		public function getGlobalStudentPresentations() {
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->studentProfileId());
+						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId());
 		}
 
 		public function getGlobalStudentPresentationCount(){
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT COUNT(*)
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->studentProfileId())[0]['computed'];
+						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['computed'];
 		}
 
 		#
@@ -91,7 +97,7 @@
 		#
 		public function getOrgUsers($org) {
 			$this->verifyOrgAccess($org);
-			$query = $this->relayDB->query("
+			$query = $this->relaySQLConnection->query("
 				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 				FROM tblUser, tblUserProfile
 				WHERE tblUser.userId = tblUserProfile.usprUser_userId
@@ -104,10 +110,10 @@
 			if(!empty($query)){
 				foreach($query as $key => $info) {
 					switch($query[$key]['userAffiliation']){
-						case $this->relayDB->employeeProfileId():
+						case $this->relaySQLConnection->employeeProfileId():
 							$query[$key]['userAffiliation'] = 'employee';
 							break;
-						case $this->relayDB->studentProfileId():
+						case $this->relaySQLConnection->studentProfileId():
 							$query[$key]['userAffiliation'] = 'student';
 							break;
 						default:
@@ -123,7 +129,7 @@
 
 		public function getOrgUserCount($org) {
 			$this->verifyOrgAccess($org);
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
 		}
 
 		/**
@@ -136,12 +142,12 @@
 		public function getOrgEmployees($org){
 			$this->verifyOrgAccess($org);
 			// Join user/profiles table and get those users from $org with employeeProfileId only
-			$query = $this->relayDB->query("
+			$query = $this->relaySQLConnection->query("
 							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId());
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
 			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
 			foreach($query as $key => $info){
 				$query[$key]['userAffiliation'] = 'employee';
@@ -151,24 +157,24 @@
 
 		public function getOrgEmployeeCount($org){
 			$this->verifyOrgAccess($org);
-			$employeeCount = $this->relayDB->query("
+			$employeeCount = $this->relaySQLConnection->query("
 							SELECT COUNT(*)
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->employeeProfileId())[0]['computed'];
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['computed'];
 			return $employeeCount;
 		}
 
 		public function getOrgStudents($org){
 			$this->verifyOrgAccess($org);
 			// Join user/profiles table and get those users from $org with employeeProfileId only
-			$query = $this->relayDB->query("
+			$query = $this->relaySQLConnection->query("
 							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId());
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
 			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
 			foreach($query as $key => $info){
 				$query[$key]['userAffiliation'] = 'student';
@@ -178,12 +184,12 @@
 
 		public function getOrgStudentCount($org){
 			$this->verifyOrgAccess($org);
-			$studentCount = $this->relayDB->query("
+			$studentCount = $this->relaySQLConnection->query("
 							SELECT COUNT(*)
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relayDB->studentProfileId())[0]['computed'];
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['computed'];
 			return $studentCount;
 		}
 
@@ -206,7 +212,7 @@
 		#
 		public function getOrgPresentations($org) {
 			$this->verifyOrgAccess($org);
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
 						FROM tblPresentation
 						WHERE presPresenterEmail LIKE '%$org%' ");
@@ -214,24 +220,24 @@
 
 		public function getOrgPresentationCount($org) {
 			$this->verifyOrgAccess($org);
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
 		public function getOrgEmployeePresentationCount($org){
 			$this->verifyOrgAccess($org);
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT COUNT(*)
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->employeeProfileId() . "
+						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
 						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
 		public function getOrgStudentPresentationCount($org){
 			$this->verifyOrgAccess($org);
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT COUNT(*)
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relayDB->studentProfileId() . "
+						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
 						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
 		}
 
@@ -249,7 +255,7 @@
 		 * @return array
 		 */
 		public function getUser($feideUserName) {
-			$query = $this->relayDB->query("
+			$query = $this->relaySQLConnection->query("
 				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 				FROM tblUser, tblUserProfile
 				WHERE tblUser.userId = tblUserProfile.usprUser_userId
@@ -262,10 +268,10 @@
 			if(!empty($query)){
 				foreach($query as $key => $info) {
 					switch($query[$key]['userAffiliation']){
-						case $this->relayDB->employeeProfileId():
+						case $this->relaySQLConnection->employeeProfileId():
 							$query[$key]['userAffiliation'] = 'employee';
 							return $query[$key];
-						case $this->relayDB->studentProfileId():
+						case $this->relaySQLConnection->studentProfileId():
 							$query[$key]['userAffiliation'] = 'student';
 							return $query[$key];
 					}
@@ -286,7 +292,7 @@
 		public function getUserPresentations($feideUserName) {
 			// NOTE: This query returns ALL presentations; also those deleted.
 			// TODO: Need to find a quick way to check which presentations are deleted
-			return $this->relayDB->query("
+			return $this->relaySQLConnection->query("
 						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, presProfile_profId, tblPresentation.createdOn, tblPresentation.createdByUser,
 								userEmail, userName
 						FROM 	tblPresentation,
@@ -303,11 +309,11 @@
 		 * @return int
 		 */
 		public function getUserPresentationCount($feideUserName) {
-			// $userId = $this->relayDB->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			$userEmail = $this->relayDB->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
+			// $userId = $this->relaySQLConnection->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
+			$userEmail = $this->relaySQLConnection->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
 			if(empty($userEmail)) return [];
 			$userEmail = $userEmail[0]['userEmail'];
-			return $this->relayDB->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['computed'];
 		}
 
 
@@ -327,7 +333,7 @@
 		 */
 		public function getTableSchema($table_name){
 			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
-				return $this->relayDB->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
+				return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
 			}
 			// Else
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
@@ -335,7 +341,7 @@
 
 		public function getTableDump($table_name, $top){
 			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
-				return $this->relayDB->query("SELECT TOP($top) * FROM $table_name");
+				return $this->relaySQLConnection->query("SELECT TOP($top) * FROM $table_name");
 			}
 			// Else
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');

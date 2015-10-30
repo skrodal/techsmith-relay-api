@@ -1,5 +1,7 @@
 <?php
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Utils;
+
+	use Relay\Config\Config;
 /**
  * @author Simon Skrødal
  * @date 16/09/15
@@ -7,11 +9,8 @@
  */
 
 class Utils {
-	// Turn logging on/off
-	private static $DEBUG = true;
-
 	public static function log($text, $line, $function) {
-		if(self::$DEBUG)
+		if(Config::get('utils')['debug'])
 			error_log($function . '(' . $line . '): ' . $text);
 	}
 } 

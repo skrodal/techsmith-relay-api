@@ -1,5 +1,5 @@
 <?php
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Utils;
    /**
 	*
 	* @author Simon Skrødal

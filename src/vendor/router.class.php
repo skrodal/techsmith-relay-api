@@ -1,5 +1,5 @@
 <?php
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Vendor;
 	/**
 	 * Class Router
 	 *

@@ -1,6 +1,14 @@
 <?php
-	namespace UNINETT\RelayAPI;
+	namespace Relay\Api;
+	use Relay\Config\Config;
+
 	/**
+	 * Serves API routes requesting data from TechSmith RelaySQL XML files from the fileserver.
+	 *
+	 * Contrary to the RelaySQL class, which fetches info from the RelaySQL SQL DB,
+	 * RelayFS looks at content *actually* present on the fileserver.
+	 * Thus, RelayFS will not return presentations that no longer exist (deleted).
+	 *
 	 * @author Simon Skrødal
 	 * @date   16/10/2015
 	 * @time   14:00
@@ -8,18 +16,8 @@
 	class RelayFS {
 
 		private $relay, $feideConnect;
-		// TODO: put in external config file!
-		private $RELAY_CONFIG = array(
-			'SCREENCAST_URL'           => 'https://screencast.uninett.no',
-			'SCREENCAST_EMPLOYEE_URL'  => 'https://screencast.uninett.no/relay/ansatt/',
-			'SCREENCAST_STUDENT_URL'   => 'https://screencast.uninett.no/relay/student/',
-			'SCREENCAST_PATH'          => '/var/www/mnt/relaymedia_cache/',
-			'SCREENCAST_EMPLOYEE_PATH' => '/var/www/mnt/relaymedia_cache/ansatt/',
-			'SCREENCAST_STUDENT_PATH'  => '/var/www/mnt/relaymedia_cache/student/',
-			'SCREENCAST_DELETE_LIST'   => '/var/www/mnt/relaymedia_cache/relaymedia_deletelist'            // NOT IN USE
-		);
 
-		function __construct(Relay $relay, FeideConnect $connect) {
+		function __construct(RelaySQL $relay, FeideConnect $connect) {
 			$this->relay        = $relay;
 			$this->feideConnect = $connect;
 		}
@@ -37,11 +35,11 @@
 			}
 			// In v.4.4.1 update '@' is stripped from username in publish path. Hence the need to check two folders per user.
 			$feideUserNameAlt = str_replace('@', '', $feideUserName);
-			// Grabbed from assigned profile in Relay
+			// Grabbed from assigned profile in RelaySQL
 			$isEmployee = strcasecmp($userAcc['userAffiliation'], 'employee') == 0;
 			// /ansatt/ or /student/
-			$screencastUserRoot = $isEmployee ? $this->RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] : $this->RELAY_CONFIG['SCREENCAST_STUDENT_PATH'];
-			// Two potential user folders since Relay 4.4.1
+			$screencastUserRoot = $isEmployee ? Config::get('screencast')['employee_path'] : Config::get('screencast')['student_path'];
+			// Two potential user folders since RelaySQL 4.4.1
 			$screencastUserRoots = array(
 				$screencastUserRoot . $feideUserName,
 				$screencastUserRoot . $feideUserNameAlt
@@ -50,10 +48,13 @@
 			if(!file_exists($screencastUserRoots[0]) && !file_exists($screencastUserRoots[1])) {
 				return [];
 			}
-
+			// Scan and find all presentation XMLs pertaining to this user.
+			// $screencastUserXMLs is 2D - [presentation_path][...one or more XMLS]
 			foreach($screencastUserRoots as $folder) {
 				$this->getUserXMLsRecursive($folder, "xml", $screencastUserXMLs);
 			}
+
+			// Equal to number of unique presentation folders.
 			return sizeof($screencastUserXMLs);
 		}
 
@@ -70,11 +71,11 @@
 			}
 			// In v.4.4.1 update '@' is stripped from username in publish path. Hence the need to check two folders per user.
 			$feideUserNameAlt = str_replace('@', '', $feideUserName);
-			// Grabbed from assigned profile in Relay
+			// Grabbed from assigned profile in RelaySQL
 			$isEmployee = strcasecmp($userAcc['userAffiliation'], 'employee') == 0;
 			// /ansatt/ or /student/
-			$screencastUserRoot = $isEmployee ? $this->RELAY_CONFIG['SCREENCAST_EMPLOYEE_PATH'] : $this->RELAY_CONFIG['SCREENCAST_STUDENT_PATH'];
-			// Two potential user folders since Relay 4.4.1
+			$screencastUserRoot = $isEmployee ? Config::get('screencast')['employee_path'] : Config::get('screencast')['student_path'];
+			// Two potential user folders since RelaySQL 4.4.1
 			$screencastUserRoots = array(
 				$screencastUserRoot . $feideUserName,
 				$screencastUserRoot . $feideUserNameAlt
@@ -102,17 +103,17 @@
 					try {
 						// Load XML metadata
 						$screencastUserXml = simplexml_load_file($xml_path . '/' . $xml_file);
-						// Parses about any English textual datetime description into a Unix timestamp, like Relay's "1/16/2012 10:58:41 AM"
+						// Parses about any English textual datetime description into a Unix timestamp, like RelaySQL's "1/16/2012 10:58:41 AM"
 						$timestamp = strtotime($screencastUserXml->date); // = 1326707921
 						// Get presentation base URL (depends on affiliation and if username is with/without '@')
 						if($isAltUsername) {
 							$screencastPresentationBaseURL = $isEmployee ?
-								$this->RELAY_CONFIG['SCREENCAST_EMPLOYEE_URL'] . substr($xml_path, strpos($xml_path, $feideUserNameAlt)) :
-								$this->RELAY_CONFIG['SCREENCAST_STUDENT_URL'] . substr($xml_path, strpos($xml_path, $feideUserNameAlt));
+								Config::get('screencast')['employee_url'] . substr($xml_path, strpos($xml_path, $feideUserNameAlt)) :
+								Config::get('screencast')['student_url'] . substr($xml_path, strpos($xml_path, $feideUserNameAlt));
 						} else {
 							$screencastPresentationBaseURL = $isEmployee ?
-								$this->RELAY_CONFIG['SCREENCAST_EMPLOYEE_URL'] . substr($xml_path, strpos($xml_path, $feideUserName)) :
-								$this->RELAY_CONFIG['SCREENCAST_STUDENT_URL'] . substr($xml_path, strpos($xml_path, $feideUserName));
+								Config::get('screencast')['employee_url'] . substr($xml_path, strpos($xml_path, $feideUserName)) :
+								Config::get('screencast')['student_url'] . substr($xml_path, strpos($xml_path, $feideUserName));
 						}
 
 						// Name of format, e.g. "MP4 Smart Player (480p)" (will differ from changes in Profile settings over time)
@@ -137,7 +138,7 @@
 				// Find suitable mp4 and html wrapper for an MP4 for embed/download
 				foreach($screencastUserMedia as $format => $url) {
 					// a. Check if old PC (Flash) encoding is in array
-					// NOTE: Depending on Relay-version this encoding could contain _PC_(FLASH)_ OR _8.html in
+					// NOTE: Depending on RelaySQL-version this encoding could contain _PC_(FLASH)_ OR _8.html in
 					// filename. Therefore safest to use encoding format in this case
 					if(strpos($format, 'PC (Flash)') !== false) {
 						$screencastUserMedia['embed']    = str_replace(".html", "", $url) . "/index.html";
@@ -227,7 +228,7 @@
 
 		/**
 		 * Utility function:
-		 *    Format milliseconds to the H:M:SS format. Useful since Relay recording duration is given in ms...
+		 *    Format milliseconds to the H:M:SS format. Useful since RelaySQL recording duration is given in ms...
 		 *
 		 * @author    Simon Skrødal, 17.02.2012
 		 * @todo

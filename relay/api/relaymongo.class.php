@@ -25,7 +25,9 @@
 			$this->relaySQL = $rs;
 			$this->feideConnect = $fc;
 
-			Utils::log($this->relayMongoConnection->find("presentations", ['username' => 'simon@uninett.no']));
+			$test = $this->relayMongoConnection->find("presentations", ['username' => 'simon@uninett.no']);
+			Utils::log($test->count());
+			$test->reset();
 		}
 
 		public function getGlobalUserCount() {

@@ -20,7 +20,7 @@
 
 		function __construct($fc) {
 			# SQL Class
-			$this->relaySQL = new RelaySQL();
+			$this->relaySQL = new RelaySQL($fc);
 			# Mongo Class
 			$this->relayMongo = new RelayMongo();
 			# FS Class

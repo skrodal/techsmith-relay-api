@@ -47,6 +47,24 @@
 			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
 		}
 
+		public function getGlobalEmployeeCount() {
+			$employeeCount = $this->relaySQLConnection->query("
+							SELECT COUNT(*)
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['computed'];
+			return $employeeCount;
+		}
+
+		public function getGlobalStudentCount() {
+			$studentCount = $this->relaySQLConnection->query("
+							SELECT COUNT(*)
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['computed'];
+			return $studentCount;
+		}
+
 		#
 		# GLOBAL PRESENTATIONS ENDPOINTS (requires admin-scope)
 		#
@@ -367,6 +385,7 @@
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
 			}
 		}
+
 
 		// ---------------------------- ./UTILS ----------------------------
 

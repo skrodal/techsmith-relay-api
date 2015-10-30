@@ -26,6 +26,6 @@
 		}
 
 		public function getGlobalUserCount() {
-			return $this->relayMongoConnection->collection->;
+			//return $this->relayMongoConnection->collection->;
 		}
 	}

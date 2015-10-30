@@ -38,7 +38,7 @@
 			// Response
 			$response = array();
 			//
-			Utils::log("Rows returned: " . mssql_num_rows($query), __CLASS__ , __FUNCTION__, __LINE__);
+			Utils::log("Rows returned: " . mssql_num_rows($query));
 			// Loop rows and add to response array
 			if(mssql_num_rows($query) > 0) {
 				while($row = mssql_fetch_assoc($query)) {
@@ -78,7 +78,7 @@
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed (SQL).');
 			}
 
-			Utils::log("DB CONNECTED", __CLASS__ , __FUNCTION__, __LINE__);
+			Utils::log("DB CONNECTED");
 			return $connection;
 		}
 
@@ -89,7 +89,7 @@
 			if($this->connection !== false) {
 				mssql_close($this->connection);
 			}
-			Utils::log("DB CLOSED", __CLASS__ , __FUNCTION__, __LINE__);
+			Utils::log("DB CLOSED");
 		}
 
 		private function getConfig(){

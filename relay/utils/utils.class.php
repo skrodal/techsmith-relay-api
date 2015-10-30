@@ -13,7 +13,7 @@
 			if(Config::get('utils')['debug']) {
 				$trace  = debug_backtrace();
 				$caller = $trace[1];
-				error_log($caller['class'] . '->' . $caller['function'] . '::' . $caller['line'] . ': ' . $text);
+				error_log($caller['object'] . $caller['type'] . $caller['function'] . '::' . $caller['line'] . ': ' . $text);
 			}
 		}
 	}

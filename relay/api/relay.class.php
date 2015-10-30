@@ -9,7 +9,7 @@
 
 	namespace Relay\Api;
 
-
+	use Relay\Auth\FeideConnect;
 
 
 
@@ -20,7 +20,7 @@
 		private $relayFS;
 		private $relayMongo;
 
-		function __construct($fc) {
+		function __construct(FeideConnect $fc) {
 			# SQL Class
 			$this->relaySQL = new RelaySQL($fc);
 			# Mongo Class

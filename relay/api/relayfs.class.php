@@ -1,5 +1,6 @@
 <?php
 	namespace Relay\Api;
+
 	use Relay\Auth\FeideConnect;
 	use Relay\Api\RelaySQL;
 	use Relay\Conf\Config;
@@ -20,7 +21,7 @@
 		private $relaySQL, $feideConnect;
 
 		function __construct(RelaySQL $rs, FeideConnect $fc) {
-			$this->relaySQL        = $rs;
+			$this->relaySQL     = $rs;
 			$this->feideConnect = $fc;
 		}
 
@@ -30,7 +31,7 @@
 			$screencastUserXMLs = NULL;
 			$response           = NULL;
 			// Get user account info (in separate API call)
-			$userAcc = $this->relay->getUser($feideUserName);
+			$userAcc = $this->relaySQL->getUser($feideUserName);
 			// Return empty if no user found
 			if(empty($userAcc)) {
 				return [];
@@ -66,7 +67,7 @@
 			$screencastUserXMLs = NULL;
 			$response           = NULL;
 			// Get user account info (in separate API call)
-			$userAcc = $this->relay->getUser($feideUserName);
+			$userAcc = $this->relaySQL->getUser($feideUserName);
 			// Return empty if no user found
 			if(empty($userAcc)) {
 				return [];
@@ -161,7 +162,6 @@
 				}
 
 
-
 				// Recreate a new representation of relevant metadata, one for each presentation
 				$response[] = array(
 					'title'       => (String)$screencastUserXml->title,
@@ -171,9 +171,9 @@
 						'email'    => (String)$screencastUserXml->presenter->email,
 						'username' => (String)$screencastUserXml->presenter->userName
 					),
-					'recorded_by'   => array(
-						'name'     => (String)$screencastUserXml->recordedBy->displayName,
-						'email'    => (String)$screencastUserXml->recordedBy->email
+					'recorded_by' => array(
+						'name'  => (String)$screencastUserXml->recordedBy->displayName,
+						'email' => (String)$screencastUserXml->recordedBy->email
 					),
 					'server_path' => $xml_path,
 					'files'       => $screencastUserMedia,

@@ -15,7 +15,7 @@
 		'vendor'
 	);
 	// Add the paths to the class directories to the include path.
-	set_include_path(dirname(__FILE__) . PATH_SEPARATOR . implode(PATH_SEPARATOR, $paths));
+	set_include_path(dirname(__DIR__) . PATH_SEPARATOR . implode(PATH_SEPARATOR, $paths));
 	// Add the file extensions to the SPL.
 	spl_autoload_extensions(".class.php");
 	// Register the default autoloader implementation in the php engine.

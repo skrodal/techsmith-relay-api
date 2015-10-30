@@ -5,8 +5,8 @@
 	 * @time   10:09
 	 */
 
-	// 
-	require_once('config.php');
+	//
+	require_once('relay/config.php');
 
 	// Define the paths to the directories holding class files
 	$paths = array(

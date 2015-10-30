@@ -26,10 +26,26 @@
 			$this->relaySQL = $rs;
 			$this->feideConnect = $fc;
 
-
-
+			foreach($cursor as $item){
+				$return[$i] = array(
+					'_id'=>$item['_id'],
+					'nCode'=>$item['nCode'],
+					'pId'=>$item['pId'],
+					'nText'=>$item['nText'],
+					'longText'=>$item['longText'],
+					'nStatus'=>$item['nStatus'],
+					'nVType'=>$item['nVType'],
+					'pushDate'=>$item['pushDate'],
+					'updateFlag'=>$item['updateFlag'],
+					'counter' => $i
+				);
+				$i++;
+			}
+			$response = [];
 			$test = $this->relayMongoConnection->find("presentations", ['username' => 'simon@uninett.no']);
-			$response = json_encode(iterator_to_array($test));
+			foreach($test as $document){
+				array_push($response, json_decode($document));
+			}
 			$test->reset();
 			Response::result(array('status' => true, 'data' => $response ));
 		}

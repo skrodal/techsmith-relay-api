@@ -9,8 +9,8 @@
  */
 
 class Utils {
-	public static function log($text, $line, $function) {
+	public static function log($text, $class = '', $function = '', $line = '') {
 		if(Config::get('utils')['debug'])
-			error_log($function . '(' . $line . '): ' . $text);
+			error_log($class . '->' . $function . '::' . $line . ': ' . $text);
 	}
 } 

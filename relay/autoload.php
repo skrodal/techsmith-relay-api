@@ -10,7 +10,7 @@
 
 	// Define the paths to the directories holding class files
 	$paths = array(
-		'config',
+		'conf',
 		'utils',
 		'vendor',
 		'auth',

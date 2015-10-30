@@ -14,7 +14,7 @@
 
 	use Relay\Auth\FeideConnect;
 	use Relay\Api\Relay;
-	use Relay\Config\Config;
+	use Relay\Conf\Config;
 	use Relay\Utils\Response;
 	use Relay\Vendor\Router;
 

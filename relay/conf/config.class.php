@@ -5,7 +5,7 @@
 	 * @date   30/10/2015
 	 * @time   10:27
 	 */
-	namespace Relay\Config;
+	namespace Relay\Conf;
 
 	class Config {
 		protected static $config = array();

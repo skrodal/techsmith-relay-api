@@ -5,7 +5,7 @@
 	use MongoCollection;
 	use MongoConnectionException;
 	use Relay\Utils\Response;
-	use Relay\Config\Config;
+	use Relay\Conf\Config;
 
 	/**
 	 * @author Simon Skrødal

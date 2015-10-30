@@ -2,7 +2,7 @@
 
 	namespace Relay\Auth;
 
-	use Relay\Config\Config;
+	use Relay\Conf\Config;
 	use Relay\Utils\Response;
    /**
 	*

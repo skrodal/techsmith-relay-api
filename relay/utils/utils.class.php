@@ -1,7 +1,7 @@
 <?php
 	namespace Relay\Utils;
 
-	use Relay\Config\Config;
+	use Relay\Conf\Config;
 /**
  * @author Simon Skrødal
  * @date 16/09/15

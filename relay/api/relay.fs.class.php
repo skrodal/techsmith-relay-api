@@ -1,6 +1,6 @@
 <?php
 	namespace Relay\Api;
-	use Relay\Config\Config;
+	use Relay\Conf\Config;
 
 	/**
 	 * Serves API routes requesting data from TechSmith RelaySQL XML files from the fileserver.

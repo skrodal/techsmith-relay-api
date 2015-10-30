@@ -27,7 +27,7 @@
 			# SQL Class
 			$this->relaySQL = new RelaySQL($this->feideConnect);
 			# Mongo Class
-			$this->relayMongo = new RelayMongo();
+			$this->relayMongo = new RelayMongo($this->relaySQL, $this->feideConnect);
 			# FS Class
 			$this->relayFS = new RelayFS($this->relaySQL, $this->feideConnect);
 

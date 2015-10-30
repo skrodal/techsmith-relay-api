@@ -2,7 +2,6 @@
 	namespace Relay\Api;
 
 	use Relay\Auth\FeideConnect;
-	use Relay\Api\RelaySQL;
 	use Relay\Conf\Config;
 
 	/**

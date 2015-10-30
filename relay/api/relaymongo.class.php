@@ -25,8 +25,10 @@
 			$this->relaySQL = $rs;
 			$this->feideConnect = $fc;
 
+
+
 			$test = $this->relayMongoConnection->find("presentations", ['username' => 'simon@uninett.no']);
-			Utils::log($test->count());
+			Utils::log(json_encode(iterator_to_array($test)));
 			$test->reset();
 		}
 

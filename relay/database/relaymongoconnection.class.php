@@ -4,6 +4,7 @@
 	use MongoClient;
 	use MongoCollection;
 	use MongoConnectionException;
+	use MongoCursorException;
 	use Relay\Utils\Response;
 	use Relay\Conf\Config;
 	use Relay\Utils\Utils;
@@ -14,19 +15,27 @@
 	 * @time   14:28
 	 */
 	class RelayMongoConnection {
-		private $connection, $db, $config;
+		// Mongo
+		private $connection, $db, $collection;
+		//
+		private $config;
 
 		public function __construct() {
 			// Get connection conf
 			$this->config = $this->getConfig();
-			// Set DB
-			$this->db = $this->config['db'];
-			//
+			// MongoClient
 			$this->connection = $this->getConnection();
+			// Set Client DB
+			$this->db = $this->connection->selectDB( $this->config['db'] );
 		}
 
 		public function find($collection, $criteria){
-			return $this->connection->selectDB($this->db)->selectCollection($collection)->find($criteria);
+			$this->collection = new MongoCollection($this->db, $collection);
+			try {
+				return $this->collection->find($criteria);
+			} catch (MongoCursorException $e){
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
+			}
 		}
 
 		public function count($collection, $criteria){

@@ -5,9 +5,6 @@
 	 * @time   10:09
 	 */
 
-	//
-	require_once('relay/config.php');
-
 	// Define the paths to the directories holding class files
 	$paths = array(
 		'conf',
@@ -23,3 +20,6 @@
 	spl_autoload_extensions(".class.php");
 	// Register the default autoloader implementation in the php engine.
 	spl_autoload_register();
+
+	//
+	require_once('relay/config.php');

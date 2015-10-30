@@ -41,12 +41,12 @@
 			// Response
 			$response = array();
 			//
-			Utils::log("Rows returned: " . mssql_num_rows($query), __CLASS__ , __LINE__, __FUNCTION__);
+			Utils::log("Rows returned: " . mssql_num_rows($query), __CLASS__ , __FUNCTION__, __LINE__);
 			// Loop rows and add to response array
 			if(mssql_num_rows($query) > 0) {
 				while($row = mssql_fetch_assoc($query)) {
 					$response[] = $row;
-					// Utils::log(print_r($row, true), __CLASS__ , __LINE__, __FUNCTION__);
+					// Utils::log(print_r($row, true), __CLASS__ , __FUNCTION__, __LINE__);
 				}
 			}
 			// Free the query result
@@ -81,7 +81,7 @@
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed (SQL).');
 			}
 
-			Utils::log("DB CONNECTED", __CLASS__ , __LINE__, __FUNCTION__);
+			Utils::log("DB CONNECTED", __CLASS__ , __FUNCTION__, __LINE__);
 		}
 
 		/**
@@ -91,6 +91,6 @@
 			if($this->connection !== false) {
 				mssql_close($this->connection);
 			}
-			Utils::log("DB CLOSED", __CLASS__ , __LINE__, __FUNCTION__);
+			Utils::log("DB CLOSED", __CLASS__ , __FUNCTION__, __LINE__);
 		}
 	}

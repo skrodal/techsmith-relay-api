@@ -44,7 +44,7 @@
 			$response = [];
 			$test = $this->relayMongoConnection->find("presentations", ['username' => 'simon@uninett.no']);
 			foreach($test as $document){
-				array_push($response, json_decode($document));
+				array_push($response, $document);
 			}
 			$test->reset();
 			Response::result(array('status' => true, 'data' => $response ));

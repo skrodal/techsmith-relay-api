@@ -1,8 +1,9 @@
 <?php
 
+	use Relay\Conf\Config;
 	$config_root = '/var/www/etc/techsmith-relay/';
 
-	Relay\Conf\Config::add(
+	Config::add(
 		[
 			'router'     => [
 				// Remember to update .htacces as well:

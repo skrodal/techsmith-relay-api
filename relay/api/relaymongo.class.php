@@ -12,11 +12,6 @@
 	 * @time    15:24
 	 */
 
-
-
-	// Helper for MongoDB interaction
-	require_once('database/relay.mongoConnection.class.php');
-
 	class RelayMongo {
 
 	}

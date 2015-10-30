@@ -16,7 +16,7 @@
 
 		private $connection, $config;
 
-		function __construct($config) {
+		function __construct() {
 			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
 			// Sanity
 			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL config.'); }

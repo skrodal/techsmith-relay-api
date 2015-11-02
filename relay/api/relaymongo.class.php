@@ -257,7 +257,7 @@
 
 		public function getGlobalDiskusage() {
 			$response['total_mib'] = 0;
-			$response['orgs']     = $this->relayMongoConnection->findAll('org');
+			$response['orgs']      = $this->relayMongoConnection->findAll('org');
 
 			foreach($response['orgs'] as $org) {
 				if(!empty($org['storage'])) {
@@ -271,14 +271,17 @@
 		}
 
 		public function getOrgDiskusage($org) {
-			$criteria = ['org' => $org];
-			$usageArr = $this->relayMongoConnection->find('org', $criteria);
-			if(empty($usageArr)) {
-				return [];
+			$criteria              = ['org' => $org];
+			$response['total_mib'] = 0;
+			$response['storage']   = $this->relayMongoConnection->find('org', $criteria)['storage'];
+
+			if(!empty($response['storage'])) {
+				// Latest entry is most current
+				$length                = sizeof($response['storage']) - 1;
+				$response['total_mib'] = (float)$response['storage'][$length]['size_mib'];
 			}
 
-			// Latest entry is most current
-			return array_slice($usageArr, -1)[0];
+			return $response;
 		}
 
 	}

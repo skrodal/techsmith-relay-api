@@ -267,7 +267,7 @@
 				}
 			}
 
-			return (float)$response['total_mib'];
+			return (float)$response;
 		}
 
 		public function getOrgDiskusage($org) {

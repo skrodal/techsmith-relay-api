@@ -46,7 +46,6 @@
 		/* DONE */ array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); }, 'Service workers.'),
 		/* DONE */ array('GET','/service/queue/', 		function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue())); }, 	'Service queue.'),
 		/* DONE */ array('GET','/service/version/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion())); }, 'Service version.'),
-		/* TEST */ array('GET','/service/test/', 	    function(){ $test = new MongoTest(); Response::result(array('status' => true, 'data' => $test->memoryTest())); }, 'TEST ROUTE.')
 	]);
 
 
@@ -205,12 +204,13 @@
 	}
 
 
-	// DEV ROUTES FOR TESTING
+	// DEV ROUTES FOR TESTING (Superadmin access only)
 	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
 		$router->addRoutes([
-			/* DONE */ array('GET','/dev/table/[a:tableName]/schema/',	            function($table_name){ global $relay; Response::result(array('status' => true, 'data' => $relay->getTableSchema($table_name))); }, 'Table schema.'),
-			/* DONE */ array('GET','/dev/table/[a:tableName]/dump/',	            function($table_name){ global $relay; Response::result(array('status' => true, 'data' => $relay->getTableDump($table_name, 50))); }, 'Table dump. Top 50.'),
-		    /* DONE */ array('GET','/dev/table/[a:tableName]/dump/top/[i:top]',	    function($table_name, $top){ global $relay; Response::result(array('status' => true, 'data' => $relay->getTableDump($table_name, $top))); }, 'Table dump. Top $top.')
+			array('GET','/dev/table/[a:tableName]/schema/',	            function($table_name){ global $relay; Response::result(array('status' => true, 'data' => $relay->getTableSchema($table_name))); }, 'Table schema.'),
+			array('GET','/dev/table/[a:tableName]/dump/',	            function($table_name){ global $relay; Response::result(array('status' => true, 'data' => $relay->getTableDump($table_name, 50))); }, 'Table dump. Top 50.'),
+		    array('GET','/dev/table/[a:tableName]/dump/top/[i:top]',	function($table_name, $top){ global $relay; Response::result(array('status' => true, 'data' => $relay->getTableDump($table_name, $top))); }, 'Table dump. Top $top.'),
+			array('GET','/dev/memorytest/', 	                        function(){ $test = new MongoTest(); Response::result(array('status' => true, 'data' => $test->memoryTest())); }, 'Test mongodb/php memory consumption.')
 		]);
 	}
 

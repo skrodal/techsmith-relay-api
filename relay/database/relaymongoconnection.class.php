@@ -30,18 +30,20 @@
 		}
 
 		public function find($collection, $criteria){
-			$this->collection = new MongoCollection($this->db, $collection);
+			// $this->collection = new MongoCollection($this->db, $collection);
 			try {
-				return $this->collection->find($criteria);
+				return $this->db->selectCollection($collection)->find($criteria);
+				// return $this->collection->find($criteria);
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}
 		}
 
 		public function findAll($collection){
-			$this->collection = new MongoCollection($this->db, $collection);
+			// $this->collection = new MongoCollection($this->db, $collection);
 			try {
-				return $this->collection->find();
+				return $this->db->selectCollection($collection)->find();
+				// return $this->collection->find();
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}
@@ -57,11 +59,13 @@
 		}
 
 		public function count($collection, $criteria){
-			return $this->connection->selectDB($this->db)->selectCollection($collection)->find($criteria)->count();
+			return $this->db->selectCollection($collection)->find($criteria)->count();
+			//return $this->connection->selectDB($this->db)->selectCollection($collection)->find($criteria)->count();
 		}
 
 		public function countAll($collection){
-			return $this->connection->selectDB($this->db)->selectCollection($collection)->count();
+			return $this->db->selectCollection($collection)->count();
+			// return $this->connection->selectDB($this->db)->selectCollection($collection)->count();
 		}
 
 

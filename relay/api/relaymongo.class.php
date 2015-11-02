@@ -166,6 +166,10 @@
 				             ]
 			];
 
+			$criteria = array(
+				'path' => array('$in' => array('ansatt'))
+			);
+
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 

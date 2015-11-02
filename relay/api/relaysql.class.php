@@ -47,6 +47,16 @@
 			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
 		}
 
+
+	    public function getGlobalEmployees() {
+		    $employees = $this->relaySQLConnection->query("
+							SELECT userId, userName, userDisplayName, userEmail
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
+		    return $employees;
+	    }
+
 		public function getGlobalEmployeeCount() {
 			$employeeCount = $this->relaySQLConnection->query("
 							SELECT COUNT(*)
@@ -54,6 +64,15 @@
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['computed'];
 			return $employeeCount;
+		}
+
+		public function getGlobalStudents() {
+			$students = $this->relaySQLConnection->query("
+							SELECT userId, userName, userDisplayName, userEmail
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
+			return $students;
 		}
 
 		public function getGlobalStudentCount() {

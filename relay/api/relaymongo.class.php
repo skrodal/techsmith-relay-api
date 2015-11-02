@@ -36,7 +36,7 @@
 			return $this->relayMongoConnection->countAll('users');
 		}
 
-		
+
 		public function getUser($feideUserName){
 			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
 		}

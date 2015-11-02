@@ -148,6 +148,9 @@
 			return $response;
 		}
 
+		public function getGlobalPresentationCount(){
+			return $this->relayMongoConnection->countAll('presentations');
+		}
 
 
 

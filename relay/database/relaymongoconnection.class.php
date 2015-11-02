@@ -38,6 +38,15 @@
 			}
 		}
 
+		public function findOne($collection, $criteria){
+			$this->collection = new MongoCollection($this->db, $collection);
+			try {
+				return $this->collection->findOne($criteria);
+			} catch (MongoCursorException $e){
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
+			}
+		}
+
 		public function count($collection, $criteria){
 			return $this->connection->selectDB($this->db)->selectCollection($collection)->find($criteria)->count();
 		}

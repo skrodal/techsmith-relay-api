@@ -36,6 +36,11 @@
 			return $this->relayMongoConnection->countAll('users');
 		}
 
+		
+		public function getUser($feideUserName){
+			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
+		}
+
 		public function test(){
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];

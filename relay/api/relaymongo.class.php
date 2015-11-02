@@ -1,6 +1,7 @@
 <?php
 	namespace Relay\Api;
 
+	use MongoRegex;
 	use Relay\Auth\FeideConnect;
 	use Relay\Database\RelayMongoConnection;
 	use Relay\Utils\Response;
@@ -160,16 +161,18 @@
 		}
 
 		public function getGlobalEmployeePresentationCount() {
+			$find     = 'ansatt';
 			$criteria = ['path' =>
-				             ['$in' => 'ansatt']
+				             ['$regex' => new MongoRegex("/^$find/i")]
 			];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
 		public function getGlobalStudentPresentationCount() {
+			$find     = 'student';
 			$criteria = ['path' =>
-				             ['$in' => 'student']
+				             ['$regex' => new MongoRegex("/^$find/i")]
 			];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);

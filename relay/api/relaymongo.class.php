@@ -254,23 +254,20 @@
 		####    DISKUSAGE GLOBAL/ORG/USER
 		####
 		########################################################################
+
 		public function getGlobalDiskusage() {
-			return $this->relayMongoConnection->findAll('org');
-		}
+			$response['total_mib'] = 0;
+			$response['orgs']     = $this->relayMongoConnection->findAll('org');
 
-		public function getGlobalDiskusageTotal() {
-			$usageArr     = $this->getGlobalDiskusage();
-			$totalStorage = 0;
-
-			foreach($usageArr as $org) {
+			foreach($response['orgs'] as $org) {
 				if(!empty($org['storage'])) {
 					// Latest entry is most current
 					$length = sizeof($org['storage']) - 1;
-					$totalStorage += (float)$org['storage'][$length]['size_mib'];
+					$response['total_mib'] += (float)$org['storage'][$length]['size_mib'];
 				}
 			}
 
-			return (float)$totalStorage;
+			return (float)$response['total_mib'];
 		}
 
 		public function getOrgDiskusage($org) {

@@ -265,7 +265,8 @@
 			foreach($usageArr as $org) {
 				if(!empty($org['storage'])) {
 					// Latest entry is most current
-					$totalStorage += array_slice($org['storage'], -1)[0];
+					$length = sizeof($org['storage'])-1;
+					$totalStorage += $org['storage'][$length];
 				}
 			}
 

@@ -124,7 +124,6 @@
 
 		    ### DISKUSAGE
 			array('GET','/global/diskusage/', 			                        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); }, 				        'Diskusage (in MiB) per org and total (Scope: admin).'),
-		    array('GET','/global/diskusage/total/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusageTotal())); }, 				    'Total diskusage (in MiB) (Scope: admin).'),
 
 			// CLIENTS
 			/* Tested, but no useful info to be grabbed from tblClient. */
@@ -171,7 +170,7 @@
 			array('GET','/org/[org:orgId]/presentations/employees/', 		    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentations($orgId))); }, 			                    'All employee presentations at org (Scope: admin/org).'),
 			array('GET','/org/[org:orgId]/presentations/employees/count/',      function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentationCount($orgId))); }, 		                    'Total employee presentations at org (Scope: admin/org).'),
 			array('GET','/org/[org:orgId]/presentations/students/', 		    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentations($orgId))); }, 			                    'All student presentations at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/presentations/students/count/',       function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 		                    'Total student presentations at org (Scope: admin/org).')
+			array('GET','/org/[org:orgId]/presentations/students/count/',       function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 		                    'Total student presentations at org (Scope: admin/org).'),
 
 		    // sql - deprecated
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentations($orgId))); }, 					            'All presentations at org (Scope: admin/org).'),
@@ -180,6 +179,10 @@
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/employees/count/',    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgEmployeePresentationCount($orgId))); }, 		            'Total employee presentations at org (Scope: admin/org).'),
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/students/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgStudentPresentations($orgId))); }, 			    'All student presentations at org (Scope: admin/org).'),
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/students/count/',     function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgStudentPresentationCount($orgId))); }, 		            'Total student presentations at org (Scope: admin/org).')
+
+		    ### DISKUSAGE
+
+			array('GET','/org/[org:orgId]/diskusage/', 			                function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 				    'Org diskusage history (in MiB) and total (Scope: admin/org).'),
 		]);
 	}
 

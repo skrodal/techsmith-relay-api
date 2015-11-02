@@ -30,30 +30,44 @@
 		}
 
 		public function find($collection, $criteria){
-			// $this->collection = new MongoCollection($this->db, $collection);
+			$response = [];
 			try {
-				return $this->db->selectCollection($collection)->find($criteria);
-				// return $this->collection->find($criteria);
+				// Get cursor
+				$cursor = $this->db->selectCollection($collection)->find($criteria);
+				// Iterate the cursor
+				foreach($cursor as $document) {
+					// Push document (array) into response array
+					array_push($response, $document);
+				}
+				// Close the cursor (apparently recommended)
+				$cursor->reset();
+				return $response;
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}
 		}
 
 		public function findOne($collection, $criteria){
-			// $this->collection = new MongoCollection($this->db, $collection);
 			try {
 				return $this->db->selectCollection($collection)->findOne($criteria);
-				// return $this->collection->findOne($criteria);
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}
 		}
 
 		public function findAll($collection){
-			// $this->collection = new MongoCollection($this->db, $collection);
+			$response      = [];
 			try {
-				return $this->db->selectCollection($collection)->find();
-				// return $this->collection->find();
+				// Get cursor
+				$cursor = $this->db->selectCollection($collection)->find();
+				// Iterate the cursor
+				foreach($cursor as $document) {
+					// Push document (array) into response array
+					array_push($response, $document);
+				}
+				// Close the cursor (apparently recommended)
+				$cursor->reset();
+				return $response;
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}

@@ -27,9 +27,41 @@
 			$this->feideConnect = $fc;
 		}
 
-		/*
-		 * All users found in mongo
-		 */
+
+		###
+		# SINGLE USER
+		###
+
+		// Userinfo
+		public function getUser($feideUserName){
+			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
+		}
+
+		// User presentations on disk
+		public function getUserPresentations($feideUserName){
+			// Simple test to get all presentations *on disk* for a specific user.
+			$response = [];
+			$criteria = ['username' => $feideUserName];
+			$presentations = $this->relayMongoConnection->find("presentations", $criteria);
+			// Iterate the cursor
+			foreach($presentations as $presentation){
+				// Push document (array) into response array
+				array_push($response, $presentation);
+			}
+			// Close the cursor (apparently recommended)
+			$presentations->reset();
+			return $response;
+		}
+
+		// Count user presentations on disk
+		public function getUserPresentationCount($feideUserName){
+			$criteria = ["username" => $feideUserName];
+			return $this->relayMongoConnection->count("presentations", $criteria);
+		}
+
+		###
+		# ALL USERS
+		###
 		public function getGlobalUsers(){
 			$response = [];
 			$users = $this->relayMongoConnection->findAll("users");
@@ -43,32 +75,15 @@
 			return $response;
 		}
 
-		/**
-		 * Same as $this->relaySQL->getGlobalUserCount(), really... wonder which is faster... -> TODO
-		 *
-		 * @return int
-		 */
+		// Same as $this->relaySQL->getGlobalUserCount()... wonder which is faster... -> TODO
 		public function getGlobalUserCount() {
 			return $this->relayMongoConnection->countAll('users');
 		}
 
-
-		public function getUser($feideUserName){
-			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
-		}
-
-		/*
-		 * Counts employees with content on disk
-		 */
-		public function getGlobalEmployeeCount(){
-			$criteria = ['affiliation' => 'ansatt'];
-			return $this->relayMongoConnection->count("users", $criteria);
-
-		}
-
-		/*
-		 * Userinfo for all employees with content on disk
-		 */
+		###
+		# USERS BY AFFILIATION
+		###
+		// Userinfo, only users with content
 		public function getGlobalEmployees(){
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];
@@ -84,19 +99,14 @@
 			return $response;
 		}
 
-
-		/*
-		 * Counts students with content on disk
-		 */
-		public function getGlobalStudentCount(){
-			$criteria = ['affiliation' => 'student'];
+		// Only with content
+		public function getGlobalEmployeeCount(){
+			$criteria = ['affiliation' => 'ansatt'];
 			return $this->relayMongoConnection->count("users", $criteria);
 
 		}
 
-		/*
-		 * Userinfo for all students with content on disk
-		 */
+		// Userinfo, only users with content
 		public function getGlobalStudents(){
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];
@@ -111,6 +121,22 @@
 			$students->reset();
 			return $response;
 		}
+
+		// Only with content on disk
+		public function getGlobalStudentCount(){
+			$criteria = ['affiliation' => 'student'];
+			return $this->relayMongoConnection->count("users", $criteria);
+
+		}
+
+		###
+		# PRESENTATIONS (only content on disk - SQL provides a view of all, inc. deleted content)
+		###
+
+
+
+
+
 
 		public function test(){
 			// Simple test to get all presentations *on disk* for a specific user.

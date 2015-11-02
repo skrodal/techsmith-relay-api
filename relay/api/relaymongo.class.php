@@ -12,19 +12,18 @@
 	 * The harvester stores all consolidated information in MongoDB.
 	 *
 	 * @author  Simon Skrødal
-	 * @see:    https://github.com/skrodal/relay-mediasite-harvest
+	 * @see     :    https://github.com/skrodal/relay-mediasite-harvest
 	 * @date    29/10/2015
 	 * @time    15:24
 	 */
-
 	class RelayMongo {
 		private $relayMongoConnection, $relaySQL, $feideConnect;
 
 		function __construct(RelaySQL $rs, FeideConnect $fc) {
 			//
 			$this->relayMongoConnection = new RelayMongoConnection();
-			$this->relaySQL = $rs;
-			$this->feideConnect = $fc;
+			$this->relaySQL             = $rs;
+			$this->feideConnect         = $fc;
 		}
 
 
@@ -33,45 +32,48 @@
 		###
 
 		// Userinfo
-		public function getUser($feideUserName){
-			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
+		public function getUser($feideUserName) {
+			return $this->relayMongoConnection->findOne('users', array('username' => $feideUserName));
 		}
 
 		// User presentations on disk
-		public function getUserPresentations($feideUserName){
+		public function getUserPresentations($feideUserName) {
 			// Simple test to get all presentations *on disk* for a specific user.
-			$response = [];
-			$criteria = ['username' => $feideUserName];
-			$presentations = $this->relayMongoConnection->find("presentations", $criteria);
+			$response      = [];
+			$criteria      = ['username' => $feideUserName];
+			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
 			// Iterate the cursor
-			foreach($presentations as $presentation){
+			foreach($presentations as $presentation) {
 				// Push document (array) into response array
 				array_push($response, $presentation);
 			}
 			// Close the cursor (apparently recommended)
 			$presentations->reset();
+
 			return $response;
 		}
 
 		// Count user presentations on disk
-		public function getUserPresentationCount($feideUserName){
+		public function getUserPresentationCount($feideUserName) {
 			$criteria = ["username" => $feideUserName];
-			return $this->relayMongoConnection->count("presentations", $criteria);
+
+			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
 		###
 		# ALL USERS
 		###
-		public function getGlobalUsers(){
+		public function getGlobalUsers() {
 			$response = [];
-			$users = $this->relayMongoConnection->findAll("users");
+			$users    = $this->relayMongoConnection->findAll('users');
 			// Iterate the cursor
-			foreach($users as $user){
+			foreach($users as $user) {
 				// Push document (array) into response array
 				array_push($response, $user);
 			}
 			// Close the cursor (apparently recommended)
 			$users->reset();
+
 			return $response;
 		}
 
@@ -84,48 +86,52 @@
 		# USERS BY AFFILIATION
 		###
 		// Userinfo, only users with content
-		public function getGlobalEmployees(){
+		public function getGlobalEmployees() {
 			// Simple test to get all presentations *on disk* for a specific user.
-			$response = [];
-			$criteria = ['affiliation' => 'ansatt'];
-			$employees = $this->relayMongoConnection->find("users", $criteria);
+			$response  = [];
+			$criteria  = ['affiliation' => 'ansatt'];
+			$employees = $this->relayMongoConnection->find('users', $criteria);
 			// Iterate the cursor
-			foreach($employees as $employee){
+			foreach($employees as $employee) {
 				// Push document (array) into response array
 				array_push($response, $employee);
 			}
 			// Close the cursor (apparently recommended)
 			$employees->reset();
+
 			return $response;
 		}
 
 		// Only with content
-		public function getGlobalEmployeeCount(){
+		public function getGlobalEmployeeCount() {
 			$criteria = ['affiliation' => 'ansatt'];
-			return $this->relayMongoConnection->count("users", $criteria);
+
+			return $this->relayMongoConnection->count('users', $criteria);
 
 		}
 
 		// Userinfo, only users with content
-		public function getGlobalStudents(){
+		public function getGlobalStudents() {
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];
 			$criteria = ['affiliation' => 'student'];
-			$students = $this->relayMongoConnection->find("users", $criteria);
+			$students = $this->relayMongoConnection->find('users', $criteria);
 			// Iterate the cursor
-			foreach($students as $student){
+			foreach($students as $student) {
 				// Push document (array) into response array
 				array_push($response, $student);
 			}
 			// Close the cursor (apparently recommended)
 			$students->reset();
+
 			return $response;
 		}
 
 		// Only with content on disk
-		public function getGlobalStudentCount(){
+		public function getGlobalStudentCount() {
 			$criteria = ['affiliation' => 'student'];
-			return $this->relayMongoConnection->count("users", $criteria);
+
+			return $this->relayMongoConnection->count('users', $criteria);
 
 		}
 
@@ -136,31 +142,51 @@
 		// ALL presentations on disk
 		public function getGlobalPresentations() {
 			// Simple test to get all presentations *on disk* for a specific user.
-			$response = [];
-			$presentations = $this->relayMongoConnection->findAll("presentations");
+			$response      = [];
+			$presentations = $this->relayMongoConnection->findAll('presentations');
 			// Iterate the cursor
-			foreach($presentations as $presentation){
+			foreach($presentations as $presentation) {
 				// Push document (array) into response array
 				array_push($response, $presentation);
 			}
 			// Close the cursor (apparently recommended)
 			$presentations->reset();
+
 			return $response;
 		}
 
-		public function getGlobalPresentationCount(){
+		public function getGlobalPresentationCount() {
 			return $this->relayMongoConnection->countAll('presentations');
 		}
 
+		public function getGlobalEmployeePresentationCount() {
+			$criteria = ['path' =>
+				             ['$in' =>
+					              ['ansatt']
+				             ]
+			];
+
+			return $this->relayMongoConnection->count('presentations', $criteria);
+		}
+
+		public function getGlobalStudentPresentationCount() {
+			$criteria = ['path' =>
+				             ['$in' =>
+					              ['student']
+				             ]
+			];
+
+			return $this->relayMongoConnection->count('presentations', $criteria);
+		}
 
 
-		public function test(){
+		public function test() {
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];
 			$criteria = ['username' => 'simon@uninett.no'];
-			$test = $this->relayMongoConnection->find("presentations", $criteria);
+			$test     = $this->relayMongoConnection->find("presentations", $criteria);
 			// Iterate the cursor
-			foreach($test as $document){
+			foreach($test as $document) {
 				// Push document (array) into response array
 				array_push($response, $document);
 			}

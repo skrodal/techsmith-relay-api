@@ -22,7 +22,7 @@
 			array_push($result,  "Memory after collection: " . ($new - $old));
 
 			$old = memory_get_usage();
-			$arr =$relayMongoConnection->findOne('users', ['username' => 'simon@uninett.no']);
+			$arr =$relayMongoConnection->findOne('presentations', ['username' => 'simon@uninett.no']);
 			$new = memory_get_usage();
 			array_push($result, "Memory after findOne: " . ($new - $old));
 

@@ -265,8 +265,8 @@
 			foreach($usageArr as $org) {
 				if(!empty($org['storage'])) {
 					// Latest entry is most current
-					$length = sizeof($org['storage'])-1;
-					$totalStorage += (float)$org['storage'][$length];
+					$length = sizeof($org['storage']) - 1;
+					$totalStorage += (float)$org['storage'][$length]['size_mib'];
 				}
 			}
 

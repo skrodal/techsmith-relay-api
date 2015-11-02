@@ -28,9 +28,11 @@
 		}
 
 
-		###
-		# SINGLE USER
-		###
+		########################################################################
+		####
+		####    SINGLE USER/PRESENTATIONS
+		####
+		########################################################################
 
 		// Userinfo
 		public function getUser($feideUserName) {
@@ -61,9 +63,12 @@
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
-		###
-		# ALL USERS
-		###
+		########################################################################
+		####
+		####    GLOBAL USERS/PRESENTATIONS
+		####
+		########################################################################
+
 		public function getGlobalUsers() {
 			$response = [];
 			$users    = $this->relayMongoConnection->findAll('users');
@@ -74,7 +79,6 @@
 			}
 			// Close the cursor (apparently recommended)
 			$users->reset();
-
 			return $response;
 		}
 
@@ -178,21 +182,48 @@
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
+		########################################################################
+		####
+		####    ORG USERS/PRESENTATIONS
+		####
+		########################################################################
 
-		public function test() {
-			// Simple test to get all presentations *on disk* for a specific user.
+		public function getOrgUsers($org) {
 			$response = [];
-			$criteria = ['username' => 'simon@uninett.no'];
-			$test     = $this->relayMongoConnection->find("presentations", $criteria);
+			$users    = $this->relayMongoConnection->find('users', ['org' => $org]);
 			// Iterate the cursor
-			foreach($test as $document) {
+			foreach($users as $user) {
 				// Push document (array) into response array
-				array_push($response, $document);
+				array_push($response, $user);
 			}
 			// Close the cursor (apparently recommended)
-			$test->reset();
-			// Response
-			// Response::result(array('status' => true, 'data' => $response ));
+			$users->reset();
 			return $response;
 		}
+
+		public function getOrgUserCount($org) {
+
+		}
+
+		public function getOrgUserCountByAffiliation($org) {
+
+		}
+
+		public function getOrgEmployees($org) {
+
+		}
+
+		public function getOrgEmployeeCount($org) {
+
+		}
+
+		public function getOrgStudents($org) {
+
+		}
+
+		public function getOrgStudentCount($org) {
+
+		}
+
+
 	}

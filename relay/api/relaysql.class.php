@@ -396,8 +396,8 @@
 
 		/**
 		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
-		 * @param $orgName
-		 */
+		* @param $orgName
+		*/
 		function verifyOrgAccess($orgName){
 			// If NOT superadmin AND requested org data is not for home org
 			if(!$this->feideConnect->isSuperAdmin() && strcasecmp($orgName, $this->feideConnect->userOrg()) !== 0) {

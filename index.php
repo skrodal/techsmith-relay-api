@@ -76,12 +76,13 @@
 
 
 			### USERS
-			// mongo
-			/* DONE */ array('GET','/global/users/', 							    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
-			/* DONE */ array('GET','/global/users/count/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
-			// sql
-			/* DONE  */ // array('GET','/global/users/', 					    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
-			/* DONE  */ //array('GET','/global/users/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
+			// sql (all)
+			/* DONE  */ array('GET','/global/users/', 					                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
+			/* DONE  */ array('GET','/global/users/count/', 			                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
+
+			// mongo (only active)
+			/* DONE */ array('GET','/global/users/active/', 							    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/count/active/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
 
 			### USERS BY AFFILIATION (match with profile ID==ansatt|student (relay.db.class has employeeProfileID)
 		    // employees (sql)
@@ -136,7 +137,7 @@
 			### USERS
 
 			// mongo
-			/* DONE */ array('GET','/org/[org:orgId]/users/', 			                 function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUsers($orgId))); }, 							'All users at org (Scope: admin/org).'),
+			/* DONE */ array('GET','/org/[org:orgId]/users/active/', 	                 function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUsers($orgId))); }, 							'All users at org (Scope: admin/org).'),
 			/* DONE */ array('GET','/org/[org:orgId]/users/count/', 		             function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCount($orgId))); }, 						'Total user count at org (Scope: admin/org).'),
 			/* DONE */ array('GET','/org/[org:orgId]/users/count/affiliation/',          function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCountByAffiliation($orgId))); }, 		'Total user count at org by affiliation (Scope: admin/org).'),
 			/* DONE */ array('GET','/org/[org:orgId]/users/employees/', 				 function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployees($orgId))); }, 						'All employees at org (Scope: admin/org).'),

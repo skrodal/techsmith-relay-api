@@ -16,6 +16,7 @@
 	use
 		Relay\Auth\FeideConnect, Relay\Api\Relay, Relay\Conf\Config,
 		Relay\Utils\Response, Relay\Vendor\Router;
+	use Relay\Tests\MongoTest;
 
 	// Gatekeeper and provider of useful info
 	$feideConnect = new FeideConnect();
@@ -45,7 +46,7 @@
 		/* DONE */ array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); }, 'Service workers.'),
 		/* DONE */ array('GET','/service/queue/', 		function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue())); }, 	'Service queue.'),
 		/* DONE */ array('GET','/service/version/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion())); }, 'Service version.'),
-		/* TEST */ array('GET','/service/test/', 	    function(){ /** DO NOTHING **/ }, 'TEST ROUTE.')
+		/* TEST */ array('GET','/service/test/', 	    function(){ $test = new MongoTest(); Response::result(array('status' => true, 'data' => $test->memoryTest())); }, 'TEST ROUTE.')
 	]);
 
 

@@ -273,7 +273,7 @@
 		public function getOrgDiskusage($org) {
 			$criteria              = ['org' => $org];
 			$response['total_mib'] = 0;
-			$response['storage']   = $this->relayMongoConnection->find('org', $criteria)['storage'];
+			$response['storage']   = $this->relayMongoConnection->findOne('org', $criteria)['storage'];
 
 			if(!empty($response['storage'])) {
 				// Latest entry is most current

@@ -35,22 +35,24 @@
 		########################################################################
 
 		// Userinfo
-		public function getUser($feideUserName = null) {
+		public function getUser($feideUserName = NULL) {
 			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+
 			return $this->relayMongoConnection->findOne('users', array('username' => $feideUserName));
 		}
 
 		// User presentations on disk
-		public function getUserPresentations($feideUserName = null) {
+		public function getUserPresentations($feideUserName = NULL) {
 			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
-			$criteria = ['username' => $feideUserName];
+			$criteria      = ['username' => $feideUserName];
+
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 
 		// Count user presentations on disk
 		public function getUserPresentationCount($feideUserName) {
 			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
-			$criteria = ["username" => $feideUserName];
+			$criteria      = ["username" => $feideUserName];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
@@ -65,7 +67,7 @@
 			return $this->relayMongoConnection->findAll('users');
 		}
 
-		// Same as $this->relaySQL->getGlobalUserCount()... wonder which is faster... -> TODO
+		// Same as $this->relaySQL->getGlobalUserCount()...
 		public function getGlobalUserCount() {
 			return $this->relayMongoConnection->countAll('users');
 		}
@@ -202,44 +204,83 @@
 
 		public function getOrgPresentationCount($org) {
 			$criteria = ['org' => $org];
+
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
 		public function getOrgEmployeePresentations($org) {
 			$find     = 'ansatt';
-			$criteria = ['org' => $org,
+			$criteria = ['org'  => $org,
 			             'path' =>
 				             ['$regex' => new MongoRegex("/^$find/i")]
 			];
+
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 
 		public function getOrgEmployeePresentationCount($org) {
 			$find     = 'ansatt';
-			$criteria = ['org' => $org,
+			$criteria = ['org'  => $org,
 			             'path' =>
 				             ['$regex' => new MongoRegex("/^$find/i")]
 			];
+
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
 
 		public function getOrgStudentPresentations($org) {
 			$find     = 'student';
-			$criteria = ['org' => $org,
+			$criteria = ['org'  => $org,
 			             'path' =>
 				             ['$regex' => new MongoRegex("/^$find/i")]
 			];
+
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 
 		public function getOrgStudentPresentationCount($org) {
 			$find     = 'student';
-			$criteria = ['org' => $org,
+			$criteria = ['org'  => $org,
 			             'path' =>
 				             ['$regex' => new MongoRegex("/^$find/i")]
 			];
+
 			return $this->relayMongoConnection->count('presentations', $criteria);
+		}
+
+		########################################################################
+		####
+		####    DISKUSAGE GLOBAL/ORG/USER
+		####
+		########################################################################
+		public function getGlobalDiskusage() {
+			return $this->relayMongoConnection->findAll('org');
+		}
+
+		public function getGlobalDiskusageTotal() {
+			$usageArr     = $this->getGlobalDiskusage();
+			$totalStorage = 0;
+
+			foreach($usageArr as $org) {
+				if(!empty($org['storage'])) {
+					// Latest entry is most current
+					$totalStorage += array_slice($org['storage'], -1)[0];
+				}
+			}
+
+			return (int)$totalStorage;
+		}
+
+		public function getOrgDiskusage($org) {
+			$criteria = ['org' => $org];
+			$usageArr = $this->relayMongoConnection->find('org', $criteria);
+			if(empty($usageArr)) {
+				return [];
+			}
+
+			// Latest entry is most current
+			return array_slice($usageArr, -1)[0];
 		}
 
 	}

@@ -122,6 +122,10 @@
 			/* DONE */ // array('GET','/global/presentations/students/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
 			/* DONE */ // array('GET','/global/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).'),
 
+		    ### DISKUSAGE
+			array('GET','/global/diskusage/', 			                        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); }, 				        'Diskusage (in MiB) per org (Scope: admin).'),
+		    array('GET','/global/diskusage/total/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusageTotal())); }, 				    'Total diskusage (in MiB) (Scope: admin).'),
+
 			// CLIENTS
 			/* Tested, but no useful info to be grabbed from tblClient. */
 		]);

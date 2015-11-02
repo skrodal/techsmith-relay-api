@@ -133,7 +133,20 @@
 		# PRESENTATIONS (only content on disk - SQL provides a view of all, inc. deleted content)
 		###
 
-
+		// ALL presentations on disk
+		public function getGlobalPresentations() {
+			// Simple test to get all presentations *on disk* for a specific user.
+			$response = [];
+			$presentations = $this->relayMongoConnection->findAll("presentations");
+			// Iterate the cursor
+			foreach($presentations as $presentation){
+				// Push document (array) into response array
+				array_push($response, $presentation);
+			}
+			// Close the cursor (apparently recommended)
+			$presentations->reset();
+			return $response;
+		}
 
 
 

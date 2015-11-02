@@ -40,9 +40,11 @@
 		}
 
 		// User presentations on disk
-		public function getUserPresentations($feideUserName) {
+		public function getUserPresentations($feideUserName = null) {
+			if(is_null($feideUserName)) {
+				$feideUserName = $this->feideConnect->userName();
+			}
 			$criteria = ['username' => $feideUserName];
-
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 

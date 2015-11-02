@@ -186,12 +186,20 @@
 		$router->addRoutes([
 			// STORAGE
 			// (todo)
-			// USERS
-			/* DONE */ array('GET','/me/', 					                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
-			/* TEST WITH FS */ array('GET','/me/presentations/',                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($feideConnect->userName()))); },     'User presentations, deleted ones excluded (Scope: user).'),
+
+			// mongo
+			array('GET','/me/', 					    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'User account details (Scope: user).'),
+			array('GET','/me/presentations/', 			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations())); }, 	'User presentations (Scope: user).'),
+			array('GET','/me/presentations/count/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount())); }, 'User presentation count (Scope: user).'),
+
+			// sql deprecated
+			/* DONE */ // array('GET','/me/', 					                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
 			/* DONE */ //array('GET','/me/presentations/', 		                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentations($feideConnect->userName()))); }, 	'User presentations (Scope: user).'),
-			/* TEST WITH FS */ array('GET','/me/presentations/count/', 					function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMediaCount($feideConnect->userName()))); },     'User presentation count, deleted ones excluded (Scope: user).'),
 			/* DONE */ //array('GET','/me/presentations/count/',                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentationCount($feideConnect->userName()))); }, 'User presentation count (Scope: user).'),
+			// fs deprecated
+			/* TEST WITH FS */ //array('GET','/me/presentations/',                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($feideConnect->userName()))); },     'User presentations, deleted ones excluded (Scope: user).'),
+			/* TEST WITH FS */ //array('GET','/me/presentations/count/', 					function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMediaCount($feideConnect->userName()))); },     'User presentation count, deleted ones excluded (Scope: user).'),
+
 			// TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $feideConnect->userName()))); }, 'Delete user presentation (Scope: user).')
 		]);
 	}

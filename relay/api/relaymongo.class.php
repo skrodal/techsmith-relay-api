@@ -87,6 +87,10 @@
 			return $this->relayMongoConnection->countAll('users');
 		}
 
+		public function getGlobalUserCountActive() {
+			return $this->getGlobalEmployeeCount() + $this->getGlobalStudentCount();
+		}
+
 		###
 		# USERS BY AFFILIATION
 		###

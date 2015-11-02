@@ -270,7 +270,7 @@
 				}
 			}
 
-			return (int)$totalStorage;
+			return (float)$totalStorage;
 		}
 
 		public function getOrgDiskusage($org) {

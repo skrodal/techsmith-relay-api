@@ -35,21 +35,21 @@
 		########################################################################
 
 		// Userinfo
-		public function getUser($feideUserName) {
+		public function getUser($feideUserName = null) {
+			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
 			return $this->relayMongoConnection->findOne('users', array('username' => $feideUserName));
 		}
 
 		// User presentations on disk
 		public function getUserPresentations($feideUserName = null) {
-			if(is_null($feideUserName)) {
-				$feideUserName = $this->feideConnect->userName();
-			}
+			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
 			$criteria = ['username' => $feideUserName];
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 
 		// Count user presentations on disk
 		public function getUserPresentationCount($feideUserName) {
+			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
 			$criteria = ["username" => $feideUserName];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);

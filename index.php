@@ -77,12 +77,18 @@
 
 			### USERS BY AFFILIATION (match with profile ID==ansatt|student (relay.db.class has employeeProfileID)
 		    // employees (sql)
-			/* DONE */ array('GET','/global/users/employees/', 				        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/employees/',   			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
 			/* DONE */ array('GET','/global/users/employees/count/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: admin).'),
+			// employees (mongo)
+			/* DONE */ array('GET','/global/users/employees/active/',		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployees())); }, 							'All employees with content (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/employees/count/active/',		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeeCount())); }, 						'Total employee with content count (Scope: admin).'),
+
 			// students (sql)
-			/* DONE */ array('GET','/global/users/students/', 					    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 							'All students (Scope: admin).'),
-			/* DONE */ array('GET','/mongo/global/users/students/',				    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudents())); }, 							'All students - Mongo (Scope: admin).'),
-			/* DONE */ array('GET','/global/users/students/count/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						'Total student count (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/students/',    				    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 							    'All students (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/students/count/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						    'Total student count (Scope: admin).'),
+		    // students (mongo)
+			/* DONE */ array('GET','/global/users/students/active/',			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudents())); }, 						    'Students with content (Scope: admin).'),
+			/* DONE */ array('GET','/global/users/students/count/active/',		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentCount())); }, 					    'Total student with content count (Scope: admin).'),
 
 
 			// PRESENTATIONS

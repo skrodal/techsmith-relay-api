@@ -41,6 +41,46 @@
 			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
 		}
 
+		/*
+		 * Counts employees with content on disk
+		 */
+		public function getGlobalEmployeeCount(){
+			$criteria = ['affiliation' => 'ansatt'];
+			return $this->relayMongoConnection->count("users", $criteria);
+
+		}
+
+		/*
+		 * Userinfo for all employees with content on disk
+		 */
+		public function getGlobalEmployees(){
+			// Simple test to get all presentations *on disk* for a specific user.
+			$response = [];
+			$criteria = ['affiliation' => 'ansatt'];
+			$employees = $this->relayMongoConnection->find("users", $criteria);
+			// Iterate the cursor
+			foreach($employees as $employee){
+				// Push document (array) into response array
+				array_push($response, $employee);
+			}
+			// Close the cursor (apparently recommended)
+			$employees->reset();
+			return $response;
+		}
+
+
+		/*
+		 * Counts students with content on disk
+		 */
+		public function getGlobalStudentCount(){
+			$criteria = ['affiliation' => 'student'];
+			return $this->relayMongoConnection->count("users", $criteria);
+
+		}
+
+		/*
+		 * Userinfo for all students with content on disk
+		 */
 		public function getGlobalStudents(){
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];

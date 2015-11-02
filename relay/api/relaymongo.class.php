@@ -41,7 +41,8 @@
 
 		// User presentations on disk
 		public function getUserPresentations($feideUserName) {
-			$criteria      = ['username' => $feideUserName];
+			$criteria = ['username' => $feideUserName];
+
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 
@@ -77,7 +78,8 @@
 
 		// Userinfo, only users with content
 		public function getGlobalEmployees() {
-			$criteria  = ['affiliation' => 'ansatt'];
+			$criteria = ['affiliation' => 'ansatt'];
+
 			return $this->relayMongoConnection->find('users', $criteria);
 		}
 
@@ -92,6 +94,7 @@
 		// Userinfo, only users with content
 		public function getGlobalStudents() {
 			$criteria = ['affiliation' => 'student'];
+
 			return $this->relayMongoConnection->find('users', $criteria);
 		}
 
@@ -141,6 +144,7 @@
 
 		public function getOrgUsers($org) {
 			$criteria = ['org' => $org];
+
 			return $this->relayMongoConnection->find('users', $criteria);
 		}
 
@@ -162,21 +166,25 @@
 
 		public function getOrgEmployees($org) {
 			$criteriaEmployee = ['org' => $org, 'affiliation' => 'ansatt'];
+
 			return $this->relayMongoConnection->find('users', $criteriaEmployee);
 		}
 
 		public function getOrgEmployeeCount($org) {
 			$criteriaEmployee = ['org' => $org, 'affiliation' => 'ansatt'];
+
 			return $this->relayMongoConnection->count('users', $criteriaEmployee);
 		}
 
 		public function getOrgStudents($org) {
 			$criteriaStudent = ['org' => $org, 'affiliation' => 'student'];
+
 			return $this->relayMongoConnection->find('users', $criteriaStudent);
 		}
 
 		public function getOrgStudentCount($org) {
 			$criteriaStudent = ['org' => $org, 'affiliation' => 'student'];
+
 			return $this->relayMongoConnection->count('users', $criteriaStudent);
 		}
 
@@ -184,9 +192,15 @@
 		# ORG PRESENTATIONS
 		###
 
-		public function getOrgPresentations($org){
+		public function getOrgPresentations($org) {
 			$criteria = ['org' => $org];
+
 			return $this->relayMongoConnection->find('presentations', $criteria);
+		}
+
+		public function getOrgPresentationCount($org) {
+			$criteria = ['org' => $org];
+			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
 

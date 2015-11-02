@@ -41,6 +41,21 @@
 			return $this->relayMongoConnection->findOne("users", array("username" => $feideUserName));
 		}
 
+		public function getGlobalStudents(){
+			// Simple test to get all presentations *on disk* for a specific user.
+			$response = [];
+			$criteria = ['affiliation' => 'student'];
+			$students = $this->relayMongoConnection->find("users", $criteria);
+			// Iterate the cursor
+			foreach($students as $student){
+				// Push document (array) into response array
+				array_push($response, $student);
+			}
+			// Close the cursor (apparently recommended)
+			$students->reset();
+			return $response;
+		}
+
 		public function test(){
 			// Simple test to get all presentations *on disk* for a specific user.
 			$response = [];

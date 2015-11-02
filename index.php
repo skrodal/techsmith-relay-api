@@ -49,9 +49,9 @@
 	]);
 
 
-	// ADMIN ROUTES if scope allows
+	// ADMIN ROUTES - if scope allows
 	// isSuperAdmin added 15.10.2015 - need to be tested and considered carefully. Should we leave the clients to decide who is SuperAdmin, or
-	// hardcode in API, judging by 'uninett.no' in username (I prefer the latter). The client can actually call this API to find out if user has role(s)
+	// hardcode in API, judging by 'uninett.no' in username (I prefer the latter)? The client can actually call this API to find out if user has role(s)
 	// super or org or user. simon@uninett.no should get:
 	// { roles : [super, org, user] }
 
@@ -61,8 +61,11 @@
 		$router->addRoutes([
 			// STORAGE
 			// (todo)
-			// USER
-			/* DONE */ array('GET','/user/[user:userName]/', 					    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($userName))); }, 					'User account details (Scope: admin).'),
+			# USER
+			/* DONE */ array('GET','/user/[user:userName]/', 					    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($userName))); }, 			'User account details (Scope: admin).'),
+			/* DONE */ array('GET','mongo/user/[user:userName]/', 					    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($userName))); }, 		'User account details, Mongo (Scope: admin).'),
+		    # USER PRESENTATIONS
+
 			/* DONE */ // array('GET','/user/[user:userName]/presentations/', 		    function($userName){ global $RelaySQL; Response::result(array('status' => true, 'data' => $RelaySQL->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
 			/* TEST WITH FS */ array('GET','/user/[user:userName]/presentations/', 		function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($userName))); },     'User presentations, deleted ones excluded (Scope: admin).'),
 			/* DONE */ array('GET','/user/[user:userName]/presentations/count/',    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
@@ -71,8 +74,11 @@
 			/* DONE */ array('GET','/global/users/count/', 					        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
 
 
-			// Mongo
+			##### Mongo ####
 			/* DONE */ array('GET','/mongo/users/count/', 					        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count from MongoDB (Scope: admin).'),
+			################
+
+
 
 			// Use DB call and match with profile ID==ansatt (relay.db.class has employeeProfileID!!!)
 			array('GET','/global/users/employees/', 				                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),

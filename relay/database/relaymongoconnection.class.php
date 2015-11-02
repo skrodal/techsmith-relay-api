@@ -39,20 +39,21 @@
 			}
 		}
 
-		public function findAll($collection){
+		public function findOne($collection, $criteria){
 			// $this->collection = new MongoCollection($this->db, $collection);
 			try {
-				return $this->db->selectCollection($collection)->find();
-				// return $this->collection->find();
+				return $this->db->selectCollection($collection)->findOne($criteria);
+				// return $this->collection->findOne($criteria);
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}
 		}
 
-		public function findOne($collection, $criteria){
-			$this->collection = new MongoCollection($this->db, $collection);
+		public function findAll($collection){
+			// $this->collection = new MongoCollection($this->db, $collection);
 			try {
-				return $this->collection->findOne($criteria);
+				return $this->db->selectCollection($collection)->find();
+				// return $this->collection->find();
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}

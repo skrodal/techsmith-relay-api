@@ -161,23 +161,15 @@
 
 		public function getGlobalEmployeePresentationCount() {
 			$criteria = ['path' =>
-				             ['$in' =>
-					              ['ansatt']
-				             ]
+				             ['$in' => 'ansatt']
 			];
-
-			$criteria = array(
-				'path' => array('$in' => array('ansatt'))
-			);
 
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
 		public function getGlobalStudentPresentationCount() {
 			$criteria = ['path' =>
-				             ['$in' =>
-					              ['student']
-				             ]
+				             ['$in' => 'student']
 			];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);

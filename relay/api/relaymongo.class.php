@@ -141,7 +141,6 @@
 			$criteria = ['affiliation' => 'student'];
 
 			return $this->relayMongoConnection->count('users', $criteria);
-
 		}
 
 		###
@@ -206,7 +205,7 @@
 		}
 
 		public function getOrgUserCount($org) {
-
+			return $this->relayMongoConnection->count('users', ['org' => $org]);
 		}
 
 		public function getOrgUserCountByAffiliation($org) {

@@ -203,5 +203,22 @@
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
+		public function getOrgEmployeePresentations($org) {
+			$find     = 'ansatt';
+			$criteria = ['org' => $org,
+			             'path' =>
+				             ['$regex' => new MongoRegex("/^$find/i")]
+			];
+			return $this->relayMongoConnection->find('presentations', $criteria);
+		}
+
+		public function getOrgEmployeePresentationCount($org) {
+			$find     = 'ansatt';
+			$criteria = ['org' => $org,
+			             'path' =>
+				             ['$regex' => new MongoRegex("/^$find/i")]
+			];
+			return $this->relayMongoConnection->count('presentations', $criteria);
+		}
 
 	}

@@ -267,7 +267,7 @@
 				}
 			}
 
-			return (float)$response;
+			return $response;
 		}
 
 		public function getOrgDiskusage($org) {

@@ -27,11 +27,11 @@
 			array_push($result, "Memory after findOne: " . ($new - $old));
 
 			$old = memory_get_usage();
-			$cursor = $relayMongoConnection->findAll('users');
+			$cursor = $relayMongoConnection->findAll('presentations');
 			$arr = iterator_to_array($cursor);
 			$new = memory_get_usage();
 			array_push($result, "Memory after find: " . ($new - $old));
-			
+
 			$cursor->reset();
 			return $result;
 		}

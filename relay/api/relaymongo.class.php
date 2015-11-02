@@ -266,7 +266,7 @@
 				if(!empty($org['storage'])) {
 					// Latest entry is most current
 					$length = sizeof($org['storage'])-1;
-					$totalStorage += $org['storage'][$length];
+					$totalStorage += (float)$org['storage'][$length];
 				}
 			}
 

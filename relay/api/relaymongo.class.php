@@ -27,6 +27,22 @@
 			$this->feideConnect = $fc;
 		}
 
+		/*
+		 * All users found in mongo
+		 */
+		public function getGlobalUsers(){
+			$response = [];
+			$users = $this->relayMongoConnection->findAll("users");
+			// Iterate the cursor
+			foreach($users as $user){
+				// Push document (array) into response array
+				array_push($response, $user);
+			}
+			// Close the cursor (apparently recommended)
+			$users->reset();
+			return $response;
+		}
+
 		/**
 		 * Same as $this->relaySQL->getGlobalUserCount(), really... wonder which is faster... -> TODO
 		 *

@@ -33,7 +33,7 @@
 			$response = [];
 			try {
 				// Get cursor
-				$cursor = $this->db->selectCollection($collection)->find($criteria, ['_id' => false]);
+				$cursor = $this->db->selectCollection($collection)->find($criteria);
 				// Iterate the cursor
 				foreach($cursor as $document) {
 					// Push document (array) into response array
@@ -49,7 +49,7 @@
 
 		public function findOne($collection, $criteria){
 			try {
-				return $this->db->selectCollection($collection)->findOne($criteria, ['_id' => false]);
+				return $this->db->selectCollection($collection)->findOne($criteria);
 			} catch (MongoCursorException $e){
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
 			}
@@ -59,7 +59,7 @@
 			$response      = [];
 			try {
 				// Get cursor
-				$cursor = $this->db->selectCollection($collection)->find(['_id' => false]);
+				$cursor = $this->db->selectCollection($collection)->find();
 				// Iterate the cursor
 				foreach($cursor as $document) {
 					// Push document (array) into response array

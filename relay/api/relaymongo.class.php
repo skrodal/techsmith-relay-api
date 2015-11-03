@@ -165,7 +165,7 @@
 		public function getOrgUserCount($org) {
 			$criteria = ['org' => $org];
 			error_log('Org:' . $org);
-			
+
 			return $this->relayMongoConnection->count('users', $criteria);
 		}
 

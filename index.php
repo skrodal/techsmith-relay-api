@@ -141,7 +141,8 @@
 			### USERS
 
 		    // Single user
-			array('GET','/org/[org:orgId]/users/[user:userName]/', 	            function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); }, 'Specific user at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/[user:userName]/', 	            function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); },            'Specific user at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/users/[user:userName]/diskusage/',     function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); },  'Diskusage for specific user at org (Scope: admin/org).'),
 			// mongo (active == user has produced content)
 			array('GET','/org/[org:orgId]/users/', 	                            function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUsers($orgId))); }, 					'All users at org (Scope: admin/org).'),
 			array('GET','/org/[org:orgId]/users/count/', 		                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCount($orgId))); }, 				'Count users at org (Scope: admin/org).'),

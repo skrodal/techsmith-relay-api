@@ -2,7 +2,6 @@
 	namespace Relay\Database;
 
 	use MongoClient;
-	use MongoCollection;
 	use MongoConnectionException;
 	use MongoCursorException;
 	use Relay\Utils\Response;
@@ -16,7 +15,7 @@
 	 */
 	class RelayMongoConnection {
 		// Mongo
-		private $connection, $db, $collection;
+		private $connection, $db;
 		//
 		private $config;
 
@@ -75,16 +74,11 @@
 
 		public function count($collection, $criteria){
 			return $this->db->selectCollection($collection)->find($criteria)->count();
-			//return $this->connection->selectDB($this->db)->selectCollection($collection)->find($criteria)->count();
 		}
 
 		public function countAll($collection){
 			return $this->db->selectCollection($collection)->count();
-			// return $this->connection->selectDB($this->db)->selectCollection($collection)->count();
 		}
-
-
-
 
 
 		private function getConnection(){

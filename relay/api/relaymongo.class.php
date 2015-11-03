@@ -163,7 +163,8 @@
 		}
 
 		public function getOrgUserCount($org) {
-			return $this->relayMongoConnection->count('users', ['org' => $org]);
+			$criteria = ['org' => $org];
+			return $this->relayMongoConnection->count('users', $criteria);
 		}
 
 		public function getOrgUserCountByAffiliation($org) {

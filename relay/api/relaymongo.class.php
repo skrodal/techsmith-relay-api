@@ -114,6 +114,7 @@
 		###
 
 		// ALL presentations on disk
+		// NOTE: Chews up a lot of memory, consider rewrite -> pagination or split query to find e.g. 5000 documents at a time
 		public function getGlobalPresentations() {
 			return $this->relayMongoConnection->findAll('presentations');
 		}

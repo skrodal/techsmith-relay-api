@@ -1,6 +1,7 @@
 <?php
 
 	use Relay\Conf\Config;
+	ini_set('memory_limit','512MB');
 	$config_root = '/var/www/etc/techsmith-relay/';
 
 	Config::add(

@@ -285,4 +285,19 @@
 			return $response;
 		}
 
+		// User presentations on disk
+		public function getUserDiskusage($feideUserName = NULL) {
+			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+			$criteria      = ['username' => $feideUserName];
+			$response['total_mib'] = 0;
+			$response['storage']   = $this->relayMongoConnection->findOne('userDiskUsage', $criteria)['storage'];
+
+			if(!empty($response['storage'])) {
+				// Latest entry is most current
+				$length                = sizeof($response['storage']) - 1;
+				$response['total_mib'] = (float)$response['storage'][$length]['size_mib'];
+			}
+			return $response;
+		}
+
 	}

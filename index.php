@@ -106,12 +106,12 @@
 
 			### PRESENTATIONS
 		    // mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)
-		    // todo: consider writing some sort of pagination (or split mongo query to pieces) since this is memory hungry!
-			array('GET','/global/presentations/', 				                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentations())); }, 				        'All presentations on disk (Scope: admin).'),
+		    // todo: consider writing some sort of pagination (or split mongo query to pieces) since this is memory hungry and returns results that the browser can't handle!
+			// array('GET','/global/presentations/', 				                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentations())); }, 				        'All presentations on disk (Scope: admin).'),
 			array('GET','/global/presentations/count/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentationCount())); }, 				    'Total presentation count (on disk) (Scope: admin).'),
-			array('GET','/global/presentations/employees/', 		            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentations())); }, 		        'All employee presentations (Scope: admin).'),
+			// array('GET','/global/presentations/employees/', 		            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentations())); }, 		        'All employee presentations (Scope: admin).'),
 			array('GET','/global/presentations/employees/count/', 	            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (on disk) (Scope: admin).'),
-			array('GET','/global/presentations/students/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 			        'All student presentations (Scope: admin).'),
+			// array('GET','/global/presentations/students/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 			        'All student presentations (Scope: admin).'),
 			array('GET','/global/presentations/students/count/', 	            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (on disk) (Scope: admin).'),
 
 		    // sql (deprecated; retrieves all presentations, also deleted ones)

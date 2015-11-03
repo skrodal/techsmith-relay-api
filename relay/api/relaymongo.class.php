@@ -79,10 +79,11 @@
 		}
 
 		// Same as getGlobalUserCountActive, but separated into affiliation
-		public function getGlobalUserCountByAffiliation(){
+		public function getGlobalUserCountByAffiliation() {
 			$employeeCount = $this->getGlobalEmployeeCount();
-			$studentCount = $this->getGlobalStudentCount();
-			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
+			$studentCount  = $this->getGlobalStudentCount();
+
+			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
 		###
@@ -167,8 +168,9 @@
 
 		public function getOrgUserCountByAffiliation($org) {
 			$employeeCount = $this->getOrgEmployeeCount($org);
-			$studentCount = $this->getOrgStudentCount($org);
-			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
+			$studentCount  = $this->getOrgStudentCount($org);
+
+			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
 		public function getOrgEmployees($org) {
@@ -289,8 +291,8 @@
 
 		// User presentations on disk
 		public function getUserDiskusage($feideUserName = NULL) {
-			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
-			$criteria      = ['username' => $feideUserName];
+			$feideUserName         = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+			$criteria              = ['username' => $feideUserName];
 			$response['total_mib'] = 0;
 			$response['storage']   = $this->relayMongoConnection->findOne('userDiskUsage', $criteria)['storage'];
 
@@ -299,6 +301,7 @@
 				$length                = sizeof($response['storage']) - 1;
 				$response['total_mib'] = (float)$response['storage'][$length]['size_mib'];
 			}
+
 			return $response;
 		}
 

@@ -60,8 +60,8 @@
 		// Add all routes
 		$router->addRoutes([
 			### DISKUSAGE
-			array('GET','/global/diskusage/', 			                                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); },                'Diskusage (in MiB) per org and total (Scope: admin).'),
-			array('GET','/user/[user:userName]/diskusage/', 			                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); }, 		    'Org diskusage history (in MiB) and total (Scope: admin/org).'),
+			array('GET','/global/diskusage/', 			                                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); },                       'Service diskusage history (in MiB) and total (Scope: admin).'),
+			array('GET','/user/[user:userName]/diskusage/', 			                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); }, 		'User diskusage history (in MiB) and total (Scope: admin).'),
 
 			### USER (prefer userinfo from Mongo over SQL)
 			/* DONE (SQL) */ // array('GET','/user/[user:userName]/', 			            function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($userName))); }, 			'User account details (Scope: admin).'),
@@ -136,10 +136,12 @@
 		// Add all routes
 		$router->addRoutes([
 			### DISKUSAGE
-			array('GET','/org/[org:orgId]/diskusage/', 			                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 				                            'Org diskusage history (in MiB) and total (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/diskusage/', 			                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 				 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
 
 			### USERS
 
+		    // Single user
+			array('GET','/org/[org:orgId]/users/[user:userName]/', 	            function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); }, 					'All users at org (Scope: admin/org).'),
 			// mongo (active == user has produced content)
 			array('GET','/org/[org:orgId]/users/', 	                            function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUsers($orgId))); }, 					'All users at org (Scope: admin/org).'),
 			array('GET','/org/[org:orgId]/users/count/', 		                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCount($orgId))); }, 				'Count users at org (Scope: admin/org).'),
@@ -240,13 +242,25 @@
 
 	/**
 	 * Prevent orgAdmin to request data for other orgs than what he belongs to.
-	 * @param $orgName
+	 *
+	 * @param      $orgName
+	 * @param null $userName
 	 */
-	function verifyOrgAccess($orgName){
+	function verifyOrgAccess($orgName, $userName = null){
 		global $feideConnect;
-		// If NOT superadmin AND requested org data is not for home org
-		if(!$feideConnect->isSuperAdmin() && strcasecmp($orgName, $feideConnect->userOrg()) !== 0) {
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
+
+		// Restrictions apply, unless you're superadmin...
+		if(!$feideConnect->isSuperAdmin()){
+			// If requested org data is not for home org
+			if(strcasecmp($orgName, $feideConnect->userOrg()) !== 0) {
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
+			}
+			// If request involves a user account
+			if(isset($userName)){
+				// Must be user from home org
+				if(!strstr($userName, $orgName)) {
+					Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');	                                      				}
+			}
 		}
 	}
 

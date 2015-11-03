@@ -47,6 +47,11 @@
 			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
 		}
 
+		public function getGlobalUserCountByAffiliation() {
+			$employeeCount = $this->getGlobalEmployeeCount();
+			$studentCount = $this->getGlobalStudentCount();
+			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
+		}
 
 	    public function getGlobalEmployees() {
 		    $employees = $this->relaySQLConnection->query("
@@ -241,7 +246,7 @@
 		public function getOrgUserCountByAffiliation($org) {
 			$employeeCount = $this->getOrgEmployeeCount($org);
 			$studentCount = $this->getOrgStudentCount($org);
-			return array('employees' => $employeeCount, 'students' => $studentCount);
+			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
 		#

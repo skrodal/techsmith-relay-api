@@ -63,6 +63,7 @@
 		####
 		########################################################################
 
+		// All users
 		public function getGlobalUsers() {
 			return $this->relayMongoConnection->findAll('users');
 		}
@@ -72,8 +73,16 @@
 			return $this->relayMongoConnection->countAll('users');
 		}
 
+		// Only users with content
 		public function getGlobalUserCountActive() {
 			return $this->getGlobalEmployeeCount() + $this->getGlobalStudentCount();
+		}
+
+		// Same as getGlobalUserCountActive, but separated into affiliation
+		public function getGlobalUserCountByAffiliation(){
+			$employeeCount = $this->getGlobalEmployeeCount();
+			$studentCount = $this->getGlobalStudentCount();
+			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
 		###
@@ -92,7 +101,6 @@
 			$criteria = ['affiliation' => 'ansatt'];
 
 			return $this->relayMongoConnection->count('users', $criteria);
-
 		}
 
 		// Userinfo, only users with content
@@ -158,15 +166,9 @@
 		}
 
 		public function getOrgUserCountByAffiliation($org) {
-			$response         = [];
-			$criteriaEmployee = ['org' => $org, 'affiliation' => 'ansatt'];
-			$criteriaStudent  = ['org' => $org, 'affiliation' => 'student'];
-
-			$response['employees'] = $this->relayMongoConnection->count('users', $criteriaEmployee);
-			$response['students']  = $this->relayMongoConnection->count('users', $criteriaStudent);
-
-			return $response;
-
+			$employeeCount = $this->getOrgEmployeeCount($org);
+			$studentCount = $this->getOrgStudentCount($org);
+			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
 		public function getOrgEmployees($org) {

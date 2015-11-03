@@ -1,7 +1,9 @@
 <?php
 
 	use Relay\Conf\Config;
-	ini_set('memory_limit','512MB');
+	// For large mongo-requests...
+	// ini_set('memory_limit','512M');
+	//
 	$config_root = '/var/www/etc/techsmith-relay/';
 
 	Config::add(

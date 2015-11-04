@@ -292,7 +292,7 @@
 		########################################################################
 
 		// Total only
-		public function getGlobalDiskusage() {
+		public function getServiceDiskusage() {
 			$orgs = $this->relayMongoConnection->findAll('org');
 			//
 			$total_mib = 0;

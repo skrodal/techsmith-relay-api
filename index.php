@@ -40,12 +40,30 @@
 	}, 'All available routes.');
 
 
-	// SERVICE ROUTES
+	// SERVICE ROUTES (scope basic)
 	$router->addRoutes([
 		//array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getService())); }, 	    'Workers, queue and version.'),
-		/* DONE */ array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); }, 'Service workers.'),
-		/* DONE */ array('GET','/service/queue/', 		function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue())); }, 	'Service queue.'),
-		/* DONE */ array('GET','/service/version/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion())); }, 'Service version.'),
+		array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); },     'Service workers.'),
+		array('GET','/service/queue/', 		function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue())); }, 	    'Service queue.'),
+		array('GET','/service/version/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion())); },      'Service version.'),
+
+		// storage (mongo)
+		array('GET','/service/diskusage/',                              function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getServiceDiskusage())); },                          'Total service diskusage (in MiB) (Scope: basic).'),
+		// users (mongo)
+		array('GET','/service/users/count/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count (Scope: basic).'),
+		array('GET','/service/users/active/count/', 	                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountActive())); }, 					'Count *active* users (Scope: basic).'),
+		array('GET','/service/users/affiliation/active/count/',         function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountByAffiliation())); }, 	            'Count *active* users by affiliation (Scope: basic).'),
+		array('GET','/service/users/employees/active/count/',		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeeCount())); }, 						'Total *active* employee count (Scope: basic).'),
+		array('GET','/service/users/students/active/count/',		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentCount())); }, 					    'Count *active* student count (Scope: basic).'),
+		// users (sql)
+		array('GET','/service/users/affiliation/count/', 		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCountByAffiliation())); },			    'Total user count by affiliation (Scope: basic).'),
+		array('GET','/service/users/employees/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: basic).'),
+		array('GET','/service/users/students/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						    'Total student count (Scope: basic).'),
+		// presentations (mongo)
+		array('GET','/service/presentations/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentationCount())); }, 				    'Total presentation count (on disk) (Scope: basic).'),
+		array('GET','/service/presentations/employees/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (on disk) (Scope: basic).'),
+		array('GET','/service/presentations/students/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (on disk) (Scope: basic).'),
+
 	]);
 
 
@@ -55,79 +73,60 @@
 	// super or org or user. simon@uninett.no should get:
 	// { roles : [super, org, user] }
 
-	// TODO: Some global routes, e.g. user counts, may as well be public.
 	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
 		// Add all routes
 		$router->addRoutes([
-			### DISKUSAGE
-			array('GET','/global/diskusage/', 			                                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); },                       'Total service diskusage (in MiB) (Scope: admin).'),
-			array('GET','/global/orgs/diskusage/', 			                                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage())); },                         'Total service diskusage (in MiB) plus per org (Scope: admin).'),
-			array('GET','/user/[user:userName]/diskusage/', 			                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); }, 		'User diskusage history (in MiB) and total (Scope: admin).'),
 
-			### USER (prefer userinfo from Mongo over SQL)
-			array('GET','/user/[user:userName]/', 					                        function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); }, 		'User account details (Scope: admin).'),
+			### SINGLE USER (prefer userinfo from Mongo over SQL)
+			array('GET','/admin/user/[user:userName]/', 					                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); }, 		            'User account details (Scope: admin).'),
+			array('GET','/admin/user/[user:userName]/diskusage/', 			                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); }, 		    'User diskusage history (in MiB) and total (Scope: admin).'),
 
-			### USER PRESENTATIONS
-			array('GET','/user/[user:userName]/presentations/', 		                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations($userName))); },       'User presentations, excluding deleted (Scope: admin).'),
-			array('GET','/user/[user:userName]/presentations/count/', 	                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount($userName))); },   'User presentation count, excluding deleted (Scope: admin).'),
+			### SINGLE USER PRESENTATIONS
+			array('GET','/admin/user/[user:userName]/presentations/', 		                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations($userName))); },       'User presentations, excluding deleted (Scope: admin).'),
+			array('GET','/admin/user/[user:userName]/presentations/count/', 	                function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount($userName))); },   'User presentation count, excluding deleted (Scope: admin).'),
 
 			// Old, deprecated, functions using sql/fs
-			/* DONE (SQL) */ // array('GET','/user/[user:userName]/', 			            function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($userName))); }, 			'User account details (Scope: admin).'),
-			/* DONE (SQL) */ // array('GET','/user/[user:userName]/presentations/', 		function($userName){ global $RelaySQL; Response::result(array('status' => true, 'data' => $RelaySQL->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
-			/* DONE (SQL) */ //array('GET','/user/[user:userName]/presentations/count/',    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
-			/* DONE (FS)  */ //array('GET','/user/[user:userName]/presentations/', 		    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($userName))); },     'User presentations, deleted ones excluded (Scope: admin).'),
+			/* DONE (SQL) */ // array('GET','/admin/user/[user:userName]/', 			        function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($userName))); }, 			'User account details (Scope: admin).'),
+			/* DONE (SQL) */ // array('GET','/admin/user/[user:userName]/presentations/', 		function($userName){ global $RelaySQL; Response::result(array('status' => true, 'data' => $RelaySQL->getUserPresentations($userName))); }, 		'User presentations (Scope: admin).'),
+			/* DONE (SQL) */ //array('GET','/admin/user/[user:userName]/presentations/count/',  function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentationCount($userName))); }, 	'User presentation count (Scope: admin).'),
+			/* DONE (FS)  */ //array('GET','/admin/user/[user:userName]/presentations/', 		function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($userName))); },     'User presentations, deleted ones excluded (Scope: admin).'),
 
 			### USERS
 			// sql (all)
 		    // note: we do not need these sql routes since mongo also provides all users
-			/* DONE  */ // array('GET','/global/users/', 					                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
-			/* DONE  */ // array('GET','/global/users/count/', 			                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
+			/* DONE  */ // array('GET','/admin/users/', 					                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
+			/* DONE  */ // array('GET','/admin/users/count/', 			                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
 
 			// mongo (active == user has produced content)
-			array('GET','/global/users/', 							            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
-			array('GET','/global/users/count/', 			                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
-			array('GET','/global/users/active/count/', 	                        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountActive())); }, 					'Count *active* users (Scope: admin).'),
-
+			array('GET','/admin/users/', 							            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
 			// mongo (active == have content on disk)
-			array('GET','/global/users/affiliation/active/count/',              function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountByAffiliation())); }, 	            'Count *active* users by affiliation (Scope: admin).'),
-			array('GET','/global/users/employees/active/',		                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployees())); }, 							'All *active* employees (Scope: admin).'),
-			array('GET','/global/users/employees/active/count/',		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeeCount())); }, 						'Total *active* employee count (Scope: admin).'),
-			array('GET','/global/users/students/active/',			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudents())); }, 						    'All *active* students (Scope: admin).'),
-			array('GET','/global/users/students/active/count/',		            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentCount())); }, 					    'Count *active* student count (Scope: admin).'),
-
+			array('GET','/admin/users/employees/active/',		                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployees())); }, 							'All *active* employees (Scope: admin).'),
+			array('GET','/admin/users/students/active/',			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudents())); }, 						    'All *active* students (Scope: admin).'),
 			// sql
-			array('GET','/global/users/affiliation/count/', 		            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCountByAffiliation())); },			    'Total user count by affiliation (Scope: admin).'),
-			array('GET','/global/users/employees/',   			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
-			array('GET','/global/users/employees/count/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: admin).'),
-			array('GET','/global/users/students/',    				            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 							    'All students (Scope: admin).'),
-			array('GET','/global/users/students/count/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						    'Total student count (Scope: admin).'),
+			array('GET','/admin/users/employees/',   			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
+			array('GET','/admin/users/students/',    				            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 							    'All students (Scope: admin).'),
 
 
 			### PRESENTATIONS
 		    // mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)
 		    // todo: consider writing some sort of pagination (or split mongo query to pieces) since this is memory hungry and returns a huge result that the browser can't handle!
-			// array('GET','/global/presentations/', 				                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentations())); }, 				        'All presentations on disk (Scope: admin).'),
-			array('GET','/global/presentations/count/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentationCount())); }, 				    'Total presentation count (on disk) (Scope: admin).'),
-			// todo: paginate
-			// array('GET','/global/presentations/employees/', 		            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentations())); }, 		        'All employee presentations (Scope: admin).'),
-			array('GET','/global/presentations/employees/count/', 	            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (on disk) (Scope: admin).'),
-			// todo: paginate
-			// array('GET','/global/presentations/students/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 			        'All student presentations (Scope: admin).'),
-			array('GET','/global/presentations/students/count/', 	            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (on disk) (Scope: admin).'),
+			// array('GET','/admin/presentations/', 				                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentations())); }, 				        'All presentations on disk (Scope: admin).'),
+			// array('GET','/admin/presentations/employees/', 		            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentations())); }, 		        'All employee presentations (Scope: admin).'),
+			// array('GET','/admin/presentations/students/', 			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 			        'All student presentations (Scope: admin).'),
 
 		    // sql (deprecated; retrieves all presentations, also deleted ones)
-			/* DONE */ // array('GET','/global/presentations/', 				        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentations())); }, 						'All presentations (Scope: admin).'),
-			/* DONE */ // array('GET','/global/presentations/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentationCount())); }, 					'Total presentation count (Scope: admin).'),
-			/* DONE */ // array('GET','/global/presentations/employees/', 		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentations())); }, 				'All employee presentations (Scope: admin).'),
-			/* DONE */ // array('GET','/global/presentations/employees/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (Scope: admin).'),
-			/* DONE */ // array('GET','/global/presentations/students/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
-			/* DONE */ // array('GET','/global/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).'),
+			// array('GET','/admin/presentations/', 				        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentations())); }, 						'All presentations (Scope: admin).'),// array('GET','/global/presentations/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentationCount())); }, 					'Total presentation count (Scope: admin).'),
+			// array('GET','/admin/presentations/employees/', 		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentations())); }, 				'All employee presentations (Scope: admin).'),
+			// array('GET','/admin/presentations/employees/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (Scope: admin).'),
+			// array('GET','/admin/presentations/students/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentations())); }, 				'All student presentations (Scope: admin).'),
+			// array('GET','/admin/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).'),
 
 		    ### ORGS
 
-			array('GET','/global/orgs/', 	              function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgs())); }, 			'List all orgs (Scope: admin).'),
-			array('GET','/global/orgs/users/count/', 	  function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsUserCount())); }, 	'List all orgs with total users (Scope: admin).'),
-
+			array('GET','/admin/orgs/', 	              function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgs())); }, 			'List all orgs (Scope: admin).'),
+			array('GET','/admin/orgs/info/',             function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgs())); }, 			'List all orgs with user/presentation/diskusage info (Scope: admin).'),
+			array('GET','/admin/orgs/users/count/', 	  function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsUserCount())); }, 	'List all orgs with total users (Scope: admin).'),
+			array('GET','/admin/orgs/diskusage/', 		  function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage())); },   'Total service diskusage (in MiB) plus per org (Scope: admin).'),
 
 			// CLIENTS
 			/* Tested, but no useful info to be grabbed from tblClient. */
@@ -143,7 +142,7 @@
 		// Add all routes
 		$router->addRoutes([
 			### DISKUSAGE
-			array('GET','/org/[org:orgId]/diskusage/', 			                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 				 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/diskusage/', 			                        function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 				 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
 
 		    ### SINGLE USER
 		    // mongo

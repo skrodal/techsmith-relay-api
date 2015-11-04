@@ -40,7 +40,8 @@
 			foreach($orgs as $org) {
 				$response[] = $org['org'];
 			}
-			return $response;
+			// Sorted
+			return sort($response);
 		}
 
 		public function getOrgsUserCount(){

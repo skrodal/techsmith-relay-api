@@ -322,6 +322,7 @@
 					$response['orgs'][$org['org']] = $latest_mib;
 				}
 			}
+			sort($response['orgs']);
 
 			return $response;
 		}

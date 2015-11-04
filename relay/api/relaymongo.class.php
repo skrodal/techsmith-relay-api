@@ -41,11 +41,18 @@
 				$response[] = $org['org'];
 			}
 			// Sorted
-			return sort($response);
+			sort($response);
+			return $response;
 		}
 
 		public function getOrgsUserCount(){
+			$orgs = $this->getOrgs();
+			$response = [];
 
+			foreach($orgs as $org) {
+				$response[$org] = $this->getOrgUserCount($org);
+			}
+			return $response;
 		}
 
 		########################################################################

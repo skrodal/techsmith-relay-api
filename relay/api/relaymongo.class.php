@@ -27,6 +27,25 @@
 			$this->feideConnect         = $fc;
 		}
 
+		########################################################################
+		####
+		####    ORGS
+		####
+		########################################################################
+
+		public function getOrgs(){
+			$orgs = $this->relayMongoConnection->findAll('org');
+			$response = [];
+
+			foreach($orgs as $org) {
+				$response[] = $org['org'];
+			}
+			return $response;
+		}
+
+		public function getOrgsUserCount(){
+
+		}
 
 		########################################################################
 		####

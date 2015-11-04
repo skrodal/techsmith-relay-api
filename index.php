@@ -60,7 +60,8 @@
 		// Add all routes
 		$router->addRoutes([
 			### DISKUSAGE
-			array('GET','/global/diskusage/', 			                                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); },                       'Service diskusage history (in MiB) and total (Scope: admin).'),
+			array('GET','/global/diskusage/', 			                                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalDiskusage())); },                       'Total service diskusage (in MiB) (Scope: admin).'),
+			array('GET','/global/orgs/diskusage/', 			                                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage())); },                         'Total service diskusage (in MiB) plus per org (Scope: admin).'),
 			array('GET','/user/[user:userName]/diskusage/', 			                    function($userName){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); }, 		'User diskusage history (in MiB) and total (Scope: admin).'),
 
 			### USER (prefer userinfo from Mongo over SQL)

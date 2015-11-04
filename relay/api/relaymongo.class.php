@@ -33,8 +33,8 @@
 		####
 		########################################################################
 
-		public function getOrgs(){
-			$orgs = $this->relayMongoConnection->findAll('org');
+		public function getOrgs() {
+			$orgs     = $this->relayMongoConnection->findAll('org');
 			$response = [];
 
 			foreach($orgs as $org) {
@@ -42,16 +42,18 @@
 			}
 			// Sorted
 			sort($response);
+
 			return $response;
 		}
 
-		public function getOrgsUserCount(){
-			$orgs = $this->getOrgs();
+		public function getOrgsUserCount() {
+			$orgs     = $this->getOrgs();
 			$response = [];
 
 			foreach($orgs as $org) {
 				$response[$org] = $this->getOrgUserCount($org);
 			}
+
 			return $response;
 		}
 
@@ -191,6 +193,7 @@
 
 		public function getOrgUserCount($org) {
 			$criteria = ['org' => $org];
+
 			return $this->relayMongoConnection->count('users', $criteria);
 		}
 
@@ -288,15 +291,35 @@
 		####
 		########################################################################
 
+		// Total only
 		public function getGlobalDiskusage() {
-			$response['total_mib'] = 0;
-			$response['orgs']      = $this->relayMongoConnection->findAll('org');
-
-			foreach($response['orgs'] as $org) {
+			$orgs = $this->relayMongoConnection->findAll('org');
+			//
+			$total_mib = 0;
+			foreach($orgs as $org) {
 				if(!empty($org['storage'])) {
 					// Latest entry is most current
 					$length = sizeof($org['storage']) - 1;
-					$response['total_mib'] += (float)$org['storage'][$length]['size_mib'];
+					$total_mib += (float)$org['storage'][$length]['size_mib'];
+				}
+			}
+
+			return $total_mib;
+		}
+
+		public function getOrgsDiskusage() {
+			$orgs = $this->relayMongoConnection->findAll('org');
+			//
+			$response['total_mib'] = 0;
+			$response['orgs']      = [];
+
+			foreach($orgs as $org) {
+				if(!empty($org['storage'])) {
+					// Latest entry is most current
+					$length = sizeof($org['storage']) - 1;
+					$latest_mib = (float)$org['storage'][$length]['size_mib'];
+					$response['total_mib'] += $latest_mib;
+					$response['orgs'][$org['org']] = $latest_mib;
 				}
 			}
 

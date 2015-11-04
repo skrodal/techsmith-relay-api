@@ -33,6 +33,7 @@
 		####
 		########################################################################
 
+		// Sorted list of org names
 		public function getOrgs() {
 			$orgs     = $this->relayMongoConnection->findAll('org');
 			$response = [];
@@ -46,6 +47,21 @@
 			return $response;
 		}
 
+		// Sorted list of orgs with user count, presentation count, total_mib and storage[]
+		public function getOrgsInfo() {
+			$orgs = $this->getOrgs();
+
+			foreach($orgs as $org){
+				$response[$org]['users'] = $this->getOrgUserCount($org);
+				$response[$org]['presentations'] = $this->getOrgPresentationCount($org);
+				$diskUsage = $this->getOrgDiskusage($org);
+				$response[$org]['total_mib'] = $diskUsage['total_mib'];
+				$response[$org]['storage'] = $diskUsage['storage'];
+			}
+			return $response;
+		}
+
+		// Sorted list of org names with user count
 		public function getOrgsUserCount() {
 			$orgs     = $this->getOrgs();
 			$response = [];

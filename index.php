@@ -147,8 +147,10 @@
 
 		    ### SINGLE USER
 		    // mongo
-			array('GET','/org/[org:orgId]/user/[user:userName]/', 	            function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); },            'Specific user at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/user/[user:userName]/diskusage/',    function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); },  'Diskusage for specific user at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/user/[user:userName]/', 	                    function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); },                        'Specific user at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/user/[user:userName]/presentations/',         function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations($userName))); },           'Presentations for specific user at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/user/[user:userName]/presentations/count/', 	function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount($userName))); },       'Presentation count for specific user at org (Scope: admin/org).'),
+			array('GET','/org/[org:orgId]/user/[user:userName]/diskusage/',             function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); },               'Diskusage for specific user at org (Scope: admin/org).'),
 
 			### USERS
 

@@ -36,6 +36,7 @@
 	 */
 	$router->map('GET', '/', function () {
 		global $router;
+		// TODO: Show only routes available according to scope
 		Response::result(array('status' => true, 'data' => $router->getRoutes()));
 	}, 'All available routes.');
 
@@ -124,7 +125,7 @@
 		    ### ORGS
 
 			array('GET','/admin/orgs/', 	                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgs())); }, 			    'List all orgs (Scope: admin).'),
-			array('GET','/admin/orgs/info/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsInfo())); }, 			    'List all orgs with user/presentation/diskusage info (Scope: admin).'),
+			array('GET','/admin/orgs/info/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsInfo())); }, 		    'List all orgs with user/presentation/diskusage info (Scope: admin).'),
 			array('GET','/admin/orgs/users/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsUserCount())); }, 	'List all orgs with total users (Scope: admin).'),
 			array('GET','/admin/orgs/diskusage/', 		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage())); },     'Total service diskusage (in MiB) plus per org (Scope: admin).'),
 

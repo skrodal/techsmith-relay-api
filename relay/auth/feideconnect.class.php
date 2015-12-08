@@ -22,6 +22,8 @@
 			// Exits on OPTION call
 			$this->_checkCORS();
 			// Make sure we have a scope
+			// (NOTE: 'basic' scope is implicit and not listed in HTTP_X_FEIDECONNECT_SCOPES. This means that client MUST have access
+			// to at least ONE extra custom scope).
 			if(!isset($_SERVER["HTTP_X_FEIDECONNECT_SCOPES"])) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (missing scope)');
 			}

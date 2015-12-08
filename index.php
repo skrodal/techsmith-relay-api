@@ -42,6 +42,8 @@
 
 
 	// SERVICE ROUTES (scope basic)
+	// (Update: NOT true! Basic Scope is not transferred in HTTP_X_FEIDECONNECT_SCOPES, hence client needs at least one custom scope.)
+	// See GK in feideconnect.class...
 	$router->addRoutes([
 		//array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getService())); }, 	    'Workers, queue and version.'),
 		array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); },     'Service workers.'),

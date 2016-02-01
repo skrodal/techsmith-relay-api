@@ -71,6 +71,7 @@
 
 
 	// ADMIN ROUTES - if scope allows
+	//
 	// isSuperAdmin added 15.10.2015 - need to be tested and considered carefully. Should we leave the clients to decide who is SuperAdmin, or
 	// hardcode in API, judging by 'uninett.no' in username (I prefer the latter)? The client can actually call this API to find out if user has role(s)
 	// super or org or user. simon@uninett.no should get:
@@ -125,14 +126,28 @@
 			// array('GET','/admin/presentations/students/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (Scope: admin).'),
 
 		    ### ORGS
+			// JAN 2016: Moved to own scope (does not require superadmin).
+			// array('GET','/admin/orgs/', 	                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgs())); }, 			    'List all orgs (Scope: admin).'),
+			// array('GET','/admin/orgs/info/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsInfo())); }, 		    'List all orgs with user/presentation/diskusage info (Scope: admin).'),
+			// array('GET','/admin/orgs/users/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsUserCount())); }, 	'List all orgs with total users (Scope: admin).'),
+			// array('GET','/admin/orgs/diskusage/', 		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage())); },     'Total service diskusage (in MiB) plus per org (Scope: admin).'),
 
+			// CLIENTS
+			/* Tested, but no useful info to be grabbed from tblClient. */
+		]);
+	}
+
+	// Client must have admin scope. Does not restrict on superadmin (i.e. uninett-employees only) since these routes provides higher level data
+	// per org. Suffices that client prevents access to certain groups if necessary.
+	// Since Jan. 2016.
+	if($feideConnect->hasOauthScopeAdmin()) {
+		// Add all routes
+		$router->addRoutes([
+			### ORGS
 			array('GET','/admin/orgs/', 	                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgs())); }, 			    'List all orgs (Scope: admin).'),
 			array('GET','/admin/orgs/info/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsInfo())); }, 		    'List all orgs with user/presentation/diskusage info (Scope: admin).'),
 			array('GET','/admin/orgs/users/count/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsUserCount())); }, 	'List all orgs with total users (Scope: admin).'),
 			array('GET','/admin/orgs/diskusage/', 		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage())); },     'Total service diskusage (in MiB) plus per org (Scope: admin).'),
-
-			// CLIENTS
-			/* Tested, but no useful info to be grabbed from tblClient. */
 		]);
 	}
 

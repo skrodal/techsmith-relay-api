@@ -94,7 +94,8 @@
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
 			}
 			// 'username@org.no'
-			return $userIdSec;
+			return 'torejorg@uio.no';
+			// return $userIdSec;
 		}
 
 

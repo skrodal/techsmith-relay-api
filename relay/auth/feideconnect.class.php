@@ -55,7 +55,6 @@
 		// org.no
 		public function userOrg() { 
 			$userOrg = explode('@', $this->userName());
-			return "uio.no";
 			return $userOrg[1];
 		}
 
@@ -95,7 +94,6 @@
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
 			}
 			// 'username@org.no'
-			return 'torejorg@uio.no';
 			return $userIdSec;
 		}
 

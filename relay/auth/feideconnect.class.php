@@ -54,7 +54,8 @@
 		public function userName() { return $this->_getFeideUsername(); }
 		// org.no
 		public function userOrg() { 
-			$userOrg = explode('@', $this->userName()); 
+			$userOrg = explode('@', $this->userName());
+			return "uio.no";
 			return $userOrg[1];
 		}
 
@@ -95,7 +96,7 @@
 			}
 			// 'username@org.no'
 			return 'torejorg@uio.no';
-			// return $userIdSec;
+			return $userIdSec;
 		}
 
 

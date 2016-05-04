@@ -9,27 +9,27 @@
 
 	namespace Relay\Api;
 
-	use Relay\Auth\FeideConnect;
+	use Relay\Auth\Dataporten;
 
 
 
 	class Relay {
 
-		private $feideConnect;
+		private $dataporten;
 		private $relaySQL;
 		private $relayFS;
 		private $relayMongo;
 
-		function __construct(FeideConnect $fc) {
+		function __construct(Dataporten $fc) {
 			#
-			$this->feideConnect = $fc;
+			$this->dataporten = $fc;
 
 			# SQL Class
-			$this->relaySQL = new RelaySQL($this->feideConnect);
+			$this->relaySQL = new RelaySQL($this->dataporten);
 			# Mongo Class
-			$this->relayMongo = new RelayMongo($this->relaySQL, $this->feideConnect);
+			$this->relayMongo = new RelayMongo($this->relaySQL, $this->dataporten);
 			# FS Class
-			$this->relayFS = new RelayFS($this->relaySQL, $this->feideConnect);
+			$this->relayFS = new RelayFS($this->relaySQL, $this->dataporten);
 
 		}
 
@@ -47,6 +47,6 @@
 		}
 
 		public function fc(){
-			return $this->feideConnect;
+			return $this->dataporten;
 		}
 	}

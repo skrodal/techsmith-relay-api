@@ -2,7 +2,7 @@
 
 	namespace Relay\Api;
 
-	use Relay\Auth\FeideConnect;
+	use Relay\Auth\Dataporten;
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
 	/**
@@ -14,12 +14,12 @@
 
 
 	class RelaySQL {
-		private $relaySQLConnection, $feideConnect;
+		private $relaySQLConnection, $dataporten;
 
-		function __construct(FeideConnect $fc) {
+		function __construct(Dataporten $fc) {
 			//
 			$this->relaySQLConnection = new RelaySQLConnection();
-			$this->feideConnect = $fc;
+			$this->dataporten         = $fc;
 		}
 
 		#
@@ -376,7 +376,7 @@
 		 * @return array
 		 */
 		public function getTableSchema($table_name){
-			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
+			if($this->dataporten->isSuperAdmin() && $this->dataporten->hasOauthScopeAdmin()) {
 				return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
 			}
 			// Else
@@ -384,7 +384,7 @@
 		}
 
 		public function getTableDump($table_name, $top){
-			if($this->feideConnect->isSuperAdmin() && $this->feideConnect->hasOauthScopeAdmin()) {
+			if($this->dataporten->isSuperAdmin() && $this->dataporten->hasOauthScopeAdmin()) {
 				return $this->relaySQLConnection->query("SELECT TOP($top) * FROM $table_name");
 			}
 			// Else
@@ -405,7 +405,7 @@
 		*/
 		function verifyOrgAccess($orgName){
 			// If NOT superadmin AND requested org data is not for home org
-			if(!$this->feideConnect->isSuperAdmin() && strcasecmp($orgName, $this->feideConnect->userOrg()) !== 0) {
+			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
 			}
 		}

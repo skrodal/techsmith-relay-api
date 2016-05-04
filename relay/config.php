@@ -13,7 +13,7 @@
 				'api_base_path' => '/api/techsmith-relay'
 			],
 			'auth'       => [
-				'feide_connect' => $config_root . 'feideconnect_config.js',
+				'dataporten' => $config_root . 'dataporten_config.js',
 				'relay_sql'     => $config_root . 'relay_config.js',
 				'relay_mongo'   => $config_root . 'mongodb_config.js',
 			],

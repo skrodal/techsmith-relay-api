@@ -24,5 +24,5 @@ MERK: Alle kall som går på presentations baserer seg på data fra DB. Dette vi
 
 ## Avhengigheter
 
-- UNINETT Connect GateKeeper
+- UNINETT Dataporten GateKeeper
 - Alto Router

@@ -1,7 +1,7 @@
 <?php
 	namespace Relay\Api;
 
-	use Relay\Auth\FeideConnect;
+	use Relay\Auth\Dataporten;
 	use Relay\Conf\Config;
 
 	/**
@@ -17,11 +17,11 @@
 	 */
 	class RelayFS {
 
-		private $relaySQL, $feideConnect;
+		private $relaySQL, $dataporten;
 
-		function __construct(RelaySQL $rs, FeideConnect $fc) {
-			$this->relaySQL     = $rs;
-			$this->feideConnect = $fc;
+		function __construct(RelaySQL $rs, Dataporten $fc) {
+			$this->relaySQL   = $rs;
+			$this->dataporten = $fc;
 		}
 
 

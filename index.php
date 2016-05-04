@@ -14,14 +14,14 @@
 	require_once('relay/autoload.php');
 
 	use
-		Relay\Auth\FeideConnect, Relay\Api\Relay, Relay\Conf\Config,
+		Relay\Auth\Dataporten, Relay\Api\Relay, Relay\Conf\Config,
 		Relay\Utils\Response, Relay\Vendor\Router;
 	use Relay\Tests\MongoTest;
 
 	// Gatekeeper and provider of useful info
-	$feideConnect = new FeideConnect();
+	$dataporten = new Dataporten();
 	// Provides an interface to SQL, Mongo, FS classes
-	$relay = new Relay($feideConnect);
+	$relay = new Relay($dataporten);
 
 	### 	  ALTO ROUTER 		###
 	$router = new Router();
@@ -42,8 +42,8 @@
 
 
 	// SERVICE ROUTES (scope basic)
-	// (Update: NOT true! Basic Scope is not transferred in HTTP_X_FEIDECONNECT_SCOPES, hence client needs at least one custom scope.)
-	// See GK in feideconnect.class...
+	// (Update: NOT true! Basic Scope is not transferred in HTTP_X_DATAPORTEN_SCOPES, hence client needs at least one custom scope.)
+	// See GK in dataporten.class...
 	$router->addRoutes([
 		//array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getService())); }, 	    'Workers, queue and version.'),
 		array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); },     'Service workers.'),
@@ -77,7 +77,7 @@
 	// super or org or user. simon@uninett.no should get:
 	// { roles : [super, org, user] }
 
-	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
+	if($dataporten->hasOauthScopeAdmin() && $dataporten->isSuperAdmin()) {
 		// Add all routes
 		$router->addRoutes([
 
@@ -140,7 +140,7 @@
 	// Client must have admin scope. Does not restrict on superadmin (i.e. uninett-employees only) since these routes provides higher level data
 	// per org. Suffices that client prevents access to certain groups if necessary.
 	// Since Jan. 2016.
-	if($feideConnect->hasOauthScopeAdmin()) {
+	if($dataporten->hasOauthScopeAdmin()) {
 		// Add all routes
 		$router->addRoutes([
 			### ORGS
@@ -156,7 +156,7 @@
 	//  At present, the client talks to Kind to check if logged on user is OrgAdmin.
 	//  This is not ideal, the check should happen in this API, which can call Kind and verify!
 	//  FC team says there is no easy way at present for one API GK to speak to another one... (OCT 2015)
-	if( $feideConnect->hasOauthScopeAdmin() || $feideConnect->hasOauthScopeOrg() ) { // TODO: Implement isOrgAdmin :: && ($feideConnect->isOrgAdmin() || $feideConnect->isSuperAdmin())) {
+	if( $dataporten->hasOauthScopeAdmin() || $dataporten->hasOauthScopeOrg() ) { // TODO: Implement isOrgAdmin :: && ($dataporten->isOrgAdmin() || $dataporten->isSuperAdmin())) {
 		// Add all routes
 		$router->addRoutes([
 			### DISKUSAGE
@@ -210,7 +210,7 @@
 	}
 
 	// USER ROUTES (/me/) if scope allows
-	if($feideConnect->hasOauthScopeUser()) {
+	if($dataporten->hasOauthScopeUser()) {
 		// Add all routes
 		$router->addRoutes([
 			// STORAGE
@@ -222,20 +222,20 @@
 			array('GET','/me/presentations/count/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount())); }, 'User presentation count (Scope: user).'),
 
 			// sql deprecated
-			/* DONE */ // array('GET','/me/', 					                            function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($feideConnect->userName()))); }, 		            'User account details (Scope: user).'),
-			/* DONE */ //array('GET','/me/presentations/', 		                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentations($feideConnect->userName()))); }, 	'User presentations (Scope: user).'),
-			/* DONE */ //array('GET','/me/presentations/count/',                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentationCount($feideConnect->userName()))); }, 'User presentation count (Scope: user).'),
+			/* DONE */ // array('GET','/me/', 					                            function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($dataporten->userName()))); }, 		            'User account details (Scope: user).'),
+			/* DONE */ //array('GET','/me/presentations/', 		                        function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentations($dataporten->userName()))); }, 	'User presentations (Scope: user).'),
+			/* DONE */ //array('GET','/me/presentations/count/',                        function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentationCount($dataporten->userName()))); }, 'User presentation count (Scope: user).'),
 			// fs deprecated
-			/* TEST WITH FS */ //array('GET','/me/presentations/',                        function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($feideConnect->userName()))); },     'User presentations, deleted ones excluded (Scope: user).'),
-			/* TEST WITH FS */ //array('GET','/me/presentations/count/', 					function(){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMediaCount($feideConnect->userName()))); },     'User presentation count, deleted ones excluded (Scope: user).'),
+			/* TEST WITH FS */ //array('GET','/me/presentations/',                        function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($dataporten->userName()))); },     'User presentations, deleted ones excluded (Scope: user).'),
+			/* TEST WITH FS */ //array('GET','/me/presentations/count/', 					function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMediaCount($dataporten->userName()))); },     'User presentation count, deleted ones excluded (Scope: user).'),
 
-			// TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $feideConnect; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $feideConnect->userName()))); }, 'Delete user presentation (Scope: user).')
+			// TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $dataporten->userName()))); }, 'Delete user presentation (Scope: user).')
 		]);
 	}
 
 
 	// DEV ROUTES FOR TESTING (Superadmin access only)
-	if($feideConnect->hasOauthScopeAdmin() && $feideConnect->isSuperAdmin()) {
+	if($dataporten->hasOauthScopeAdmin() && $dataporten->isSuperAdmin()) {
 		$router->addRoutes([
 			array('GET','/dev/table/[a:tableName]/schema/',	            function($table_name){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getTableSchema($table_name))); }, 'Table schema.'),
 			array('GET','/dev/table/[a:tableName]/dump/',	            function($table_name){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getTableDump($table_name, 50))); }, 'Table dump. Top 50.'),
@@ -276,12 +276,12 @@
 	 * @param null $userName
 	 */
 	function verifyOrgAccess($orgName, $userName = null){
-		global $feideConnect;
+		global $dataporten;
 
 		// Restrictions apply, unless you're superadmin...
-		if(!$feideConnect->isSuperAdmin()){
+		if(!$dataporten->isSuperAdmin()){
 			// If requested org data is not for home org
-			if(strcasecmp($orgName, $feideConnect->userOrg()) !== 0) {
+			if(strcasecmp($orgName, $dataporten->userOrg()) !== 0) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
 			}
 			// If request involves a user account

@@ -2,7 +2,7 @@
 	namespace Relay\Api;
 
 	use MongoRegex;
-	use Relay\Auth\FeideConnect;
+	use Relay\Auth\Dataporten;
 	use Relay\Database\RelayMongoConnection;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
@@ -18,13 +18,13 @@
 	 * @time    15:24
 	 */
 	class RelayMongo {
-		private $relayMongoConnection, $relaySQL, $feideConnect;
+		private $relayMongoConnection, $relaySQL, $dataporten;
 
-		function __construct(RelaySQL $rs, FeideConnect $fc) {
+		function __construct(RelaySQL $rs, Dataporten $fc) {
 			//
 			$this->relayMongoConnection = new RelayMongoConnection();
 			$this->relaySQL             = $rs;
-			$this->feideConnect         = $fc;
+			$this->dataporten           = $fc;
 		}
 
 		########################################################################
@@ -81,14 +81,14 @@
 
 		// Userinfo
 		public function getUser($feideUserName = NULL) {
-			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 
 			return $this->relayMongoConnection->findOne('users', array('username' => $feideUserName));
 		}
 
 		// User presentations on disk
 		public function getUserPresentations($feideUserName = NULL) {
-			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ['username' => $feideUserName];
 
 			return $this->relayMongoConnection->find('presentations', $criteria);
@@ -96,7 +96,7 @@
 
 		// Count user presentations on disk
 		public function getUserPresentationCount($feideUserName) {
-			$feideUserName = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ["username" => $feideUserName];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);
@@ -359,7 +359,7 @@
 
 		// User presentations on disk
 		public function getUserDiskusage($feideUserName = NULL) {
-			$feideUserName         = is_null($feideUserName) ? $this->feideConnect->userName() : $feideUserName;
+			$feideUserName         = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria              = ['username' => $feideUserName];
 			$response['total_mib'] = 0;
 			$response['storage']   = $this->relayMongoConnection->findOne('userDiskUsage', $criteria)['storage'];

@@ -27,7 +27,7 @@
 				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: MySQL config.');
 			}
 
-			Response::error(500, (json_encode($this->config)));
+			Response::error(500, $this->config);
 			// MySQL connection and info config
 			return json_decode($this->config, true);
 		}

@@ -18,16 +18,16 @@
 		function __construct() {
 			// Get connection conf
 			$this->config = $this->getConfig();
+			Response::error(500, $this->config);
 		}
 
 		public function getConfig() {
-			$this->config = file_get_contents(Config::get('auth')['relay_mysql_presdelete'], true);
+			$this->config = file_get_contents(Config::get('auth')['relay_mysql_presdelete']);
 			// Sanity
 			if($this->config === false) {
 				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: MySQL config.');
 			}
 
-			Response::error(500, $this->config);
 			// MySQL connection and info config
 			return json_decode($this->config, true);
 		}

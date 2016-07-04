@@ -66,7 +66,7 @@
 			$mysqli = new \mysqli($this->config['db_host'], $this->config['db_user'], $this->config['db_pass'], $this->config['db_name']);
 			//
 			if($mysqli->connect_errno) {
-				Response::error(503, "503 Service Unavailable (DB connection failed (MySQL).");
+				Response::error(503, "503 Service Unavailable (DB connection failed (MySQL): " . $mysqli->error);
 			}
 
 			Utils::log("MySQL DB CONNECTED");

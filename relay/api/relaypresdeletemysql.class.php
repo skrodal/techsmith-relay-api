@@ -24,7 +24,6 @@
 			$this->dataporten           = $fc;
 			$this->config               = $this->relayMySQLConnection->getConfig();
 			$this->table_name           = $this->config['db_table_name'];
-			Response::error(300, $this->table_name);
 		}
 
 		#

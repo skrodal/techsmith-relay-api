@@ -17,7 +17,7 @@
 
 		function __construct() {
 			// Get connection conf
-			$this->config = $this->getConfig();
+			$this->config = $this->_getConfig();
 		}
 
 		/**
@@ -52,7 +52,8 @@
 		 *    Open MySQL connection
 		 */
 		private function getConnection() {
-			Response::error(503, $this->config['db_host']);
+			Response::error(300, array($this->config['db_host'], $this->config['db_user'], $this->config['db_pass'], $this->config['db_name']) );
+
 			$mysqli = new \mysqli($this->config['db_host'], $this->config['db_user'], $this->config['db_pass'], $this->config['db_name']);
 			//
 			if($mysqli->connect_errno) {
@@ -75,12 +76,16 @@
 		}
 
 
-		public function getConfig(){
+		private function _getConfig(){
 			$this->config = file_get_contents(Config::get('auth')['relay_mysql_presdelete']);
 			// Sanity
 			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: MySQL config.'); }
 			// Connect username and pass
 			return json_decode($this->config, true);
+		}
+
+		public function getConfig(){
+			return $this->config;
 		}
 
 	}

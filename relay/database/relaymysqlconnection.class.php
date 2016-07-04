@@ -18,7 +18,6 @@
 		function __construct() {
 			// Get connection conf
 			$this->config = $this->getConfig();
-			Response::error(500, $this->config);
 		}
 
 		public function getConfig() {

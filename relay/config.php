@@ -1,6 +1,7 @@
 <?php
 
 	use Relay\Conf\Config;
+
 	// For large mongo-requests...
 	// ini_set('memory_limit','512M');
 	//
@@ -13,9 +14,10 @@
 				'api_base_path' => '/api/techsmith-relay'
 			],
 			'auth'       => [
-				'dataporten' => $config_root . 'dataporten_config.js',
-				'relay_sql'     => $config_root . 'relay_config.js',
-				'relay_mongo'   => $config_root . 'mongodb_config.js',
+				'dataporten'             => $config_root . 'dataporten_config.js',
+				'relay_sql'              => $config_root . 'relay_config.js',
+				'relay_mongo'            => $config_root . 'mongodb_config.js',
+				'relay_mysql_presdelete' => $config_root . 'relay_mysql_presdelete_config.js'
 			],
 			'utils'      => [
 				'debug' => true

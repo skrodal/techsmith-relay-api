@@ -19,6 +19,7 @@
 		private $relaySQL;
 		private $relayFS;
 		private $relayMongo;
+		private $relayPresDeleteMySQL;
 
 		function __construct(Dataporten $fc) {
 			#
@@ -30,7 +31,8 @@
 			$this->relayMongo = new RelayMongo($this->relaySQL, $this->dataporten);
 			# FS Class
 			$this->relayFS = new RelayFS($this->relaySQL, $this->dataporten);
-
+			# Presentation delete
+			$this->relayPresDeleteMySQL = new RelayPresDeleteMySQL($fc);
 		}
 
 
@@ -44,6 +46,10 @@
 
 		public function fs(){
 			return $this->relayFS;
+		}
+
+		public function presDelete(){
+			return $this->relayPresDeleteMySQL;
 		}
 
 		public function fc(){

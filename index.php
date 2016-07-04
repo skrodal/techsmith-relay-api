@@ -102,15 +102,20 @@
 			/* DONE  */ // array('GET','/admin/users/count/', 			                    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount())); }, 							'Total user count (Scope: admin).'),
 
 			// mongo (active == user has produced content)
-			array('GET','/admin/users/', 							            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUsers())); }, 								'All users (Scope: admin).'),
+			array('GET','/admin/users/', 							            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUsers())); }, 		'All users (Scope: admin).'),
 			// mongo (active == have content on disk)
-			array('GET','/admin/users/employees/active/',		                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployees())); }, 							'All *active* employees (Scope: admin).'),
-			array('GET','/admin/users/students/active/',			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudents())); }, 						    'All *active* students (Scope: admin).'),
+			array('GET','/admin/users/employees/active/',		                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployees())); }, 	'All *active* employees (Scope: admin).'),
+			array('GET','/admin/users/students/active/',			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudents())); }, 	'All *active* students (Scope: admin).'),
 			// sql
-			array('GET','/admin/users/employees/',   			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 							'All employees (Scope: admin).'),
-			array('GET','/admin/users/students/',    				            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 							    'All students (Scope: admin).'),
+			array('GET','/admin/users/employees/',   			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployees())); }, 	'All employees (Scope: admin).'),
+			array('GET','/admin/users/students/',    				            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 		'All students (Scope: admin).'),
 
+			### PRESENTATIONS DELETE LIST 
+			array('GET','/admin/presentations/deletelist/all/',    				function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getAllPresentationRecords())); },       'All presentations in deletelist (Scope: admin).'),
+			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentations())); },           'Moved presentations in deletelist (Scope: admin).'),
+			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentations())); },         'Deleted presentations in deletelist (Scope: admin).'),
 
+		    
 			### PRESENTATIONS
 		    // mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)
 		    // todo: consider writing some sort of pagination (or split mongo query to pieces) since this is memory hungry and returns a huge result that the browser can't handle!
@@ -221,6 +226,12 @@
 			array('GET','/me/presentations/', 			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations())); }, 	'User presentations (Scope: user).'),
 			array('GET','/me/presentations/count/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount())); }, 'User presentation count (Scope: user).'),
 
+		    // Delete presentations (TODO)
+			array('POST','/me/presentation/delete/',    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'Request for a presentation to be deleted (Scope: user).'),
+			array('POST','/me/presentation/restore/',   function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'Cancel request for a presentation to be deleted (Scope: user).'),
+			array('POST','/me/presentation/undelete/',  function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'Request for a presentation to be UNdeleted (Scope: user).'),
+
+
 			// sql deprecated
 			/* DONE */ // array('GET','/me/', 					                            function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($dataporten->userName()))); }, 		            'User account details (Scope: user).'),
 			/* DONE */ //array('GET','/me/presentations/', 		                        function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentations($dataporten->userName()))); }, 	'User presentations (Scope: user).'),
@@ -232,7 +243,6 @@
 			// TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $dataporten->userName()))); }, 'Delete user presentation (Scope: user).')
 		]);
 	}
-
 
 	// DEV ROUTES FOR TESTING (Superadmin access only)
 	if($dataporten->hasOauthScopeAdmin() && $dataporten->isSuperAdmin()) {

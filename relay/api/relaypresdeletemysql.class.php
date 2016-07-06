@@ -52,17 +52,18 @@
 
 		// Presentations recently added to deletelist that have not yet been moved (may be cancelled)
 		public function getNotMovedPresentationsMe() {
-			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE username = $this->feideUserName AND moved = 0");
+			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName' AND moved = 0");
 		}
 
 		// Presentations in the deletelist that have been moved, but not yet deleted (may be restored)
+		// Note! Will also return presentations where a restore has been requested already!
 		public function getMovedPresentationsMe() {
-
+			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName' AND moved = 1 AND deleted <> 1");
 		}
 
 		// Presentations in the deletelist that have been deleted (thus cannot be restored)
 		public function getDeletedPresentationsMe() {
-
+			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName' AND deleted = 1");
 		}
 
 		# POST /me/presentation/deletelist/*/

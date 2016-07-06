@@ -111,9 +111,9 @@
 			array('GET','/admin/users/students/',    				            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudents())); }, 		'All students (Scope: admin).'),
 
 			### PRESENTATIONS DELETE LIST 
-			array('GET','/admin/presentations/deletelist/all/',    				function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getAllPresentationRecords())); },       'All presentations in deletelist (Scope: admin).'),
-			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentations())); },           'Moved presentations in deletelist (Scope: admin).'),
-			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentations())); },         'Deleted presentations in deletelist (Scope: admin).'),
+			array('GET','/admin/presentations/deletelist/all/',    				function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getAllPresentationRecordsAdmin())); },       'All presentations in deletelist (Scope: admin).'),
+			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
+			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
 
 		    
 			### PRESENTATIONS
@@ -226,11 +226,14 @@
 			array('GET','/me/presentations/', 			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations())); }, 	'User presentations (Scope: user).'),
 			array('GET','/me/presentations/count/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount())); }, 'User presentation count (Scope: user).'),
 
-		    // Delete presentations (TODO)
-			array('POST','/me/presentation/delete/',    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'Request for a presentation to be deleted (Scope: user).'),
-			array('POST','/me/presentation/restore/',   function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'Cancel request for a presentation to be deleted (Scope: user).'),
-			array('POST','/me/presentation/undelete/',  function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUser())); }, 		            'Request for a presentation to be UNdeleted (Scope: user).'),
-
+			// Presentations deletelist (status)
+			array('GET','/me/presentations/deletelist/notmoved/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getNotMovedPresentationsMe())); },    'Get all presentations in deletelist that have not yet been moved (Scope: user).'),
+			array('GET','/me/presentation/deletelist/moved/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsMe())); },       'Get all presentations in deletelist that have been moved (Scope: user).'),
+			array('GET','/me/presentation/deletelist/deleted/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsMe())); },     'Get all presentations in deletelist that have been deleted (Scope: user).'),
+		    // Presentation delete/restore/undelete (actions)
+			array('POST','/me/presentation/deletelist/delete/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->deletePresentationMe())); },  'Request for a presentation to be deleted (Scope: user).'),
+			array('POST','/me/presentation/deletelist/restore/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->restorePresentationMe())); },  'Cancel request for a presentation to be deleted (Scope: user).'),
+			array('POST','/me/presentation/deletelist/undelete/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->undeletePresentationMe())); },  'Request for a presentation already moved to be UNdeleted (Scope: user).'),
 
 			// sql deprecated
 			/* DONE */ // array('GET','/me/', 					                            function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->sql()->getUser($dataporten->userName()))); }, 		            'User account details (Scope: user).'),

@@ -3,7 +3,6 @@
 	namespace Relay\Api;
 
 	use Relay\Auth\Dataporten;
-	use Relay\Utils\Response;
 	use Relay\Database\RelayMySQLConnection;
 
 	/**
@@ -15,8 +14,8 @@
 	 * @since  July 2016
 	 */
 	class RelayPresDeleteMySQL {
-		private $relayMySQLConnection, $dataporten, $config;
 		protected $table_name;
+		private $relayMySQLConnection, $dataporten, $config, $feideUserName;
 
 		function __construct(Dataporten $fc) {
 			//
@@ -24,72 +23,62 @@
 			$this->dataporten           = $fc;
 			$this->config               = $this->relayMySQLConnection->getConfig();
 			$this->table_name           = $this->config['db_table_name'];
+			$this->feideUserName        = $this->dataporten->userName();
 		}
 
 		#
-		# GLOBAL ENDPOINTS (requires admin-scope) AND Role of Superadmin
+		# ADMIN ENDPOINTS (requires admin-scope) AND Role of Superadmin
 		#
-		# /global/presentations/deletelist/*/
+		# /admin/presentations/deletelist/*/
 		#
-		public function getAllPresentationRecords() {
+		public function getAllPresentationRecordsAdmin() {
 			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name");
 		}
 
-		public function getMovedPresentations() {
+		public function getMovedPresentationsAdmin() {
 			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE moved = 1 AND deleted <> 1");
 		}
 
-		public function getDeletedPresentations() {
+		public function getDeletedPresentationsAdmin() {
 			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE deleted = 1");
 		}
 
 
 		#
-		# ORG ENDPOINTS (requires minimum org-scope)
-		#
-		# /org/{org.no}/presentations/deletelist/*/
+		# USER (ME) ENDPOINTS (requires user-scope)
 		#
 
-		public function getOrgUserCount($org) {
-			$this->verifyOrgAccess($org);
+		# GET /me/presentations/deletelist/*/
 
-			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
+		// Presentations recently added to deletelist that have not yet been moved (may be cancelled)
+		public function getNotMovedPresentationsMe() {
+			return $this->relayMySQLConnection->query("SELECT * FROM $this->table_name WHERE username = $this->feideUserName AND moved = 0");
 		}
 
-		/**
-		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
-		 *
-		 * @param $orgName
-		 */
-		function verifyOrgAccess($orgName) {
-			// If NOT superadmin AND requested org data is not for home org
-			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
-			}
+		// Presentations in the deletelist that have been moved, but not yet deleted (may be restored)
+		public function getMovedPresentationsMe() {
+
+		}
+
+		// Presentations in the deletelist that have been deleted (thus cannot be restored)
+		public function getDeletedPresentationsMe() {
+
+		}
+
+		# POST /me/presentation/deletelist/*/
+
+		// Add a single presentation to the deletelist
+		public function deletePresentationMe() {
+		}
+
+		// Remove a single presentation from the deletelist (prior to it being moved)
+		public function restorePresentationMe() {
+		}
+
+		// Request a moved presentation to be moved back
+		public function undeletePresentationMe() {
+
 		}
 
 
-
-		/**
-		 * /me/presentations/deletelist/
-		 * /user/[*:userName]/deletelist/
-		 *
-		 *
-		 * @param $feideUserName
-		 *
-		 * @return array
-		 */
-		public function getUserPresentations($feideUserName) {
-			// NOTE: This query returns ALL presentations; also those deleted.
-			// TODO: Need to find a quick way to check which presentations are deleted
-			return $this->relaySQLConnection->query("
-						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, presProfile_profId, tblPresentation.createdOn, tblPresentation.createdByUser,
-								userEmail, userName
-						FROM 	tblPresentation,
-								tblUser
-						WHERE 	tblUser.userName = '$feideUserName'
-						AND 	tblPresentation.presPresenterEmail = tblUser.userEmail");
-		}
-
-		
 	}

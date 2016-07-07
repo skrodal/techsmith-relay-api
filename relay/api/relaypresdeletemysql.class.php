@@ -118,10 +118,10 @@
 		public function restorePresentationMe() {
 			// Will exit on errors
 			$requestBody = Utils::getPresentationRequestBody();
-			$presID    = isset($requestBody['presentation']['id']) ? $this->sql->real_escape_string($requestBody['presentation']['id']) : Response::error(400, 'Bad request: Missing required data in request body.');
+			$presentationPath    = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
 			// See if entry is in table and that it is not already moved/deleted
-			if($presToDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE id='$presID' AND moved <> 1 AND deleted <> 1")->fetch_assoc()){
-				$query = "DELETE FROM $this->table_name WHERE id='$presID'";
+			if($presToDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presentationPath' AND moved <> 1 AND deleted <> 1")->fetch_assoc()){
+				$query = "DELETE FROM $this->table_name WHERE path='$presentationPath'";
 				// Exit on error
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): ". $this->sql->error);//. $mysqli->error
@@ -137,10 +137,10 @@
 		public function undeletePresentationMe() {
 			// Will exit on errors
 			$requestBody = Utils::getPresentationRequestBody();
-			$presID    = isset($requestBody['presentation']['id']) ? $this->sql->real_escape_string($requestBody['presentation']['id']) : Response::error(400, 'Bad request: Missing required data in request body.');
+			$presentationPath    = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
 			// See if entry is in table and that it is already marked as moved (and not deleted)
-			if($presToUnDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE id='$presID' AND moved = 1 AND deleted <> 1")->fetch_assoc()){
-				$query = "UPDATE $this->table_name SET undelete=1 WHERE id=$presID";
+			if($presToUnDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presentationPath' AND moved = 1 AND deleted <> 1")->fetch_assoc()){
+				$query = "UPDATE $this->table_name SET undelete=1 WHERE path=$presentationPath";
 				// Exit on error
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql->error);//. $mysqli->error

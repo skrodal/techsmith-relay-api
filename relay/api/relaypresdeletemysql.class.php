@@ -110,7 +110,7 @@
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql->error);
 				}
-				Response::result("Request to delete presentation OK.");
+				return 'Request to delete presentation OK.';
 			}
 		}
 
@@ -126,7 +126,7 @@
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): ". $this->sql->error);//. $mysqli->error
 				}
-				Response::result("Request to cancel presentation delete OK.");
+				return 'Request to cancel presentation delete OK.';
 			} else {
 				// The requested presentation record does not exist in the table
 				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted/moved.');
@@ -145,7 +145,7 @@
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql->error);//. $mysqli->error
 				}
-				Response::result("Request to undelete presentation OK.");
+				return 'Request to undelete presentation OK.';
 			} else {
 				// The requested presentation record does not exist in the table
 				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted.');

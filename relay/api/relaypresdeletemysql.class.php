@@ -116,11 +116,40 @@
 
 		// Remove a single presentation from the deletelist (prior to it being moved)
 		public function restorePresentationMe() {
+			// Will exit on errors
+			$requestBody = Utils::getPresentationRequestBody();
+			$presID    = isset($requestBody['presentation']['id']) ? $this->sql->real_escape_string($requestBody['presentation']['id']) : Response::error(400, 'Bad request: Missing required data in request body.');
+			// See if entry is in table and that it is not already moved/deleted
+			if($presToDelete = $this->sql->query("SELECT * FROM $this->tableName WHERE id='$presID' AND moved <> 1 AND deleted <> 1")->fetch_assoc()){
+				$sql = "DELETE FROM $this->tableName WHERE id='$presID'";
+				// Exit on error
+				if(!$result = $this->sql->query($sql)) {
+					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): ". $this->sql()->error);//. $mysqli->error
+				}
+				Response::result($result->fetch_assoc());
+			} else {
+				// The requested presentation record does not exist in the table
+				Response::error(400, 'Bad request: The requested presentation does not exist in the table');
+			}
 		}
 
 		// Request a moved presentation to be moved back
 		public function undeletePresentationMe() {
-
+			// Will exit on errors
+			$requestBody = Utils::getPresentationRequestBody();
+			$presID    = isset($requestBody['presentation']['id']) ? $this->sql->real_escape_string($requestBody['presentation']['id']) : Response::error(400, 'Bad request: Missing required data in request body.');
+			// See if entry is in table and that it is already marked as moved (and not deleted)
+			if($presToUnDelete = $this->sql->query("SELECT * FROM $this->tableName WHERE id='$presID' AND moved = 1 AND deleted <> 1")->fetch_assoc()){
+				$query = "UPDATE $this->tableName SET undelete=1 WHERE id=$presID";
+				// Exit on error
+				if(!$result = $this->sql->query($sql)) {
+					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql()->error);//. $mysqli->error
+				}
+				Response::result($result->fetch_assoc());
+			} else {
+				// The requested presentation record does not exist in the table
+				Response::error(400, 'Bad request: The requested presentation does not exist in the table');
+			}
 		}
 
 

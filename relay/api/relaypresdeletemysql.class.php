@@ -110,7 +110,7 @@
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql->error);
 				}
-				Response::result($result->fetch_assoc());
+				Response::result("Request to delete presentation OK.");
 			}
 		}
 
@@ -126,7 +126,7 @@
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): ". $this->sql->error);//. $mysqli->error
 				}
-				Response::result($result->fetch_assoc());
+				Response::result("Request to cancel presentation delete OK.");
 			} else {
 				// The requested presentation record does not exist in the table
 				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted/moved.');
@@ -145,50 +145,11 @@
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql->error);//. $mysqli->error
 				}
-				Response::result($result->fetch_assoc());
+				Response::result("Request to undelete presentation OK.");
 			} else {
 				// The requested presentation record does not exist in the table
 				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted.');
 			}
 		}
-
-
-		/**
-		 *
-		 */
-		public function movePresentations() {
-
-			$response = array();
-			$issues   = false;
-			// Will exit on error
-			$requestBody = Utils::getRequestBody();
-
-			// Loop each org and save storage in db
-			foreach($requestBody['presentations'] as $presentation) {
-				$presentationID = $this->sql->real_escape_string($presentation['id']);
-				// Note: will not complain about presentations with the `deleted` flag already set
-				$query = "UPDATE $this->table_name SET moved=1 WHERE id=$presentationID";
-				// Exit on error
-				if(!$result = $this->sql->query($query)) {
-					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql->error);
-				}
-
-				// See if presentation is in table before we continue
-				if($presToBeMoved = $this->sql->query("SELECT * FROM $this->table_name WHERE id=$presentationID")->fetch_assoc()) {
-					array_push($response, $presToBeMoved);
-				} else {
-					$issues = true;
-					array_push($response, array('id' => $presentationID, 'error' => 'Not found in the table. Skipped.'));
-				}
-			}
-
-			if(!$issues) {
-				Response::result($response, "Presentations were successfully marked as moved.");
-			} else {
-				Response::result($response, "One or more presentation IDs were not found in the table. See 'response' object for more info.");
-			}
-
-		}
-
 
 	}

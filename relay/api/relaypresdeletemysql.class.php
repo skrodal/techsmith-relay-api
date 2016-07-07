@@ -102,13 +102,13 @@
 
 			// If the presentation is already in the table, exit
 			if($result = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presPath'")->fetch_assoc()) {
-				Response::result(array('info' => 'Presentation was already in the deletelist'));
+				Response::result(array('info' => 'Presentation is already in the deletelist'));
 			} else {
 				// Do the insert
 				$query = "INSERT INTO $this->table_name (path, username) VALUES ('$presPath', '$this->feideUserName')";
 				// Exit on error
 				if(!$result = $this->sql->query($query)) {
-					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql()->error);
+					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql->error);
 				}
 				Response::result($result->fetch_assoc());
 			}
@@ -121,15 +121,15 @@
 			$presID    = isset($requestBody['presentation']['id']) ? $this->sql->real_escape_string($requestBody['presentation']['id']) : Response::error(400, 'Bad request: Missing required data in request body.');
 			// See if entry is in table and that it is not already moved/deleted
 			if($presToDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE id='$presID' AND moved <> 1 AND deleted <> 1")->fetch_assoc()){
-				$sql = "DELETE FROM $this->table_name WHERE id='$presID'";
+				$query = "DELETE FROM $this->table_name WHERE id='$presID'";
 				// Exit on error
-				if(!$result = $this->sql->query($sql)) {
-					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): ". $this->sql()->error);//. $mysqli->error
+				if(!$result = $this->sql->query($query)) {
+					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): ". $this->sql->error);//. $mysqli->error
 				}
 				Response::result($result->fetch_assoc());
 			} else {
 				// The requested presentation record does not exist in the table
-				Response::error(400, 'Bad request: The requested presentation does not exist in the table');
+				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted/moved.');
 			}
 		}
 
@@ -142,13 +142,13 @@
 			if($presToUnDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE id='$presID' AND moved = 1 AND deleted <> 1")->fetch_assoc()){
 				$query = "UPDATE $this->table_name SET undelete=1 WHERE id=$presID";
 				// Exit on error
-				if(!$result = $this->sql->query($sql)) {
-					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql()->error);//. $mysqli->error
+				if(!$result = $this->sql->query($query)) {
+					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql->error);//. $mysqli->error
 				}
 				Response::result($result->fetch_assoc());
 			} else {
 				// The requested presentation record does not exist in the table
-				Response::error(400, 'Bad request: The requested presentation does not exist in the table');
+				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted.');
 			}
 		}
 
@@ -165,16 +165,16 @@
 
 			// Loop each org and save storage in db
 			foreach($requestBody['presentations'] as $presentation) {
-				$presentationID = $this->sql()->real_escape_string($presentation['id']);
+				$presentationID = $this->sql->real_escape_string($presentation['id']);
 				// Note: will not complain about presentations with the `deleted` flag already set
 				$query = "UPDATE $this->table_name SET moved=1 WHERE id=$presentationID";
 				// Exit on error
-				if(!$result = $this->sql()->query($query)) {
-					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql()->error);
+				if(!$result = $this->sql->query($query)) {
+					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql->error);
 				}
 
 				// See if presentation is in table before we continue
-				if($presToBeMoved = $this->sql()->query("SELECT * FROM $this->table_name WHERE id=$presentationID")->fetch_assoc()) {
+				if($presToBeMoved = $this->sql->query("SELECT * FROM $this->table_name WHERE id=$presentationID")->fetch_assoc()) {
 					array_push($response, $presToBeMoved);
 				} else {
 					$issues = true;

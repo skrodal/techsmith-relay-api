@@ -33,4 +33,4 @@ av drift til UNINETT (treg lesetilgang, manglende tilganger, ødelagt Harvester 
 
 ## Brukes av ##
 
-- RelayAdmin (
+RelayAdmin (klient)

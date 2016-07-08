@@ -232,8 +232,12 @@
 			array('GET','/me/presentations/deletelist/deleted/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsMe())); },     'Get all presentations in deletelist that have been deleted (Scope: user).'),
 
 			// POST single presentation delete/restore/undelete request
+
+			// Requires `path` and `username` in request body
 			array('POST','/me/presentation/deletelist/delete/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->deletePresentationMe())); },  'Request for a presentation to be deleted (Scope: user).'),
+			// Requires `path` in request body
 			array('POST','/me/presentation/deletelist/restore/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->restorePresentationMe())); },  'Cancel request for a presentation to be deleted (Scope: user).'),
+			// Requires `path` in request body
 			array('POST','/me/presentation/deletelist/undelete/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->undeletePresentationMe())); },  'Request for a presentation already moved to be UNdeleted (Scope: user).'),
 
 			// sql deprecated

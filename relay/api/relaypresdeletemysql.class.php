@@ -59,6 +59,11 @@
 		# GET /me/presentations/deletelist/*/
 
 
+		// All presentations in the deletelist (client can choose to determine which is which).
+		public function getAllDeletelistPresentationsMe() {
+			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName'");
+			return $this->_sqlResultToArray($result);
+		}
 
 		// Presentations in the deletelist that have been moved, but not yet deleted (may be restored)
 		// Note! Will also return presentations where a restore has been requested already!

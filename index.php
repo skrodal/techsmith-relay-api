@@ -227,9 +227,10 @@
 			array('GET','/me/presentations/count/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount())); }, 'User presentation count (Scope: user).'),
 
 			// GET presentationS deletelist
-			array('GET','/me/presentations/deletelist/notmoved/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getNotMovedPresentationsMe())); },    'Get all presentations in deletelist that have not yet been moved (Scope: user).'),
-			array('GET','/me/presentations/deletelist/moved/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsMe())); },       'Get all presentations in deletelist that have been moved (Scope: user).'),
-			array('GET','/me/presentations/deletelist/deleted/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsMe())); },     'Get all presentations in deletelist that have been deleted (Scope: user).'),
+			array('GET','/me/presentations/deletelist/all/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getAllDeletelistPresentationsMe())); }, 'Get all presentations in deletelist (Scope: user).'),
+			array('GET','/me/presentations/deletelist/notmoved/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getNotMovedPresentationsMe())); },      'Get all presentations in deletelist that have not yet been moved (Scope: user).'),
+			array('GET','/me/presentations/deletelist/moved/',	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsMe())); },         'Get all presentations in deletelist that have been moved (Scope: user).'),
+			array('GET','/me/presentations/deletelist/deleted/',	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsMe())); },       'Get all presentations in deletelist that have been deleted (Scope: user).'),
 
 			// POST single presentation delete/restore/undelete request
 

@@ -148,7 +148,7 @@
 			$presentationPath    = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
 			// See if entry is in table and that it is already marked as moved (and not deleted)
 			if($presToUnDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presentationPath' AND moved = 1 AND deleted <> 1")->fetch_assoc()){
-				$query = "UPDATE $this->table_name SET undelete=1 WHERE path=$presentationPath";
+				$query = "UPDATE $this->table_name SET undelete=1 WHERE path='$presentationPath'";
 				// Exit on error
 				if(!$result = $this->sql->query($query)) {
 					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): ". $this->sql->error);//. $mysqli->error

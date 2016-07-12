@@ -106,7 +106,7 @@
 			$presPath    = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
 			// Double check that the username in request equals Dataporten user
 			if(strcasecmp($requestBody['presentation']['username'], $this->feideUserName) !== 0){
-				Response::error(400, 400, 'Bad request: Client/API user mismatch.');
+				Response::error(400, 'Bad request: Client/API user mismatch.');
 			}
 			// If the presentation is already in the table, exit
 			if($result = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presPath'")->fetch_assoc()) {

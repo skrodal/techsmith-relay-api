@@ -18,12 +18,12 @@
 	class RelayPresDeleteMySQL {
 		private $sql, $table_name, $dataporten, $feideUserName;
 
-		function __construct(Dataporten $fc) {
+		function __construct(Dataporten $dataporten) {
 			//
 			$relayMySQLConnection = new RelayMySQLConnection();
 			$this->sql            = $relayMySQLConnection->db_connect();
 			$this->table_name     = $relayMySQLConnection->getTableName();
-			$this->dataporten     = $fc;
+			$this->dataporten     = $dataporten;
 			$this->feideUserName  = $this->dataporten->userName();
 		}
 

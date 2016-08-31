@@ -115,7 +115,7 @@
 			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
 
-		    
+
 			### PRESENTATIONS
 		    // mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)
 		    // todo: consider writing some sort of pagination (or split mongo query to pieces) since this is memory hungry and returns a huge result that the browser can't handle!
@@ -156,55 +156,51 @@
 		]);
 	}
 
-	// ORG ROUTES if scope allows
-	// TODO:
-	//  At present, the client talks to Kind to check if logged on user is OrgAdmin.
-	//  This is not ideal, the check should happen in this API, which can call Kind and verify!
-	//  FC team says there is no easy way at present for one API GK to speak to another one... (OCT 2015)
-	if( $dataporten->hasOauthScopeAdmin() || $dataporten->hasOauthScopeOrg() ) { // TODO: Implement isOrgAdmin :: && ($dataporten->isOrgAdmin() || $dataporten->isSuperAdmin())) {
+	// ORG ROUTES if scope and role (orgAdmin) allows
+	if( $dataporten->hasOauthScopeAdmin() || $dataporten->hasOauthScopeOrg() ) {
 		// Add all routes
 		$router->addRoutes([
 			### DISKUSAGE
-			array('GET','/org/[org:orgId]/diskusage/', 			                        function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 				 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/diskusage/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
 
-		    ### SINGLE USER
-		    // mongo
-			array('GET','/org/[org:orgId]/user/[user:userName]/', 	                    function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); },                        'Specific user at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/user/[user:userName]/presentations/',         function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations($userName))); },           'Presentations for specific user at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/user/[user:userName]/presentations/count/', 	function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount($userName))); },       'Presentation count for specific user at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/user/[user:userName]/diskusage/',             function($orgId, $userName){ global $relay; verifyOrgAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); },               'Diskusage for specific user at org (Scope: admin/org).'),
+			### SINGLE USER
+			// mongo
+			array('GET', '/org/[org:orgId]/user/[user:userName]/', function($orgId, $userName){ global $relay; verifyOrgAndUserAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUser($userName))); }, 'Specific user at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/user/[user:userName]/presentations/', function($orgId, $userName){ global $relay; verifyOrgAndUserAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations($userName))); }, 'Presentations for specific user at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/user/[user:userName]/presentations/count/', function($orgId, $userName){ global $relay; verifyOrgAndUserAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount($userName))); }, 'Presentation count for specific user at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/user/[user:userName]/diskusage/', function($orgId, $userName){ global $relay; verifyOrgAndUserAccess($orgId, $userName); Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName))); }, 'Diskusage for specific user at org (Scope: admin/org).'),
 
 			### USERS
 
 			// mongo (active == user has produced content)
-			array('GET','/org/[org:orgId]/users/', 	                            function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUsers($orgId))); }, 					'All users at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/count/', 		                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCount($orgId))); }, 				'Count users at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/affiliation/active/count/',     function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCountByAffiliation($orgId))); }, 	'Count *active* users at org by affiliation (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/employees/active/', 			function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployees($orgId))); }, 				'*Active* employees at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/employees/active/count/',       function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeeCount($orgId))); }, 			'Count *active* employees at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/students/active/', 		        function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudents($orgId))); }, 					'*Active* students at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/students/active/count/',        function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentCount($orgId))); }, 				'Count *active* students at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUsers($orgId))); }, 'All users at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCount($orgId))); }, 'Count users at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/affiliation/active/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgUserCountByAffiliation($orgId))); }, 'Count *active* users at org by affiliation (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/employees/active/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployees($orgId))); }, '*Active* employees at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/employees/active/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeeCount($orgId))); }, 'Count *active* employees at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/students/active/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudents($orgId))); }, '*Active* students at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/students/active/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentCount($orgId))); }, 'Count *active* students at org (Scope: admin/org).'),
 
-		    // sql (all users in DB, active *and* inactive)
+			// sql (all users in DB, active *and* inactive)
 			/* DONE */ // array('GET','/org/[org:orgId]/users/', 			    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUsers($orgId))); }, 							                    'All users at org (Scope: admin/org).'),
 			/* DONE */ // array('GET','/org/[org:orgId]/users/count/', 		    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUserCount($orgId))); }, 						                    'Total user count at org (Scope: admin/org).'),array('GET','/org/[org:orgId]/users/affiliation/count/',          function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUserCountByAffiliation($orgId))); }, 		    'Total user count at org by affiliation (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/affiliation/count/', 		    function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUserCountByAffiliation($orgId))); },			                    'Count users at org by affiliation (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/employees/', 				    function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgEmployees($orgId))); }, 						                    'Employees at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/employees/count/', 		        function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgEmployeeCount($orgId))); }, 					                    'Count employees at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/students/', 				    function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgStudents($orgId))); }, 						                    'Students at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/users/students/count/', 		        function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgStudentCount($orgId))); }, 					                    'Count students org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/affiliation/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUserCountByAffiliation($orgId))); }, 'Count users at org by affiliation (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/employees/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgEmployees($orgId))); }, 'Employees at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/employees/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgEmployeeCount($orgId))); }, 'Count employees at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/students/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgStudents($orgId))); }, 'Students at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/users/students/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->sql()->getOrgStudentCount($orgId))); }, 'Count students org (Scope: admin/org).'),
 
 			### PRESENTATIONS
 
-		    // mongo
-			array('GET','/org/[org:orgId]/presentations/', 		                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentations($orgId))); }, 					                    'All presentations at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/presentations/count/',                function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentationCount($orgId))); }, 				                    'Total presentations at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/presentations/employees/', 		    function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentations($orgId))); }, 			                    'All employee presentations at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/presentations/employees/count/',      function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentationCount($orgId))); }, 		                    'Total employee presentations at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/presentations/students/', 		    function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentations($orgId))); }, 			                    'All student presentations at org (Scope: admin/org).'),
-			array('GET','/org/[org:orgId]/presentations/students/count/',       function($orgId){ global $relay; verifyOrgAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 		                    'Total student presentations at org (Scope: admin/org).'),
+			// mongo
+			array('GET', '/org/[org:orgId]/presentations/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentations($orgId))); }, 'All presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentationCount($orgId))); }, 'Total presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/employees/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentations($orgId))); }, 'All employee presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/employees/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentationCount($orgId))); }, 'Total employee presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/students/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentations($orgId))); }, 'All student presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/students/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
 
-		    // sql - deprecated
+			// sql - deprecated
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentations($orgId))); }, 					            'All presentations at org (Scope: admin/org).'),
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/count/',              function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentationCount($orgId))); }, 				            'Total presentations at org (Scope: admin/org).'),
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/employees/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgEmployeePresentations($orgId))); }, 			'All employee presentations at org (Scope: admin/org).'),
@@ -273,7 +269,7 @@
 		sanitizeInput();
 		call_user_func_array($match['target'], $match['params']);
 	} else {
-		Response::error(404, $_SERVER["SERVER_PROTOCOL"] . " The requested resource route could not be found.");
+		Response::error(404, "The requested resource route could not be found.");
 	}
 	// ---------------------- /.MATCH AND EXECUTE REQUESTED ROUTE ----------------------
 
@@ -289,25 +285,31 @@
 	}
 
 	/**
-	 * Prevent orgAdmin to request data for other orgs than what he belongs to.
+	 * Prevent orgAdmin to request data for other orgs than what s/he belongs to.
+	 *
+	 * Also check that the user is member of the MediasiteAdmin group.
 	 *
 	 * @param      $orgName
 	 * @param null $userName
 	 */
-	function verifyOrgAccess($orgName, $userName = null){
+	function verifyOrgAndUserAccess($orgName, $userName = null){
 		global $dataporten;
-
 		// Restrictions apply, unless you're superadmin...
 		if(!$dataporten->isSuperAdmin()){
 			// If requested org data is not for home org
 			if(strcasecmp($orgName, $dataporten->userOrg()) !== 0) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
+				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
 			}
 			// If request involves a user account
 			if(isset($userName)){
 				// Must be user from home org
 				if(!strstr($userName, $orgName)) {
-					Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');	                                      				}
+					Response::error(401, '401 Unauthorized (request mismatch org/user). ');	                                      				}
+			}
+
+			// If user is not an orgAdmin
+			if(!$dataporten->isOrgAdmin()) {
+				Response::error(401, '401 Unauthorized (user is not member of the RelayAdmin group). ');
 			}
 		}
 	}

@@ -16,10 +16,10 @@
 	class RelaySQL {
 		private $relaySQLConnection, $dataporten;
 
-		function __construct(Dataporten $fc) {
+		function __construct(Dataporten $dataporten) {
 			//
 			$this->relaySQLConnection = new RelaySQLConnection();
-			$this->dataporten         = $fc;
+			$this->dataporten         = $dataporten;
 		}
 
 		#
@@ -380,7 +380,7 @@
 				return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
 			}
 			// Else
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
+			Response::error(401, 'Unauthorized!');
 		}
 
 		public function getTableDump($table_name, $top){
@@ -388,7 +388,7 @@
 				return $this->relaySQLConnection->query("SELECT TOP($top) * FROM $table_name");
 			}
 			// Else
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized!');
+			Response::error(401, 'Unauthorized!');
 		}
 
 
@@ -406,7 +406,7 @@
 		function verifyOrgAccess($orgName){
 			// If NOT superadmin AND requested org data is not for home org
 			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (request mismatch org/user). ');
+				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
 			}
 		}
 

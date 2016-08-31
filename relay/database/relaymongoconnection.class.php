@@ -42,7 +42,7 @@
 				$cursor->reset();
 				return $response;
 			} catch (MongoCursorException $e){
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
+				Response::error(500, 'DB cursor error (MongoDB).');
 			}
 		}
 
@@ -50,7 +50,7 @@
 			try {
 				return $this->db->selectCollection($collection)->findOne($criteria);
 			} catch (MongoCursorException $e){
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
+				Response::error(500, 'DB cursor error (MongoDB).');
 			}
 		}
 
@@ -68,7 +68,7 @@
 				$cursor->reset();
 				return $response;
 			} catch (MongoCursorException $e){
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB cursor error (MongoDB).');
+				Response::error(500, 'DB cursor error (MongoDB).');
 			}
 		}
 
@@ -86,14 +86,14 @@
 				return new MongoClient("mongodb://" . $this->config['user'] . ":" . $this->config['pass'] . "@127.0.0.1/" . $this->config['db']);
 			} catch (MongoConnectionException $e){
 				Utils::log($e->getMessage());
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (MongoDB).');
+				Response::error(500, 'DB connection failed (MongoDB).');
 			}
 		}
 
 		private function getConfig(){
 			$this->config = file_get_contents(Config::get('auth')['relay_mongo']);
 			// Sanity
-			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: MongoDB config.'); }
+			if($this->config === false) { Response::error(404, 'Not Found: MongoDB config.'); }
 			// Connect username and pass
 			return json_decode($this->config, true);
 		}

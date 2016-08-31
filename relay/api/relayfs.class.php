@@ -19,9 +19,9 @@
 
 		private $relaySQL, $dataporten;
 
-		function __construct(RelaySQL $rs, Dataporten $fc) {
+		function __construct(RelaySQL $rs, Dataporten $dataporten) {
 			$this->relaySQL   = $rs;
-			$this->dataporten = $fc;
+			$this->dataporten = $dataporten;
 		}
 
 

@@ -1,5 +1,7 @@
 {
-	"user"		:   "dataporten",
-	"passwd"	:   "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-	"desc"      :   "Defined in Dataporten Dashboard"
+	"user"          : "dataporten",
+	"passwd"        : "FROM_DASHBOARD",
+	"group_id"      : "Dataporten Admin Group ID",
+	"group_invite"  : "Dataporten Admin Group URL",
+	"desc"          : "For api/techsmith-relay"
 }

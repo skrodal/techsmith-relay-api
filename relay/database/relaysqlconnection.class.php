@@ -33,7 +33,7 @@
 			$query = mssql_query($sql, $this->connection);
 			// On error
 			if($query === false) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed (SQL).');
+				Response::error(500, 'DB query failed (SQL).');
 			}
 			// Response
 			$response = array();
@@ -71,11 +71,11 @@
 			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
 			//
 			if(!$connection) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (SQL).');
+				Response::error(500, 'DB connection failed (SQL).');
 			}
 			//
 			if(!mssql_select_db($this->config['db'])) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed (SQL).');
+				Response::error(500, 'DB table connection failed (SQL).');
 			}
 
 			Utils::log("DB CONNECTED");
@@ -95,7 +95,7 @@
 		private function getConfig(){
 			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
 			// Sanity
-			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL config.'); }
+			if($this->config === false) { Response::error(404, 'Not Found: SQL config.'); }
 			// Connect username and pass
 			return json_decode($this->config, true);
 		}

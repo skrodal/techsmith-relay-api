@@ -20,11 +20,11 @@
 	class RelayMongo {
 		private $relayMongoConnection, $relaySQL, $dataporten;
 
-		function __construct(RelaySQL $rs, Dataporten $fc) {
+		function __construct(RelaySQL $rs, Dataporten $dataporten) {
 			//
 			$this->relayMongoConnection = new RelayMongoConnection();
 			$this->relaySQL             = $rs;
-			$this->dataporten           = $fc;
+			$this->dataporten           = $dataporten;
 		}
 
 		########################################################################

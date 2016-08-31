@@ -34,7 +34,7 @@
 		private function _getConfig(){
 			$this->config = file_get_contents(Config::get('auth')['relay_mysql_presdelete']);
 			// Sanity
-			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: MySQL config.'); }
+			if($this->config === false) { Response::error(404, 'Not Found: MySQL config.'); }
 			// Connect username and pass
 			return json_decode($this->config, true);
 		}

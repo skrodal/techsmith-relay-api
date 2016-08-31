@@ -153,13 +153,24 @@
 		}
 
 		/**
-		 * Send just a string back that the client can use to display the role or whatever.
-		 * @return string
+		 * Send some info about the logged on user.
+		 *
+		 * @return array
 		 */
 		public function userRole(){
-			if($this->isSuperAdmin()) return "SuperAdmin";
-			else if($this->isOrgAdmin()) return "OrgAdmin";
-			else return "Basic";
+			// Default
+			$role = ['title' => 'Basic', 'orgadmin' => false, 'superadmin' => false];
+			// Member of Dataporten group
+			if($this->isOrgAdmin()){
+				$role['title'] = 'OrgAdmin';
+				$role['orgadmin'] = true;
+			}
+			// UNINETT employee
+			if($this->isSuperAdmin()){
+				$role['title'] = 'SuperAdmin';
+				$role['superadmin'] = true;
+			}
+			return $role;
 		}
 
 		/**

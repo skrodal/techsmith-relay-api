@@ -93,6 +93,7 @@
 			);
 			// Send the request, don't really care about the response for now, only HTTP code
 			$response = curl_exec($ch);
+			error_log($response);
 			//
 			if(curl_errno($ch)) {
 				return false;

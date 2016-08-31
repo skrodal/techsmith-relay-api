@@ -210,10 +210,6 @@
 		 * This function takes care of all of these cases.
 		 */
 		private function _getFeideUsername() {
-			if(!isset($_SERVER["HTTP_X_DATAPORTEN_USERID_SEC"])) {
-				Response::error(401, 'Unauthorized (user not found)');
-			}
-
 			$userIdSec = NULL;
 			// Get the username(s)
 			$userid = $_SERVER["HTTP_X_DATAPORTEN_USERID_SEC"];

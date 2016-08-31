@@ -20,7 +20,7 @@
 				'relay_mysql_presdelete' => $config_root . 'relay_mysql_presdelete_config.js'
 			],
 			'utils'      => [
-				'debug' => true
+				'debug' => false
 			],
 			'screencast' => [
 				'base_url'      => 'https://screencast.uninett.no',

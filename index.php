@@ -214,6 +214,9 @@
 	if($dataporten->hasOauthScopeUser()) {
 		// Add all routes
 		$router->addRoutes([
+
+			// USER ROLE
+			array('GET','/me/role/',                    function(){ global $dataporten; Response::result(array('status' => true, 'data' => $dataporten->userRole())); }, 	            'Logged on users role: Basic, OrgAdmin (if member of Dataporten group RelayAdmin) or SuperAdmin (Scope: user).'),
 			// STORAGE
 			array('GET','/me/diskusage/', 			    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage())); }, 	    'User diskusage history (in MiB) and total (Scope: user).'),
 

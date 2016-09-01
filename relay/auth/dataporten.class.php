@@ -93,7 +93,6 @@
 			);
 			// Send the request, don't really care about the response for now, only HTTP code
 			$response = curl_exec($ch);
-			error_log($response);
 			//
 			if(curl_errno($ch)) {
 				return false;
@@ -160,16 +159,16 @@
 		 */
 		public function userRole(){
 			// Default
-			$role = ['title' => 'Basic', 'orgadmin' => false, 'superadmin' => false];
+			$role = ['title' => 'Basic', 'isOrgAdmin' => false, 'isSuperAdmin' => false];
 			// Member of Dataporten group
 			if($this->isOrgAdmin()){
 				$role['title'] = 'OrgAdmin';
-				$role['orgadmin'] = true;
+				$role['isOrgAdmin'] = true;
 			}
 			// UNINETT employee
 			if($this->isSuperAdmin()){
 				$role['title'] = 'SuperAdmin';
-				$role['superadmin'] = true;
+				$role['isSuperAdmin'] = true;
 			}
 			return $role;
 		}

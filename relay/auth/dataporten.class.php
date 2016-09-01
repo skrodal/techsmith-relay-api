@@ -81,6 +81,9 @@
 		 * @return bool
 		 */
 		private function _getOrgAdminStatus() {
+			// SuperAdmins are OrgAdmins by default, regardless of group membership.
+			if($this->isSuperAdmin()) return true;
+
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, 'https://groups-api.dataporten.no/groups/me/groups/' . $this->config['group_id']);
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');

@@ -156,10 +156,21 @@
 		]);
 	}
 
-	// ORG ROUTES if scope and role (orgAdmin) allows
+	/**
+	 * Every org route will, via verifyOrgAndUserAccess($org, $user), check that the user
+	 *
+	 * 1. is orgAdmin (member of MediasiteAdmin Dataporten group) and
+	 * 2. is affiliated with the $org/$user requested.
+	 *
+	 * The client also needs access to either the admin or org API scope.
+	 */
 	if( $dataporten->hasOauthScopeAdmin() || $dataporten->hasOauthScopeOrg() ) {
 		// Add all routes
 		$router->addRoutes([
+
+			## RelayAdmin group invitation link (to make others OrgAdmins)
+			array('GET', '/org/[org:orgId]/orgadmin/invitationurl/', function($orgId){ global $dataporten; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $dataporten->adminGroupInviteLink())); }, 'Get invitation link to MediasiteAdmin group (Scope: admin/org).'),
+
 			### DISKUSAGE
 			array('GET', '/org/[org:orgId]/diskusage/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId))); }, 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
 

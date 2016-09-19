@@ -1,5 +1,14 @@
 <?php
 
+	/**
+	 * TODO (to consider):
+	 *
+	 * The API does not check for affiliation (left to the client). However, seeing how the API has 
+	 * access to the Group scope (to establish OrgAdmin membership), it would make sense to let the 
+	 * API handle affiliation as well...
+	 */
+
+
 	namespace Relay\Auth;
 
 	use Relay\Conf\Config;

@@ -25,7 +25,6 @@
 
 	### 	  ALTO ROUTER 		###
 	$router = new Router();
-	// TODO: 'presentation' regex when known how to implement delete function (presId format)
 	$router->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++', 'presentation' => '[0-9A-Za-z.]++'));
 	$router->setBasePath(Config::get('router')['api_base_path']);
 
@@ -36,7 +35,6 @@
 	 */
 	$router->map('GET', '/', function () {
 		global $router;
-		// TODO: Show only routes available according to scope
 		Response::result(array('status' => true, 'data' => $router->getRoutes()));
 	}, 'All available routes.');
 
@@ -258,8 +256,6 @@
 			// fs deprecated
 			/* TEST WITH FS */ //array('GET','/me/presentations/',                        function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMedia($dataporten->userName()))); },     'User presentations, deleted ones excluded (Scope: user).'),
 			/* TEST WITH FS */ //array('GET','/me/presentations/count/', 					function(){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->fs()->getRelayUserMediaCount($dataporten->userName()))); },     'User presentation count, deleted ones excluded (Scope: user).'),
-
-			// TODO:  array('DELETE', '/me/presentation/[presentation:presId]/delete/',   function($presId){ global $relay, $dataporten; Response::result(array('status' => true, 'data' => $relay->deleteUserPresentation($presId, $dataporten->userName()))); }, 'Delete user presentation (Scope: user).')
 		]);
 	}
 

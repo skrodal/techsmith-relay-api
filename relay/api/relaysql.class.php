@@ -27,8 +27,6 @@
 		#
 		# /service/*/
 		#
-		// /service/ endpoint - not sure if needed...
-		//public function getService() { return array('message' => 'TODO'); }
 		public function getServiceVersion() { return $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0]; }
 		// public function getServiceWorkers() { return $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
 		public function getServiceWorkers() { return $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
@@ -335,7 +333,6 @@
 		 */
 		public function getUserPresentations($feideUserName) {
 			// NOTE: This query returns ALL presentations; also those deleted.
-			// TODO: Need to find a quick way to check which presentations are deleted
 			return $this->relaySQLConnection->query("
 						SELECT 	presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, presProfile_profId, tblPresentation.createdOn, tblPresentation.createdByUser,
 								userEmail, userName

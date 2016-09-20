@@ -232,10 +232,8 @@
 		 *    Format milliseconds to the H:M:SS format. Useful since RelaySQL recording duration is given in ms...
 		 *
 		 * @author    Simon Skrødal, 17.02.2012
-		 * @todo
 		 *
 		 * @param    int (duration in milliseconds)
-		 *
 		 * @return    String    (H:M:SS)
 		 */
 		private function formatMilliseconds($milliseconds) {

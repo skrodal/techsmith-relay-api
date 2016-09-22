@@ -10,6 +10,7 @@
 
 	namespace Relay;
 
+	date_default_timezone_set('Europe/Oslo');
 	###	   LOAD DEPENDENCIES	###
 	require_once('relay/autoload.php');
 

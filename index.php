@@ -44,9 +44,10 @@
 	// See GK in dataporten.class...
 	$router->addRoutes([
 		//array('GET','/service/', 			function(){ Response::result(array('status' => true, 'data' => $GLOBALS['relay']->getService())); }, 	    'Workers, queue and version.'),
-		array('GET','/service/workers/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); },     'Service workers.'),
-		array('GET','/service/queue/', 		function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue())); }, 	    'Service queue.'),
-		array('GET','/service/version/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion())); },      'Service version.'),
+		array('GET','/service/workers/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceWorkers() )); },         'Service workers.'),
+		array('GET','/service/queue/', 		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue())); }, 	        'Service queue.'),
+		array('GET','/service/queue/failed/',   function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueueFailedJobs())); },  'Service qeueue - jobs that have failed to convert with.'),
+		array('GET','/service/version/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion())); },          'Service version.'),
 
 		// storage (mongo)
 		array('GET','/service/diskusage/',                              function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getServiceDiskusage())); },                          'Total service diskusage (in MiB) (Scope: basic).'),
@@ -112,7 +113,6 @@
 			array('GET','/admin/presentations/deletelist/all/',    				function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getAllPresentationRecordsAdmin())); },       'All presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
-
 
 			### PRESENTATIONS
 		    // mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)

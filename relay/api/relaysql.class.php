@@ -32,7 +32,7 @@
 		public function getServiceWorkers() { return $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
 		public function getServiceQueue() { return $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
 		//
-		public function getServiceQueueFailedJobs($table_name, $top) { return $this->relaySQLConnection->query("SELECT jobId, jobType, jobState, jobPresentation_PresId, jobQueuedTime, jobPercentComplete, jobFailureReason, jobNumberOfFailures, jobTitle  FROM tblJob WHERE jobNumberOfFailures > 0"); }
+		public function getServiceQueueFailedJobs($table_name, $top) { return $this->relaySQLConnection->query("SELECT jobId, jobType, jobState, jobPresentation_PresId, jobQueuedTime, jobPercentComplete, jobFailureReason, jobNumberOfFailures, jobTitle  FROM tblJob WHERE jobState = 3"); }
 
 
 

@@ -58,6 +58,11 @@
 			return $this->_sqlResultToArray($result);
 		}
 
+		/**
+		 * Array with number of hits per org (only org is missing/anonymised). Array items are also
+		 * shuffled/randomised before returned.
+		 * @return bool
+		 */
 		public function getHitsByOrgAnonymised() {
 			// Sorted list of org names (org.no)
 			$orgs = $this->relayMongo->getOrgs();
@@ -68,6 +73,7 @@
 				$hits = $result->fetch_assoc();
 				$response[] = $hits['hits'] ? $hits['hits'] : 0;
 			}
+			shuffle($response);
 			return $response;
 		}
 

@@ -22,17 +22,14 @@
 			array_push($result,  "Memory after collection: " . ($new - $old));
 
 			$old = memory_get_usage();
-			$arr =$relayMongoConnection->findOne('presentations', ['username' => 'simon@uninett.no']);
+			$relayMongoConnection->findOne('presentations', ['username' => 'simon@uninett.no']);
 			$new = memory_get_usage();
 			array_push($result, "Memory after findOne: " . ($new - $old));
 
 			$old = memory_get_usage();
-			$cursor = $relayMongoConnection->findAll('presentations');
-			$arr = iterator_to_array($cursor);
+			$relayMongoConnection->findAll('presentations');
 			$new = memory_get_usage();
 			array_push($result, "Memory after find: " . ($new - $old));
-
-			$cursor->reset();
 			return $result;
 		}
 

@@ -103,6 +103,10 @@
 			//TODO
 		}
 
+		public function getOrgPresentationHitsByUser($org){
+			// TODO
+		}
+
 		#
 		# USER (ME) ENDPOINTS (requires user-scope)
 		#

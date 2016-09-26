@@ -69,7 +69,7 @@
 		// hits (mysql)
 		array('GET','/service/presentations/hits/daily/all/',	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsAll())); },                           'Complete history of daily hits (Scope: basic).'),
 		array('GET','/service/presentations/hits/daily/[i:year]/',	    function($year){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByYear($year))); },              'Complete history of daily hits for a given year (Scope: basic).'),
-		array('GET','/service/presentations/hits/orgs/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAnonymised())); },                   'Hits distributed by orgs, but anonymised (Scope: basic).'),
+		array('GET','/service/presentations/hits/orgs/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAnonymised())); },                    'Hits distributed by orgs, but anonymised (Scope: basic).'),
 	]);
 
 
@@ -215,7 +215,9 @@
 			array('GET', '/org/[org:orgId]/presentations/students/count/',      function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
 
 		    // mysql
-			array('GET', '/org/[org:orgId]/presentations/hits/total/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/hits/total/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgPresentationHitsByUser($orgId))); }, 'Number of hits per user (Scope: admin/org).'),
+
+
 			// sql - deprecated
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentations($orgId))); }, 					            'All presentations at org (Scope: admin/org).'),
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/count/',              function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentationCount($orgId))); }, 				            'Total presentations at org (Scope: admin/org).'),

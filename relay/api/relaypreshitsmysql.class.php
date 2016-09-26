@@ -70,7 +70,7 @@
 		 * Total number of hits per org.
 		 * @return array
 		 */
-		public function getPresentationHitsByOrgAdmin() {
+		public function getHitsByOrgAdmin() {
 			// Sorted list of org names (org.no)
 			$orgs = $this->relayMongo->getOrgs();
 			$response = [];
@@ -96,9 +96,14 @@
 		# USER (ME) ENDPOINTS (requires user-scope)
 		#
 		# /me/presentations/hits/*/
-		public function getHitsPresentationsMe() {
-			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username = '$this->feideUserName'");
 
+		/**
+		 * Get an array with all [ presentation paths : hits ] belonging to this user
+		 * @return array
+		 */
+		public function getHitsMe() {
+			$username = '%' . str_replace("@","%",$this->feideUserName) . '%';
+			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE path LIKE '$username'");
 			return $this->_sqlResultToArray($result);
 		}
 

@@ -117,7 +117,7 @@
 			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
 			### HITS
-			array('GET','/admin/presentations/hits/',    			            function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getPresentationHitsByOrgAdmin())); },      'Hits distributed by orgs (Scope: admin).'),
+			array('GET','/admin/presentations/hits/orgs/',    			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getPresentationHitsByOrgAdmin())); },      'Hits distributed by orgs (Scope: admin).'),
 
 			### PRESENTATIONS
 		    // mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)

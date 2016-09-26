@@ -19,17 +19,17 @@
 			$old = memory_get_usage();
 			$relayMongoConnection = new RelayMongoConnection();
 			$new = memory_get_usage();
-			array_push($result,  "Memory consumption after connection: " . bytes2mb($new - $old));
+			array_push($result,  "Memory consumption (in MB) after connection: " . $this->bytes2mb($new - $old));
 
 			$old = memory_get_usage();
 			$relayMongoConnection->findOne('presentations', ['username' => 'simon@uninett.no']);
 			$new = memory_get_usage();
-			array_push($result, "Memory consumption after findOne: " . bytes2mb($new - $old));
+			array_push($result, "Memory consumption (in MB) after findOne: " . $this->bytes2mb($new - $old));
 
 			$old = memory_get_usage();
 			$relayMongoConnection->findAll('presentations');
 			$new = memory_get_usage();
-			array_push($result, "Memory consumption after findAll: " . bytes2mb($new - $old));
+			array_push($result, "Memory consumption (in MB) after findAll: " . $this->bytes2mb($new - $old));
 			return $result;
 		}
 

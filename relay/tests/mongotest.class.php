@@ -34,7 +34,7 @@
 		}
 
 		private function bytes2mb($bytes){
-			return $bytes * 1024 *1024;
+			return $bytes / 1000 / 1000;
 		}
 
 	}

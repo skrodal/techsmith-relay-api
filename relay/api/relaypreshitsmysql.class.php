@@ -58,7 +58,18 @@
 			return $this->_sqlResultToArray($result);
 		}
 
-
+		public function getHitsByOrgAnonymised() {
+			// Sorted list of org names (org.no)
+			$orgs = $this->relayMongo->getOrgs();
+			$response = [];
+			//
+			foreach($orgs as $index => $org){
+				$result = $this->sql->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
+				$hits = $result->fetch_assoc();
+				$response[] = $hits['hits'] ? $hits['hits'] : 0;
+			}
+			return $response;
+		}
 
 		#
 		# ADMIN ENDPOINTS

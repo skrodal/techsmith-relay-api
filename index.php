@@ -69,6 +69,7 @@
 		// hits (mysql)
 		array('GET','/service/presentations/hits/daily/all/',	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsAll())); },                           'Complete history of daily hits (Scope: basic).'),
 		array('GET','/service/presentations/hits/daily/[i:year]/',	    function($year){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByYear($year))); },              'Complete history of daily hits for a given year (Scope: basic).'),
+		array('GET','/service/presentations/hits/orgs/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAnonymised())); },                   'Hits distributed by orgs, but anonymised (Scope: basic).'),
 	]);
 
 
@@ -117,7 +118,7 @@
 			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
 			### HITS
-			array('GET', '/admin/presentations/hits/orgs/', function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAdmin())); }, 'Hits distributed by orgs (Scope: admin).'),
+			array('GET', '/admin/presentations/hits/orgs/',                     function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAdmin())); },                    'Hits distributed by orgs (Scope: admin).'),
 
 			### PRESENTATIONS
 			// mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)
@@ -206,13 +207,15 @@
 			### PRESENTATIONS
 
 			// mongo
-			array('GET', '/org/[org:orgId]/presentations/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentations($orgId))); }, 'All presentations at org (Scope: admin/org).'),
-			array('GET', '/org/[org:orgId]/presentations/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentationCount($orgId))); }, 'Total presentations at org (Scope: admin/org).'),
-			array('GET', '/org/[org:orgId]/presentations/employees/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentations($orgId))); }, 'All employee presentations at org (Scope: admin/org).'),
-			array('GET', '/org/[org:orgId]/presentations/employees/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentationCount($orgId))); }, 'Total employee presentations at org (Scope: admin/org).'),
-			array('GET', '/org/[org:orgId]/presentations/students/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentations($orgId))); }, 'All student presentations at org (Scope: admin/org).'),
-			array('GET', '/org/[org:orgId]/presentations/students/count/', function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/',                     function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentations($orgId))); }, 'All presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/count/',               function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgPresentationCount($orgId))); }, 'Total presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/employees/',           function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentations($orgId))); }, 'All employee presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/employees/count/',     function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgEmployeePresentationCount($orgId))); }, 'Total employee presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/students/',            function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentations($orgId))); }, 'All student presentations at org (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/students/count/',      function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
 
+		    // mysql
+			array('GET', '/org/[org:orgId]/presentations/hits/total/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
 			// sql - deprecated
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/', 		             function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentations($orgId))); }, 					            'All presentations at org (Scope: admin/org).'),
 			/* DONE */ //array('GET','/org/[org:orgId]/presentations/count/',              function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgPresentationCount($orgId))); }, 				            'Total presentations at org (Scope: admin/org).'),
@@ -238,7 +241,7 @@
 			array('GET','/me/presentations/', 			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentations())); }, 	'User presentations (Scope: user).'),
 			array('GET','/me/presentations/count/', 	function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getUserPresentationCount())); }, 'User presentation count (Scope: user).'),
 			// mysql
-			array('GET','/me/presentations/hits/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsMe())); }, 'User presentation hits (Scope: user).'),
+			array('GET','/me/presentations/hits/', 	    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsMe())); }, 'User presentation hits, inc. timestamp of latest hit (Scope: user).'),
 
 
 			// GET presentationS deletelist

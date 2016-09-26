@@ -1,5 +1,3 @@
 *.schema*
 *.idea*
 .dev
-relay_config-REAL.js
-mongodb_config-REAL.js

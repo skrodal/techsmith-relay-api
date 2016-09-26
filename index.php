@@ -55,17 +55,20 @@
 		// users (mongo)
 		array('GET','/service/users/count/', 			                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCount())); }, 							'Total user count (Scope: basic).'),
 		array('GET','/service/users/active/count/', 	                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountActive())); }, 					'Count *active* users (Scope: basic).'),
-		array('GET','/service/users/edupersonaffiliation/active/count/',         function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountByAffiliation())); }, 	            'Count *active* users by affiliation (Scope: basic).'),
+		array('GET','/service/users/edupersonaffiliation/active/count/',function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalUserCountByAffiliation())); }, 	            'Count *active* users by affiliation (Scope: basic).'),
 		array('GET','/service/users/employees/active/count/',		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeeCount())); }, 						'Total *active* employee count (Scope: basic).'),
 		array('GET','/service/users/students/active/count/',		    function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentCount())); }, 					    'Count *active* student count (Scope: basic).'),
 		// users (sql)
-		array('GET','/service/users/edupersonaffiliation/count/', 		        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCountByAffiliation())); },			    'Total user count by affiliation (Scope: basic).'),
+		array('GET','/service/users/edupersonaffiliation/count/', 		function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCountByAffiliation())); },			    'Total user count by affiliation (Scope: basic).'),
 		array('GET','/service/users/employees/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: basic).'),
 		array('GET','/service/users/students/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						    'Total student count (Scope: basic).'),
 		// presentations (mongo)
 		array('GET','/service/presentations/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentationCount())); }, 				    'Total presentation count (on disk) (Scope: basic).'),
 		array('GET','/service/presentations/employees/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (on disk) (Scope: basic).'),
 		array('GET','/service/presentations/students/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (on disk) (Scope: basic).'),
+		// hits (mysql)
+		array('GET','/service/presentations/hits/daily/all/',	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsAll())); },                           'Complete history of daily hits (Scope: basic).'),
+		array('GET','/service/presentations/hits/daily/[i:year]/',	    function($year){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByYear($year))); },              'Complete history of daily hits for a given year (Scope: basic).'),
 
 	]);
 

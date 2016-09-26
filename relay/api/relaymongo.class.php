@@ -91,6 +91,12 @@
 			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ['username' => $feideUserName];
 
+			// TODO: Get deleted
+
+			// TODO: Get hits
+
+
+
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 

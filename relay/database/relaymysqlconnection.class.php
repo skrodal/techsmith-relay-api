@@ -10,9 +10,9 @@
 
 		private $config;
 
-		function __construct() {
+		function __construct($configKey) {
 			// Get connection conf
-			$this->config = $this->_getConfig();
+			$this->config = $this->_loadConfig($configKey);
 		}
 
 		public function db_connect() {
@@ -27,15 +27,15 @@
 			return $mysqli;
 		}
 
-		public function getTableName(){
-			return $this->config['db_table_name'];
+		public function getConfig($key){
+			return $this->config[$key];
 		}
 
-		private function _getConfig(){
-			$this->config = file_get_contents(Config::get('auth')['relay_mysql_presdelete']);
+		private function _loadConfig($configKey){
+			$this->config = file_get_contents(Config::get('auth')[$configKey]);
 			// Sanity
-			if($this->config === false) { Response::error(404, 'Not Found: MySQL config.'); }
-			// Connect username and pass
+			if($this->config === false) { Response::error(404, 'Not Found: MySQL config [' . $configKey . ']'); }
+			// DB details
 			return json_decode($this->config, true);
 		}
 

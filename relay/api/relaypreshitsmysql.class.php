@@ -78,7 +78,7 @@
 			foreach($orgs as $index => $org){
 				$result = $this->sql->query("SELECT SUM(hits) FROM $this->tableHits AS hits WHERE path LIKE '%$org%'");
 				$hits = $result->fetch_assoc();
-				$response[$org] = $hits['hits'] ? $hits['hits'] : 0;
+				$response[$org] = $hits ? $hits : 0;
 			}
 			return $response;
 		}

@@ -35,7 +35,7 @@
 			# Presentation delete
 			$this->relayPresDeleteMySQL = new RelayPresDeleteMySQL($dataporten);
 			# Presentation hits
-			$this->relayPresHitsMySQL = new RelayPresHitsMySQL($dataporten);
+			$this->relayPresHitsMySQL = new RelayPresHitsMySQL($dataporten, $this->relayMongo);
 		}
 
 

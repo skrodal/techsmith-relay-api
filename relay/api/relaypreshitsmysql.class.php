@@ -5,7 +5,6 @@
 	use Relay\Auth\Dataporten;
 	use Relay\Database\RelayMySQLConnection;
 	use Relay\Utils\Response;
-	use Relay\Utils\Utils;
 
 	/**
 	 * Serves API routes pertaining to presentation hits (collected by service relay-iis-logparser).
@@ -16,16 +15,17 @@
 	 * @since  September 2016
 	 */
 	class RelayPresHitsMySQL {
-		private $sql, $tableHits, $tableDaily, $dataporten, $feideUserName;
+		private $sql, $tableHits, $tableDaily, $dataporten, $feideUserName, $relayMongo;
 		private $configKey = 'relay_mysql_preshits';
 
-		function __construct(Dataporten $dataporten) {
+		function __construct(Dataporten $dataporten, RelayMongo $relayMongo) {
 			//
 			$relayMySQLConnection = new RelayMySQLConnection($this->configKey);
 			$this->sql            = $relayMySQLConnection->db_connect();
 			$this->tableHits      = $relayMySQLConnection->getConfig('db_table_hits');
-			$this->tableDaily      = $relayMySQLConnection->getConfig('db_table_daily');
+			$this->tableDaily     = $relayMySQLConnection->getConfig('db_table_daily');
 			$this->dataporten     = $dataporten;
+			$this->relayMongo     = $relayMongo;
 			$this->feideUserName  = $this->dataporten->userName();
 		}
 
@@ -34,15 +34,53 @@
 		#
 		# /service/presentations/hits/*/
 		#
+
+		/**
+		 * All daily records in table
+		 * @return array
+		 */
 		public function getDailyHitsAll() {
 			$result = $this->sql->query("SELECT * FROM $this->tableDaily");
+
 			return $this->_sqlResultToArray($result);
 		}
 
+		/**
+		 * All daily records in table from year $year
+		 *
+		 * @param $year
+		 * @return array
+		 */
 		public function getDailyHitsByYear($year) {
-			$year = intval($this->sql->real_escape_string($year));
+			$year   = intval($this->sql->real_escape_string($year));
 			$result = $this->sql->query("SELECT * FROM $this->tableDaily WHERE YEAR(log_date) = $year");
+
 			return $this->_sqlResultToArray($result);
+		}
+
+
+
+		#
+		# ADMIN ENDPOINTS
+		#
+		# /admin/presentations/hits/
+		#
+
+		/**
+		 * Total number of hits per org.
+		 * @return array
+		 */
+		public function getPresentationHitsByOrgAdmin() {
+			// Sorted list of org names (org.no)
+			$orgs = $this->relayMongo->getOrgs();
+			$response = [];
+			//
+			foreach($orgs as $index => $org){
+				$result = $this->sql->query("SELECT SUM(hits) FROM $this->tableHits WHERE path LIKE '%$org%'");
+				$hits = $result->fetch_assoc();
+				$response[$org] = $hits ? $hits : 0;
+			}
+			return $response;
 		}
 
 		#
@@ -50,22 +88,21 @@
 		#
 		# /org/[org]/presentations/hits/*/
 		#
-
+		public function getOrgTotalHits($org) {
+			//TODO
+		}
 
 		#
 		# USER (ME) ENDPOINTS (requires user-scope)
 		#
 		# /me/presentations/hits/*/
-
-
-		// Hits for all presentations
 		public function getHitsPresentationsMe() {
 			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username = '$this->feideUserName'");
+
 			return $this->_sqlResultToArray($result);
 		}
 
-		
-		//
+
 		private function _sqlResultToArray($result) {
 			$response = array();
 			// Loop returned rows and create a response
@@ -75,5 +112,22 @@
 
 			return $response;
 		}
+
+		// ---------------------------- UTILS ----------------------------
+
+		/**
+		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
+		 *
+		 * @param $orgName
+		 */
+		function verifyOrgAccess($orgName) {
+			// If NOT superadmin AND requested org data is not for home org
+			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
+				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
+			}
+		}
+
+
+		// ---------------------------- ./UTILS ----------------------------
 
 	}

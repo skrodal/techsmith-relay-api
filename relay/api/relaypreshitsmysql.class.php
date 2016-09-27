@@ -14,16 +14,16 @@
 	 * @author Simon Skrodal
 	 * @since  September 2016
 	 */
-	class RelayPresHitsMySQL {
+	class RelayPresHitsMySQL extends Relay {
 		private $relayMySQLConnection = false;
 		private $sql, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $relayMongo, $firstRecordTimestamp;
 		private $configKey = 'relay_mysql_preshits';
 
-		function __construct(RelayMongo $relayMongo, Dataporten $dataporten) {
-			$this->dataporten     = $dataporten;
-			$this->relayMongo     = $relayMongo;
+		function __construct() {
+			$this->dataporten     = parent::dataporten();
+			// $this->relayMongo     = $relayMongo;
+			$this->relayMongo     = parent::mongo();
 			$this->feideUserName  = $this->dataporten->userName();
-
 		}
 
 		private function init(){

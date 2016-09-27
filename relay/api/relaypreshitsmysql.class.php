@@ -19,7 +19,7 @@
 		private $sql, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $relayMongo, $firstRecordTimestamp;
 		private $configKey = 'relay_mysql_preshits';
 
-		function __construct(Dataporten $dataporten, RelayMongo $relayMongo) {
+		function __construct(RelayMongo $relayMongo, Dataporten $dataporten) {
 			$this->dataporten     = $dataporten;
 			$this->relayMongo     = $relayMongo;
 			$this->feideUserName  = $this->dataporten->userName();
@@ -177,12 +177,14 @@
 		# /me/presentations/hits/*/
 
 		/**
-		 * Get an array with all [ presentation paths : hits ] belonging to this user
+		 * Get an indexed array with one obj per presentation path (hits, timestamp, username)
 		 * @return array
 		 */
-		public function getHitsMe() {
+		public function getHitsMe($feideUserName = NULL) {
+			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
+			// Hits table does not ever use the ampersand in username (as username was generated from the presentation path)
+			$username = str_replace("@","",$feideUserName);
 			$this->init();
-			$username = str_replace("@","",$this->feideUserName);
 			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username LIKE '$username'");
 			return $this->_sqlResultToArray($result);
 		}

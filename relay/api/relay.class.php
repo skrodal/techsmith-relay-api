@@ -18,6 +18,7 @@
 
 		function __construct(Dataporten $dataporten) {
 			$this->dataporten = $dataporten;
+			error_log('New Relay Instance');
 		}
 
 		public function mongo() {

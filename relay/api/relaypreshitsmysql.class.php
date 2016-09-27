@@ -176,7 +176,9 @@
 		# /me/presentations/hits/*/
 
 		/**
-		 * Get an indexed array with one obj per presentation path (hits, timestamp, username)
+		 * Get an keyed array with one obj per presentation path (hits, timestamp, username)
+		 *
+		 * @param null $feideUserName
 		 * @return array
 		 */
 		public function getHitsMe($feideUserName = NULL) {
@@ -185,7 +187,11 @@
 			$username = str_replace("@","",$feideUserName);
 			$this->init();
 			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username LIKE '$username'");
-			return $this->_sqlResultToArray($result);
+			$response = [];
+			while($row = $result->fetch_assoc()) {
+				$response[$row['path']] = $row;
+			}
+			return $response;
 		}
 
 

@@ -18,11 +18,10 @@
 	 * @time    15:24
 	 */
 	class RelayMongo extends Relay {
-		private $relayMongoConnection, $relaySQL, $dataporten;
+		private $relayMongoConnection, $dataporten;
 
 		function __construct($dataporten) {
 			$this->relayMongoConnection = new RelayMongoConnection();
-			$this->relaySQL             = parent::sql();
 			$this->dataporten           = $dataporten;
 		}
 
@@ -89,8 +88,7 @@
 		public function getUserPresentations($feideUserName = NULL) {
 			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ['username' => $feideUserName];
-
-
+			$hits = parent::presHits()->getHitsMe($feideUserName);
 			// TODO: Get deleted
 
 			// TODO: Get hits

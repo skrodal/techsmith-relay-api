@@ -16,12 +16,11 @@
 	 */
 	class RelayPresHitsMySQL extends Relay {
 		private $relayMySQLConnection = false;
-		private $sql, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $relayMongo, $firstRecordTimestamp;
+		private $sql, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $firstRecordTimestamp;
 		private $configKey = 'relay_mysql_preshits';
 
 		function __construct($dataporten) {
 			$this->dataporten     = $dataporten;
-			$this->relayMongo     = parent::mongo();
 			$this->feideUserName  = $this->dataporten->userName();
 		}
 
@@ -96,7 +95,7 @@
 		public function getOrgsTotalHitsAnonymised() {
 			$this->init();
 			// Sorted list of org names (org.no)
-			$orgs = $this->relayMongo->getOrgs();
+			$orgs = parent::mongo()->getOrgs();
 			$response = [];
 			$response['hits'] = [];
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();

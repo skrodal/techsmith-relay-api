@@ -220,7 +220,7 @@
 
 		    // mysql
 			array('GET', '/org/[org:orgId]/presentations/hits/total/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgTotalHits($orgId))); }, 'Total number of hits on this orgs content (Scope: admin/org).'),
-			array('GET', '/org/[org:orgId]/presentations/hits/users/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgTotalHitsByUser($orgId))); }, 'Total number of on this orgs content, for each user (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/hits/users/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgTotalHitsByUser($orgId))); }, 'Total number of hits on this orgs content, for each user (Scope: admin/org).'),
 
 
 			// sql - deprecated

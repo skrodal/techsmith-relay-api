@@ -163,20 +163,23 @@
 
 		/**
 		 * List of all users at org and the total number of hits each user has had on their content.
-		 *
+		 * Also includes total and first logged timestamp.
 		 * @param $org
 		 * @return array
 		 */
 		public function getOrgTotalHitsByUser($org){
 			$this->init();
 			$result = $this->sql->query("SELECT username, sum(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org%' GROUP BY username");
+			$response = [];
+			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
+			$response['total_hits'] = 0;
 			$users = [];
 			while($row = $result->fetch_assoc()) {
 				$users[$row['username']] = $row['hits'];
+				$response['total_hits']+= $row['hits'];
 			}
-			$response = [];
 			$response['users'] = $users;
-			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
+
 			return $response;
 		}
 

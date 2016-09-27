@@ -12,7 +12,6 @@
 	use Relay\Auth\Dataporten;
 
 
-
 	class Relay {
 
 		private $dataporten;
@@ -21,28 +20,27 @@
 			$this->dataporten = $dataporten;
 		}
 
-
-		public function sql(){
-			return new RelaySQL($this->dataporten);
+		public function mongo() {
+			return new RelayMongo();
 		}
 
-		public function mongo(){
-			return new RelayMongo($this->sql(), $this->dataporten);
+		public function sql() {
+			return new RelaySQL();
 		}
 
-		public function fs(){
-			return new RelayFS($this->sql(), $this->dataporten);
+		public function fs() {
+			return new RelayFS();
 		}
 
-		public function presDelete(){
-			return new RelayPresDeleteMySQL($this->dataporten);
+		public function presDelete() {
+			return new RelayPresDeleteMySQL();
 		}
 
-		public function presHits(){
+		public function presHits() {
 			return new RelayPresHitsMySQL();
 		}
 
-		public function dataporten(){
+		public function dataporten() {
 			return $this->dataporten;
 		}
 	}

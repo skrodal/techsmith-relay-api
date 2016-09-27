@@ -15,13 +15,13 @@
 	 * @date   16/10/2015
 	 * @time   14:00
 	 */
-	class RelayFS {
+	class RelayFS extends Relay {
 
 		private $relaySQL, $dataporten;
 
-		function __construct(RelaySQL $rs, Dataporten $dataporten) {
-			$this->relaySQL   = $rs;
-			$this->dataporten = $dataporten;
+		function __construct() {
+			$this->relaySQL   = parent::sql();
+			$this->dataporten = parent::dataporten();
 		}
 
 

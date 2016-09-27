@@ -21,7 +21,6 @@
 
 		function __construct() {
 			$this->dataporten     = parent::dataporten();
-			// $this->relayMongo     = $relayMongo;
 			$this->relayMongo     = parent::mongo();
 			$this->feideUserName  = $this->dataporten->userName();
 		}

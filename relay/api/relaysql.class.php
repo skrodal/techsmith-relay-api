@@ -2,7 +2,6 @@
 
 	namespace Relay\Api;
 
-	use Relay\Auth\Dataporten;
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
 	/**
@@ -13,13 +12,12 @@
 	 */
 
 
-	class RelaySQL {
+	class RelaySQL extends Relay {
 		private $relaySQLConnection, $dataporten;
 
-		function __construct(Dataporten $dataporten) {
-			//
+		function __construct() {
 			$this->relaySQLConnection = new RelaySQLConnection();
-			$this->dataporten         = $dataporten;
+			$this->dataporten         = parent::dataporten();
 		}
 
 		#

@@ -17,14 +17,13 @@
 	 * @date    29/10/2015
 	 * @time    15:24
 	 */
-	class RelayMongo {
+	class RelayMongo extends Relay {
 		private $relayMongoConnection, $relaySQL, $dataporten;
 
-		function __construct(RelaySQL $rs, Dataporten $dataporten) {
-			//
+		function __construct() {
 			$this->relayMongoConnection = new RelayMongoConnection();
-			$this->relaySQL             = $rs;
-			$this->dataporten           = $dataporten;
+			$this->relaySQL             = parent::sql();
+			$this->dataporten           = parent::dataporten();
 		}
 
 		########################################################################

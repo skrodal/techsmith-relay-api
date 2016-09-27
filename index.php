@@ -119,8 +119,9 @@
 			array('GET','/admin/presentations/deletelist/all/',    				function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getAllPresentationRecordsAdmin())); },       'All presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
+
 			### HITS
-			array('GET', '/admin/presentations/hits/orgs/total/', function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgsTotalHits())); }, 'Hits distributed by orgs (Scope: admin).'),
+			array('GET', '/admin/presentations/hits/orgs/total/',               function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgsTotalHits())); }, 'Hits distributed by orgs (Scope: admin).'),
 
 			### PRESENTATIONS
 			// mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)
@@ -217,7 +218,8 @@
 			array('GET', '/org/[org:orgId]/presentations/students/count/',      function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgStudentPresentationCount($orgId))); }, 'Total student presentations at org (Scope: admin/org).'),
 
 		    // mysql
-			array('GET', '/org/[org:orgId]/presentations/hits/total/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgPresentationHitsByUser($orgId))); }, 'Number of hits per user (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/hits/total/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgTotalHits($orgId))); }, 'Total number of hits on this orgs content (Scope: admin/org).'),
+			array('GET', '/org/[org:orgId]/presentations/hits/users/',          function($orgId){ global $relay; verifyOrgAndUserAccess($orgId); Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgTotalHitsByUser($orgId))); }, 'Total number of on this orgs content, for each user (Scope: admin/org).'),
 
 
 			// sql - deprecated

@@ -146,7 +146,19 @@
 			$this->init();
 			$result = $this->sql->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
 			$hits = $result->fetch_assoc();
-			return $hits['hits'] ? $hits['hits'] : 0;
+			$response = [];
+			$response['hits'] = $hits['hits'] ? $hits['hits'] : 0;
+			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
+			return $response;
+		}
+
+		public function getOrgTotalHitsByUser($org){
+			$this->init();
+			$result = $this->sql->query("SELECT username, sum(hits) FROM $this->tableHits WHERE username LIKE '%$org%' GROUP BY username");
+			$response = [];
+			$response['users'] = $this->_sqlResultToArray($result);
+			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
+			return $response;
 		}
 
 		public function getOrgPresentationHitsByUser($org){
@@ -177,7 +189,6 @@
 			while($row = $result->fetch_assoc()) {
 				array_push($response, $row);
 			}
-
 			return $response;
 		}
 

@@ -15,18 +15,37 @@
 	 * @since  September 2016
 	 */
 	class RelayPresHitsMySQL {
-		private $sql, $tableHits, $tableDaily, $dataporten, $feideUserName, $relayMongo;
+		private $relayMySQLConnection = false;
+		private $sql, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $relayMongo, $firstRecordTimestamp;
 		private $configKey = 'relay_mysql_preshits';
 
 		function __construct(Dataporten $dataporten, RelayMongo $relayMongo) {
-			//
-			$relayMySQLConnection = new RelayMySQLConnection($this->configKey);
-			$this->sql            = $relayMySQLConnection->db_connect();
-			$this->tableHits      = $relayMySQLConnection->getConfig('db_table_hits');
-			$this->tableDaily     = $relayMySQLConnection->getConfig('db_table_daily');
 			$this->dataporten     = $dataporten;
 			$this->relayMongo     = $relayMongo;
 			$this->feideUserName  = $this->dataporten->userName();
+
+		}
+
+		private function init(){
+			if (!$this->relayMySQLConnection){
+				$this->relayMySQLConnection = new RelayMySQLConnection($this->configKey);
+				$this->tableHits            = $this->relayMySQLConnection->getConfig('db_table_hits');
+				$this->tableDaily           = $this->relayMySQLConnection->getConfig('db_table_daily');
+				$this->tableInfo            = $this->relayMySQLConnection->getConfig('db_table_info');
+				$this->sql                  = $this->relayMySQLConnection->db_connect();
+				$this->firstRecordTimestamp = $this->getFirstRecordedTimestamp();
+			}
+		}
+
+		/**
+		 *
+		 * @return bool
+		 */
+		private function getFirstRecordedTimestamp(){
+			$this->init();
+			$result = $this->sql->query("SELECT conf_val AS 'timestamp' from $this->tableInfo WHERE conf_key = 'first_record_timestamp'");
+			$timestamp = $result->fetch_assoc();
+			return $timestamp['timestamp'] ? $timestamp['timestamp'] : false;
 		}
 
 		#
@@ -40,8 +59,8 @@
 		 * @return array
 		 */
 		public function getDailyHitsAll() {
+			$this->init();
 			$result = $this->sql->query("SELECT * FROM $this->tableDaily");
-
 			return $this->_sqlResultToArray($result);
 		}
 
@@ -52,28 +71,43 @@
 		 * @return array
 		 */
 		public function getDailyHitsByYear($year) {
+			$this->init();
 			$year   = intval($this->sql->real_escape_string($year));
 			$result = $this->sql->query("SELECT * FROM $this->tableDaily WHERE YEAR(log_date) = $year");
-
 			return $this->_sqlResultToArray($result);
 		}
 
+		/**
+		 * All daily records in table in the last $days
+		 *
+		 * @param $days
+		 * @return array
+		 */
+		public function getDailyHitsByDays($days) {
+			$this->init();
+			$days   = intval($this->sql->real_escape_string($days));
+			$result = $this->sql->query("SELECT * FROM $this->tableDaily WHERE log_date >= date(now()) - INTERVAL $days DAY");
+			return $this->_sqlResultToArray($result);
+		}
 		/**
 		 * Array with number of hits per org (only org is missing/anonymised). Array items are also
 		 * shuffled/randomised before returned.
 		 * @return bool
 		 */
-		public function getHitsByOrgAnonymised() {
+		public function getOrgsTotalHitsAnonymised() {
+			$this->init();
 			// Sorted list of org names (org.no)
 			$orgs = $this->relayMongo->getOrgs();
 			$response = [];
+			$response['hits'] = [];
+			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			//
 			foreach($orgs as $index => $org){
 				$result = $this->sql->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
 				$hits = $result->fetch_assoc();
-				$response[] = $hits['hits'] ? $hits['hits'] : 0;
+				$response['hits'][] = $hits['hits'] ? $hits['hits'] : "0";
 			}
-			shuffle($response);
+			shuffle($response['hits']);
 			return $response;
 		}
 
@@ -87,15 +121,18 @@
 		 * Total number of hits per org.
 		 * @return array
 		 */
-		public function getHitsByOrgAdmin() {
+		public function getOrgsTotalHits() {
+			$this->init();
 			// Sorted list of org names (org.no)
 			$orgs = $this->relayMongo->getOrgs();
 			$response = [];
+			$response['hits'] = [];
+			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			//
 			foreach($orgs as $index => $org){
 				$result = $this->sql->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
 				$hits = $result->fetch_assoc();
-				$response[$org] = $hits['hits'] ? $hits['hits'] : 0;
+				$response['hits'][$org] = $hits['hits'] ? $hits['hits'] : 0;
 			}
 			return $response;
 		}
@@ -106,10 +143,14 @@
 		# /org/[org]/presentations/hits/*/
 		#
 		public function getOrgTotalHits($org) {
-			//TODO
+			$this->init();
+			$result = $this->sql->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
+			$hits = $result->fetch_assoc();
+			return $hits['hits'] ? $hits['hits'] : 0;
 		}
 
 		public function getOrgPresentationHitsByUser($org){
+			$this->init();
 			// TODO
 		}
 
@@ -123,6 +164,7 @@
 		 * @return array
 		 */
 		public function getHitsMe() {
+			$this->init();
 			$username = '%' . str_replace("@","%",$this->feideUserName) . '%';
 			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE path LIKE '$username'");
 			return $this->_sqlResultToArray($result);

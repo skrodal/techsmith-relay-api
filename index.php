@@ -68,8 +68,10 @@
 		array('GET','/service/presentations/students/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (on disk) (Scope: basic).'),
 		// hits (mysql)
 		array('GET','/service/presentations/hits/daily/all/',	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsAll())); },                           'Complete history of daily hits (Scope: basic).'),
-		array('GET','/service/presentations/hits/daily/[i:year]/',	    function($year){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByYear($year))); },              'Complete history of daily hits for a given year (Scope: basic).'),
-		array('GET','/service/presentations/hits/orgs/',                function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAnonymised())); },                    'Hits distributed by orgs, but anonymised (Scope: basic).'),
+		array('GET','/service/presentations/hits/daily/year/[i:year]/', function($year){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByYear($year))); },              'History of daily hits for a given year (Scope: basic).'),
+		array('GET','/service/presentations/hits/daily/days/[i:days]/', function($days){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByDays($days))); },              'History of daily hits for the last given number of days (Scope: basic).'),
+		array('GET', '/service/presentations/hits/orgs/total/', function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgsTotalHitsAnonymised())); }, 'Hits distributed by orgs, but anonymised (Scope: basic).'),
+
 	]);
 
 
@@ -118,7 +120,7 @@
 			array('GET','/admin/presentations/deletelist/moved/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getMovedPresentationsAdmin())); },        'Moved presentations in deletelist (Scope: admin).'),
 			array('GET','/admin/presentations/deletelist/deleted/',    			function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presDelete()->getDeletedPresentationsAdmin())); },      'Deleted presentations in deletelist (Scope: admin).'),
 			### HITS
-			array('GET', '/admin/presentations/hits/orgs/',                     function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getHitsByOrgAdmin())); },                    'Hits distributed by orgs (Scope: admin).'),
+			array('GET', '/admin/presentations/hits/orgs/total/', function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgsTotalHits())); }, 'Hits distributed by orgs (Scope: admin).'),
 
 			### PRESENTATIONS
 			// mongo (exclude presentation listing as it is a) unneeded and b) memory exhaustive)

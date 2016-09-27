@@ -19,11 +19,11 @@
 		private $sql, $table_name, $dataporten, $feideUserName;
 		private $configKey = 'relay_mysql_presdelete';
 
-		function __construct() {
+		function __construct($dataporten) {
 			$relayMySQLConnection = new RelayMySQLConnection($this->configKey);
 			$this->sql            = $relayMySQLConnection->db_connect();
 			$this->table_name     = $relayMySQLConnection->getConfig('db_table_name');
-			$this->dataporten     = parent::dataporten();
+			$this->dataporten     = $dataporten;
 			$this->feideUserName  = $this->dataporten->userName();
 		}
 

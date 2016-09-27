@@ -20,10 +20,10 @@
 	class RelayMongo extends Relay {
 		private $relayMongoConnection, $relaySQL, $dataporten;
 
-		function __construct() {
+		function __construct($dataporten) {
 			$this->relayMongoConnection = new RelayMongoConnection();
 			$this->relaySQL             = parent::sql();
-			$this->dataporten           = parent::dataporten();
+			$this->dataporten           = $dataporten;
 		}
 
 		########################################################################

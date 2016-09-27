@@ -15,9 +15,9 @@
 	class RelaySQL extends Relay {
 		private $relaySQLConnection, $dataporten;
 
-		function __construct() {
+		function __construct($dataporten) {
 			$this->relaySQLConnection = new RelaySQLConnection();
-			$this->dataporten         = parent::dataporten();
+			$this->dataporten         = $dataporten;
 		}
 
 		#

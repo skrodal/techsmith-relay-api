@@ -15,29 +15,35 @@
 	class Relay {
 
 		private $dataporten;
+		private $mongo, $sql, $fs, $presDelete, $presHits;
 
 		function __construct(Dataporten $dataporten) {
 			$this->dataporten = $dataporten;
 		}
 
 		public function mongo() {
-			return new RelayMongo();
+			if(!isset($this->mongo)) $this->mongo = new RelayMongo($this->dataporten);
+			return $this->mongo;
 		}
 
 		public function sql() {
-			return new RelaySQL();
+			if(!isset($this->sql)) $this->sql = new RelaySQL($this->dataporten);
+			return $this->sql;
 		}
 
 		public function fs() {
-			return new RelayFS();
+			if(!isset($this->fs)) $this->fs = new RelayFS($this->dataporten);
+			return $this->fs;
 		}
 
 		public function presDelete() {
-			return new RelayPresDeleteMySQL();
+			if(!isset($this->presDelete)) $this->presDelete = new RelayPresDeleteMySQL($this->dataporten);
+			return $this->presDelete;
 		}
 
 		public function presHits() {
-			return new RelayPresHitsMySQL();
+			if(!isset($this->presHits)) $this->presHits = new RelayPresHitsMySQL($this->dataporten);
+			return $this->presHits;
 		}
 
 		public function dataporten() {

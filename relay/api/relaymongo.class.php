@@ -92,11 +92,11 @@
 			// All of users content from Mongo collection
 			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
 			// All og users content hits from mysql
-			$hits = $this->relay->presHits()->getHitsMe($feideUserName);
+			$hitList = $this->relay->presHits()->getHitsMe($feideUserName);
 
 			foreach($presentations as $index => $presObj){
-				if(isset($hits[$presObj['path']])){
-					$presObj['hits'] = $hits[$presObj['path']]['hits'];
+				if(isset($hitList[$presObj['path']])){
+					$presentations[$index]['hits'] = $hitList[$presObj['path']]['hits'];
 				}
 			}
 

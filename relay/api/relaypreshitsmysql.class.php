@@ -152,6 +152,12 @@
 			return $response;
 		}
 
+		/**
+		 * List of all users at org and the total number of hits each user has had on their content.
+		 *
+		 * @param $org
+		 * @return array
+		 */
 		public function getOrgTotalHitsByUser($org){
 			$this->init();
 			$result = $this->sql->query("SELECT username, sum(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org%' GROUP BY username");
@@ -165,11 +171,6 @@
 			return $response;
 		}
 
-		public function getOrgPresentationHitsByUser($org){
-			$this->init();
-			// TODO
-		}
-
 		#
 		# USER (ME) ENDPOINTS (requires user-scope)
 		#
@@ -181,8 +182,8 @@
 		 */
 		public function getHitsMe() {
 			$this->init();
-			$username = '%' . str_replace("@","%",$this->feideUserName) . '%';
-			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE path LIKE '$username'");
+			$username = str_replace("@","",$this->feideUserName);
+			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username LIKE '$username'");
 			return $this->_sqlResultToArray($result);
 		}
 

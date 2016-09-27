@@ -154,9 +154,13 @@
 
 		public function getOrgTotalHitsByUser($org){
 			$this->init();
-			$result = $this->sql->query("SELECT username, sum(hits) FROM $this->tableHits WHERE username LIKE '%$org%' GROUP BY username");
+			$result = $this->sql->query("SELECT username, sum(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org%' GROUP BY username");
+			$users = [];
+			while($row = $result->fetch_assoc()) {
+				array_push($users[$row['username']], $row['hits']);
+			}
 			$response = [];
-			$response['users'] = $this->_sqlResultToArray($result);
+			$response['users'] = $users;
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			return $response;
 		}

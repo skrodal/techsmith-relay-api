@@ -24,7 +24,7 @@
 			$this->feideUserName = $this->dataporten->userName();
 			$this->relay         = $relay;
 		}
-		
+
 		private function init() {
 			if(!$this->relayMySQLConnection) {
 				$this->relayMySQLConnection = new RelayMySQLConnection($this->configKey);

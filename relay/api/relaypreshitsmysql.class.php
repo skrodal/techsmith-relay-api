@@ -53,6 +53,16 @@
 		# /service/presentations/hits/*/
 		#
 
+		public function getTotalHits(){
+			$this->init();
+			$result = $this->sql->query("SELECT SUM(hits) AS 'hits' FROM $this->tableDaily");
+			$hits = $result->fetch_assoc();
+			$response = [];
+			$response['hits'] = $hits['hits'];
+			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
+			return $response;
+		}
+
 		/**
 		 * All daily records in table
 		 * @return array

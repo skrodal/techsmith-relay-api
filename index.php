@@ -70,7 +70,8 @@
 		array('GET','/service/presentations/hits/daily/all/',	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsAll())); },                           'Complete history of daily hits (Scope: basic).'),
 		array('GET','/service/presentations/hits/daily/year/[i:year]/', function($year){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByYear($year))); },              'History of daily hits for a given year (Scope: basic).'),
 		array('GET','/service/presentations/hits/daily/days/[i:days]/', function($days){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getDailyHitsByDays($days))); },              'History of daily hits for the last given number of days (Scope: basic).'),
-		array('GET', '/service/presentations/hits/orgs/total/',         function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgsTotalHitsAnonymised())); }, 'Hits distributed by orgs, but anonymised (Scope: basic).'),
+		array('GET', '/service/presentations/hits/orgs/total/',         function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgsTotalHitsAnonymised())); },                'Hits distributed by orgs, but anonymised (Scope: basic).'),
+		array('GET', '/service/presentations/hits/total/',              function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->presHits()->getTotalHits())); },                              'Total number of hits logged (Scope: basic).'),
 
 	]);
 

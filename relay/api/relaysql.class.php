@@ -12,12 +12,13 @@
 	 */
 
 
-	class RelaySQL extends Relay {
-		private $relaySQLConnection, $dataporten;
+	class RelaySQL {
+		private $relaySQLConnection, $dataporten, $relay;
 
-		function __construct($dataporten) {
+		function __construct(Relay $relay) {
 			$this->relaySQLConnection = new RelaySQLConnection();
-			$this->dataporten         = $dataporten;
+			$this->dataporten         = $relay->dataporten();
+			$this->relay              = $relay;
 		}
 
 		#

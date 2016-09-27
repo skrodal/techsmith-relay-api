@@ -15,14 +15,15 @@
 	 * @author Simon Skrodal
 	 * @since  July 2016
 	 */
-	class RelayPresDeleteMySQL extends Relay {
+	class RelayPresDeleteMySQL  {
 		private $relayMySQLConnection = false;
-		private $sql, $table_name, $dataporten, $feideUserName;
+		private $sql, $table_name, $dataporten, $feideUserName, $relay;
 		private $configKey = 'relay_mysql_presdelete';
 
-		function __construct($dataporten) {
-			$this->dataporten     = $dataporten;
+		function __construct(Relay $relay) {
+			$this->dataporten     = $relay->dataporten();
 			$this->feideUserName  = $this->dataporten->userName();
+			$this->relay = $relay;
 		}
 
 		private function init(){

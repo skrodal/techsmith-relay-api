@@ -85,7 +85,7 @@
 			return $this->relayMongoConnection->findOne('users', array('username' => $feideUserName));
 		}
 
-		// User presentations on disk
+		// User presentations on disk (new Sep. 2016: also fetching hits from IIS logparser)
 		public function getUserPresentations($feideUserName = NULL) {
 			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ['username' => $feideUserName];
@@ -93,21 +93,15 @@
 			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
 			// All og users content hits from mysql
 			$hitList = $this->relay->presHits()->getHitsMe($feideUserName);
-
+			// Add hits
 			foreach($presentations as $index => $presObj){
 				if(isset($hitList[$presObj['path']])){
 					$presentations[$index]['hits'] = $hitList[$presObj['path']]['hits'];
+					$presentations[$index]['hits_last'] = $hitList[$presObj['path']]['timestamp_latest'];
 				}
 			}
-
+			// TODO: Consider to get deleted presentations also. Hesitant, since the client (RelayAdmin) already takes care of this in a good way.
 			return $presentations;
-			// TODO: Get deleted
-
-			// TODO: Get hits
-
-
-
-
 		}
 
 		// Count user presentations on disk

@@ -19,8 +19,8 @@
 		private $sql, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $relayMongo, $firstRecordTimestamp;
 		private $configKey = 'relay_mysql_preshits';
 
-		function __construct() {
-			$this->dataporten     = parent::dataporten();
+		function __construct($dataporten) {
+			$this->dataporten     = $dataporten;
 			$this->relayMongo     = parent::mongo();
 			$this->feideUserName  = $this->dataporten->userName();
 		}

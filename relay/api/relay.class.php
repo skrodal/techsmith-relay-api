@@ -8,7 +8,6 @@
 	 */
 
 	namespace Relay\Api;
-
 	use Relay\Auth\Dataporten;
 
 

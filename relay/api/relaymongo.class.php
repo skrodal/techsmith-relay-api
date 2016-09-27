@@ -89,15 +89,25 @@
 		public function getUserPresentations($feideUserName = NULL) {
 			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ['username' => $feideUserName];
+			// All of users content from Mongo collection
+			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
+			// All og users content hits from mysql
 			$hits = $this->relay->presHits()->getHitsMe($feideUserName);
 
+			foreach($presentations as $index => $presObj){
+				if(isset($hits[$presObj['path']])){
+					$presObj['hits'] = $hits[$presObj['path']]['hits'];
+				}
+			}
+
+			return $presentations;
 			// TODO: Get deleted
 
 			// TODO: Get hits
 
 
 
-			return $this->relayMongoConnection->find('presentations', $criteria);
+
 		}
 
 		// Count user presentations on disk

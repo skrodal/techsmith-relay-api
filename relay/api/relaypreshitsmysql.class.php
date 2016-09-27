@@ -189,7 +189,9 @@
 			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username LIKE '$username'");
 			$response = [];
 			while($row = $result->fetch_assoc()) {
-				$response[$row['path']] = $row;
+				$path = $row['path'];
+				unset($row['path']);
+				$response[$path] = $row;
 			}
 			return $response;
 		}

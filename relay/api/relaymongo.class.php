@@ -86,21 +86,37 @@
 		}
 
 		// User presentations on disk (new Sep. 2016: also fetching hits from IIS logparser)
+		/**
+		 *
+		 *
+		 * @param null $feideUserName
+		 * @return array
+		 */
 		public function getUserPresentations($feideUserName = NULL) {
 			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
 			$criteria      = ['username' => $feideUserName];
 			// All of users content from Mongo collection
 			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
-			// All og users content hits from mysql
+			// All of user's presentation hits from IIS service
 			$hitList = $this->relay->presHits()->getHitsMe($feideUserName);
-			// Add hits
+			// All of user's deleted presentations from delete service
+			$deleteList = $this->relay->presDelete()->getDeletedPresentationsUser($feideUserName);
+			// Update all presentation paths
 			foreach($presentations as $index => $presObj){
+				// Add deleted flag
+				if(isset($deleteList[$presObj['path']])){
+					$presentations[$index]['is_deleted'] = 1;
+				}
+				// Add hits
 				if(isset($hitList[$presObj['path']])){
 					$presentations[$index]['hits'] = $hitList[$presObj['path']]['hits'];
 					$presentations[$index]['hits_last'] = $hitList[$presObj['path']]['timestamp_latest'];
 				}
+				// Remove hits attribute per file in files[] (we don't have hits per file anymore)
+				foreach($presObj['files'] as $i => $fileObj){
+					unset($presentations[$index]['files'][$i]['hits']);
+				}
 			}
-			// TODO: Consider to get deleted presentations also. Hesitant, since the client (RelayAdmin) already takes care of this in a good way.
 			return $presentations;
 		}
 
@@ -177,9 +193,15 @@
 		# PRESENTATIONS (only content on disk - SQL provides a view of all, inc. deleted content)
 		###
 
-		// ALL presentations on disk
-		// NOTE: Chews up a lot of memory, consider rewrite -> pagination or split query to find e.g. 5000 documents at a time
-		// For the time being, this route is not used by RelayAdmin anyhow...
+
+		/** Simon@28.09.2016 - note to self:
+		 *
+		 * Works, but route commented out because a) it is not used, b) hits and deleted are not included.
+		 * If route is ever needed, function getOrgPresentations shows how to incorporate b)
+		 *
+		 * Chews up a lot of memory, consider rewrite -> pagination or split query to find e.g. 5000 documents at a time
+		 * @return array
+		 */
 		public function getGlobalPresentations() {
 			return $this->relayMongoConnection->findAll('presentations');
 		}
@@ -265,8 +287,13 @@
 		}
 
 		/**
+		 * Simon@28.09.2016: Just updated this and commented out student/employee routes (not used)
+		 *
 		 * Get all presentations produced by $org from MongoDB. Supplement presentation info
 		 * with hits (from IIS service) and deleted (from delete service) before returning.
+		 *
+		 * TODO: Could really use pagination - slow for orgs with 1000s of presentations
+		 *
 		 * @param $org
 		 * @return array
 		 */
@@ -297,21 +324,21 @@
 			return $presentations;
 		}
 
-
-
-
-
-
-
-
-
-
 		public function getOrgPresentationCount($org) {
 			$criteria = ['org' => $org];
 
 			return $this->relayMongoConnection->count('presentations', $criteria);
 		}
 
+		/**
+		 * Simon@28.09.2016 - note to self:
+		 * Works, but route commented out because a) it is not used, b) hits and deleted are not included.
+		 *
+		 * If route is ever needed, function getOrgPresentations shows how to incorporate b)
+		 *
+		 * @param $org
+		 * @return array
+		 */
 		public function getOrgEmployeePresentations($org) {
 			$find     = 'ansatt';
 			$criteria = ['org'  => $org,
@@ -333,6 +360,15 @@
 		}
 
 
+		/**
+		 * Simon@28.09.2016 - note to self:
+		 * Works, but route commented out because a) it is not used, b) hits and deleted are not included.
+		 *
+		 * If route is ever needed, function getOrgPresentations shows how to incorporate b)
+		 *
+		 * @param $org
+		 * @return array
+		 */
 		public function getOrgStudentPresentations($org) {
 			$find     = 'student';
 			$criteria = ['org'  => $org,

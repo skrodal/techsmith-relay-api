@@ -50,6 +50,22 @@
 			return $response;
 		}
 
+		/**
+		 * Not implemented in route, but rather used to supplement presentation list from mongo
+		 * when it is built.
+		 * @param $username
+		 * @return array
+		 */
+		public function getDeletedPresentationsUser($username) {
+			$this->init();
+			// Only checking on moved (i.e. unavailable)
+			$result = $this->sql->query("SELECT path FROM $this->table_name WHERE username LIKE '$username' AND moved = 1");
+			$response = [];
+			while($row = $result->fetch_assoc()) {
+				$response[$row['path']] = 'deleted';
+			}
+			return $response;
+		}
 
 		#
 		# ADMIN ENDPOINTS (requires admin-scope) AND Role of Superadmin

@@ -302,9 +302,9 @@
 			// All presentations
 			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
 			// Array with usernames -> total_hits
-			$hitList = $this->relay->presHits()->getOrgPresentationsHits();
+			$hitList = $this->relay->presHits()->getOrgPresentationsHits($org);
 			// Array with path -> 'deleted'
-			$deletelist = $this->relay->presDelete()->getDeletedPresentationsOrg();
+			$deletelist = $this->relay->presDelete()->getDeletedPresentationsOrg($org);
 
 			foreach($presentations as $index => $presObj){
 				// Set deleted flag to presentations in deletelist (from delete service)

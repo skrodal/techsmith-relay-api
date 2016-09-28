@@ -179,6 +179,7 @@
 
 		// ALL presentations on disk
 		// NOTE: Chews up a lot of memory, consider rewrite -> pagination or split query to find e.g. 5000 documents at a time
+		// For the time being, this route is not used by RelayAdmin anyhow...
 		public function getGlobalPresentations() {
 			return $this->relayMongoConnection->findAll('presentations');
 		}
@@ -258,11 +259,40 @@
 		# ORG PRESENTATIONS
 		###
 
-		public function getOrgPresentations($org) {
+		public function getOrgPresentationsOriginal($org) {
 			$criteria = ['org' => $org];
-
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
+
+		public function getOrgPresentations($org) {
+			$criteria = ['org' => $org];
+			// All presentations
+			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
+			// Array with usernames -> total_hits
+			$hitList = $this->relay->presHits()->getOrgPresentationsHits();
+			// TODO: Array with deleted content
+			// Need to implement another function to get deleted content list form org
+			// $deleteList = $this->relay->presDelete()->
+			// Add hits
+			foreach($presentations as $index => $presObj){
+				if(isset($hitList[$presObj['path']])){
+					$presentations[$index]['hits'] = $hitList[$presObj['path']]['hits'];
+					$presentations[$index]['hits_last'] = $hitList[$presObj['path']]['timestamp_latest'];
+				}
+				// TODO: Remove hits attribute per files array
+			}
+			// TODO: Consider to get deleted presentations also. Hesitant, since the client (RelayAdmin) already takes care of this in a good way.
+			return $presentations;
+		}
+
+
+
+
+
+
+
+
+
 
 		public function getOrgPresentationCount($org) {
 			$criteria = ['org' => $org];

@@ -183,6 +183,21 @@
 			return $response;
 		}
 
+		/**
+		 * Not made available via route.
+		 * @param $org
+		 * @return array
+		 */
+		public function getOrgPresentationsHits($org) {
+			$this->init();
+			$result = $this->sql->query("SELECT path, hits FROM $this->tableHits WHERE username LIKE '%$org%'");
+			$presList = [];
+			while($row = $result->fetch_assoc()) {
+				$preslist[$row['path']] = $row['hits'];
+			}
+			return $preslist;
+		}
+
 		#
 		# USER (ME) ENDPOINTS (requires user-scope)
 		#

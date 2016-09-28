@@ -191,11 +191,11 @@
 		public function getOrgPresentationsHits($org) {
 			$this->init();
 			$result = $this->sql->query("SELECT path, hits FROM $this->tableHits WHERE username LIKE '%$org%'");
-			$presList = [];
+			$hitList = [];
 			while($row = $result->fetch_assoc()) {
-				$preslist[$row['path']] = $row['hits'];
+				$hitList[$row['path']] = $row['hits'];
 			}
-			return $preslist;
+			return $hitList;
 		}
 
 		#

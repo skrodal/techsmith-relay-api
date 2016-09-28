@@ -264,17 +264,27 @@
 			return $this->relayMongoConnection->find('presentations', $criteria);
 		}
 
+		/**
+		 * Get all presentations produced by $org from MongoDB. Supplement presentation info
+		 * with hits (from IIS service) and deleted (from delete service) before returning.
+		 * @param $org
+		 * @return array
+		 */
 		public function getOrgPresentations($org) {
 			$criteria = ['org' => $org];
 			// All presentations
 			$presentations = $this->relayMongoConnection->find('presentations', $criteria);
 			// Array with usernames -> total_hits
 			$hitList = $this->relay->presHits()->getOrgPresentationsHits();
-			// TODO: Array with deleted content
-			// Need to implement another function to get deleted content list form org
-			// $deleteList = $this->relay->presDelete()->
-			// Add hits
+			// Array with path -> 'deleted'
+			$deletelist = $this->relay->presDelete()->getDeletedPresentationsOrg();
+
 			foreach($presentations as $index => $presObj){
+				// Set deleted flag to presentations in deletelist (from delete service)
+				if(isset($deletelist[$presObj['path']])){
+					$presentations[$index]['is_deleted'] = 1;
+				}
+				// Add hits (from IIS service) to the presentations
 				if(isset($hitList[$presObj['path']])){
 					$presentations[$index]['hits'] = $hitList[$presObj['path']];
 					//$presentations[$index]['hits_last'] = $hitList[$presObj['path']]['timestamp_latest'];
@@ -283,9 +293,7 @@
 				foreach($presObj['files'] as $i => $fileObj){
 					unset($presentations[$index]['files'][$i]['hits']);
 				}
-
 			}
-			// TODO: Consider to get deleted presentations also. Hesitant, since the client (RelayAdmin) already takes care of this in a good way.
 			return $presentations;
 		}
 

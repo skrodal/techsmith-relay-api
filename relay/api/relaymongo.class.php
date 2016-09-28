@@ -279,7 +279,11 @@
 					$presentations[$index]['hits'] = $hitList[$presObj['path']];
 					//$presentations[$index]['hits_last'] = $hitList[$presObj['path']]['timestamp_latest'];
 				}
-				// TODO: Remove hits attribute per files array
+				// Remove hits attribute per file in files[] (we don't have hits per file anymore)
+				foreach($presObj['files'] as $i => $fileObj){
+					unset($presentations[$index]['files'][$i]['hits']);
+				}
+
 			}
 			// TODO: Consider to get deleted presentations also. Hesitant, since the client (RelayAdmin) already takes care of this in a good way.
 			return $presentations;

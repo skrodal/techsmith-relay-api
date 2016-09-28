@@ -276,7 +276,7 @@
 			// Add hits
 			foreach($presentations as $index => $presObj){
 				if(isset($hitList[$presObj['path']])){
-					$presentations[$index]['hits'] = $hitList[$presObj['path']]['hits'];
+					$presentations[$index]['hits'] = $hitList[$presObj['path']];
 					//$presentations[$index]['hits_last'] = $hitList[$presObj['path']]['timestamp_latest'];
 				}
 				// TODO: Remove hits attribute per files array

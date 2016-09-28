@@ -184,18 +184,18 @@
 		}
 
 		/**
-		 * Not made available via route.
+		 * Not made available via route - used by mongo to merge hits with presentations
 		 * @param $org
 		 * @return array
 		 */
 		public function getOrgPresentationsHits($org) {
 			$this->init();
-			$result = $this->sql->query("SELECT path, hits FROM $this->tableHits WHERE username LIKE '%$org%'");
-			$hitList = [];
+			$result = $this->sql->query("SELECT path, hits FROM $this->tableHits WHERE username LIKE '%$org'");
+			$response = [];
 			while($row = $result->fetch_assoc()) {
-				$hitList[$row['path']] = $row['hits'];
+				$response[$row['path']] = $row['hits'];
 			}
-			return $hitList;
+			return $response;
 		}
 
 		#

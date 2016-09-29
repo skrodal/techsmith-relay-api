@@ -41,9 +41,12 @@
 			$this->connection = $this->getConnection();
 			try{
 				$response = array();
-				while($row = $this->connection->query($sql, PDO::FETCH_ASSOC)) {
+				$query = $this->connection->query($sql, PDO::FETCH_ASSOC);
+				Utils::log("Rows returned: " . $query->rowCount());
+				foreach($query as $row){
 					$response[] = $row;
 				}
+				$query->closeCursor();
 				$this->closeConnection();
 				return $response;
 			}catch(PDOException $e){

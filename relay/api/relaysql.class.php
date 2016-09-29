@@ -234,11 +234,11 @@
 		public function getOrgStudentCount($org){
 			$this->verifyOrgAccess($org);
 			$studentCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*)
+							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['computed'];
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
 			return $studentCount;
 		}
 
@@ -269,7 +269,7 @@
 
 		public function getOrgPresentationCount($org) {
 			$this->verifyOrgAccess($org);
-			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['count'];
 		}
 
 		public function getOrgEmployeePresentationCount($org){
@@ -284,10 +284,10 @@
 		public function getOrgStudentPresentationCount($org){
 			$this->verifyOrgAccess($org);
 			return $this->relaySQLConnection->query("
-						SELECT COUNT(*)
+						SELECT COUNT(*) AS 'count'
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
-						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
+						AND presPresenterEmail LIKE '%$org%'")[0]['count'];
 		}
 
 		#
@@ -361,7 +361,7 @@
 			$userEmail = $this->relaySQLConnection->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
 			if(empty($userEmail)) return [];
 			$userEmail = $userEmail[0]['userEmail'];
-			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['count'];
 		}
 
 

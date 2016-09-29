@@ -73,7 +73,7 @@
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
-			return $employeeCount;
+			return $employeeCount[0];
 		}
 
 		public function getGlobalStudents() {
@@ -91,7 +91,7 @@
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
-			return $studentCount;
+			return $studentCount[0];
 		}
 
 		#

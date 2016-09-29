@@ -41,7 +41,6 @@
 			$this->connection = $this->getConnection();
 			try{
 				$response = array();
-				Utils::log("Rows returned: " . $query->rowCount());
 				while($row = $this->connection->query($sql, PDO::FETCH_ASSOC)) {
 					$response[] = $row;
 				}

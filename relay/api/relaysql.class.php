@@ -53,8 +53,8 @@
 		}
 
 		public function getGlobalUserCountByAffiliation() {
-			$employeeCount = $this->getGlobalEmployeeCount();
-			$studentCount = $this->getGlobalStudentCount();
+			$employeeCount = $this->getGlobalEmployeeCount()['count'];
+			$studentCount = $this->getGlobalStudentCount()['count'];
 			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
@@ -69,7 +69,7 @@
 
 		public function getGlobalEmployeeCount() {
 			$employeeCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*)
+							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
@@ -87,7 +87,7 @@
 
 		public function getGlobalStudentCount() {
 			$studentCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*)
+							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());

@@ -4,6 +4,8 @@
 	use Relay\Conf\Config;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
+	use PDO;
+	use PDOException;
 
 	/**
 	 * Handles DB Connection and queries
@@ -40,19 +42,19 @@
 			try{
 				$response = array();
 				Utils::log("Rows returned: " . $query->rowCount());
-				while($row = $this->connection->query($sql, \PDO::FETCH_ASSOC)) {
+				while($row = $this->connection->query($sql, PDO::FETCH_ASSOC)) {
 					$response[] = $row;
 				}
 				$this->closeConnection();
 				return $response;
-			}catch(\PDOException $e){
+			}catch(PDOException $e){
 				Response::error(500, 'DB query failed (SQL): ' . $e->getMessage());
 			}
 		}
 
 		/**
 		 * 29.09.2016: Rewrite class to use PDO (mssql is deprecated starting with PHP7)
-		 * @return \PDO
+		 * @return PDO
 		 */
 		private function getConnection() {
 			if(!is_null($this->connection))return $this->connection;
@@ -62,14 +64,14 @@
 			$user = $this->config['user'];
 			$pass = $this->config['pass'];
 			try {
-				//$connection = new \PDO("mssql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
-				$connection = new \PDO("dblib:host=$host;dbname=$db;charset=UTF8", $user, $pass);
-				//$connection = new \PDO("sqlsrv:Server=$host;Database=$db", $user, $pass);
+				//$connection = new PDO("mssql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
+				$connection = new PDO("dblib:host=$host;dbname=$db;charset=UTF8", $user, $pass);
+				//$connection = new PDO("sqlsrv:Server=$host;Database=$db", $user, $pass);
 				//odbc:DRIVER=FreeTDS;SERVERNAME=mssql;DATABASE=
 				$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				Utils::log("DB CONNECTED");
 				return $connection;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(500, 'DB connection failed (SQL): ' . $e->getMessage());
 			}
 		}

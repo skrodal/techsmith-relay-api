@@ -35,8 +35,24 @@
 			// Connect username and pass
 			return json_decode($this->config, true);
 		}
+		public function employeeProfileId() {
+			return (int)$this->config['employeeProfileId'];
+		}
 
+		public function studentProfileId() {
+			return (int)$this->config['studentProfileId'];
+		}
 
+		###
+		# 29.09.2016: Alternative DB implementation using PDO used.
+		# mssql is DEPRECATED PHP7, using PDO gives forward compatability.
+		###
+
+		/**
+		 *
+		 * @param $sql
+		 * @return array
+		 */
 		public function query($sql) {
 			$this->connection = $this->getConnection();
 			try{
@@ -55,7 +71,6 @@
 		}
 
 		/**
-		 * 29.09.2016: Rewrite class to use PDO (mssql is deprecated starting with PHP7)
 		 * @return PDO
 		 */
 		private function getConnection() {
@@ -78,28 +93,32 @@
 			}
 		}
 
+		/**
+		 *
+		 */
 		private function closeConnection() {
 			$this->connection = NULL;
 			Utils::log("DB CLOSED");
 		}
 
+
+		###
+		# 29.09.2016: OLD mssql DB implementation below. Got some random connection errors with it, and
+		# it is also DEPRECATED in PHP7. Hence, testing with PDO implementation above for a while.
+		#
+		###
+
 		/**
-		 * @param $sql
 		 *
+		 * @param $sql
 		 * @return array
 		 */
 		public function _query($sql) {
-			//
 			$this->connection = $this->getConnection();
 			// Run query
 			$query = mssql_query($sql, $this->connection);
-			// On error
-			if($query === false) {
-				Response::error(500, 'DB query failed (SQL).');
-			}
-			// Response
+			if($query === false) { Response::error(500, 'DB query failed (SQL).'); }
 			$response = array();
-			//
 			Utils::log("Rows returned: " . mssql_num_rows($query));
 			// Loop rows and add to response array
 			if(mssql_num_rows($query) > 0) {
@@ -108,50 +127,25 @@
 					// Utils::log(print_r($row, true), __CLASS__ , __FUNCTION__, __LINE__);
 				}
 			}
-			// Free the query result
 			mssql_free_result($query);
-			// Close link
 			$this->closeConnection();
-
-			//
 			return $response;
 		}
-
-		public function employeeProfileId() {
-			return (int)$this->config['employeeProfileId'];
-		}
-
-		public function studentProfileId() {
-			return (int)$this->config['studentProfileId'];
-		}
-
 		/**
 		 *    Close MSSQL connection
 		 */
 		private function _closeConnection() {
-			if($this->connection !== false) {
-				mssql_close($this->connection);
-			}
+			if($this->connection !== false) {mssql_close($this->connection);}
 			Utils::log("DB CLOSED");
 		}
-
 		/**
 		 *    Open MSSQL connection
 		 */
 		private function _getConnection() {
-			//
 			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
-			//
-			if(!$connection) {
-				Response::error(500, 'DB connection failed (SQL).');
-			}
-			//
-			if(!mssql_select_db($this->config['db'])) {
-				Response::error(500, 'DB table connection failed (SQL).');
-			}
-
+			if(!$connection) { Response::error(500, 'DB connection failed (SQL).'); }
+			if(!mssql_select_db($this->config['db'])) { Response::error(500, 'DB table connection failed (SQL).'); }
 			Utils::log("DB CONNECTED");
-
 			return $connection;
 		}
 	}

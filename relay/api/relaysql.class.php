@@ -49,7 +49,7 @@
 		}
 
 		public function getGlobalUserCount() {
-			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblUser")[0]['count'];
 		}
 
 		public function getGlobalUserCountByAffiliation() {
@@ -105,7 +105,7 @@
 			return $this->relaySQLConnection->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
 		}
 		public function getGlobalPresentationCount() {
-			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblPresentation")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation")[0]['count'];
 		}
 
 		// GLOBALS EMPLOYEE
@@ -119,9 +119,9 @@
 
 		public function getGlobalEmployeePresentationCount(){
 			return $this->relaySQLConnection->query("
-						SELECT COUNT(*)
+						SELECT COUNT(*) AS 'count'
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['computed'];
+						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
 		}
 
 		// GLOBALS STUDENT
@@ -134,9 +134,9 @@
 
 		public function getGlobalStudentPresentationCount(){
 			return $this->relaySQLConnection->query("
-						SELECT COUNT(*)
+						SELECT COUNT(*) AS 'count'
 						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['computed'];
+						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
 		}
 
 		#
@@ -178,7 +178,7 @@
 
 		public function getOrgUserCount($org) {
 			$this->verifyOrgAccess($org);
-			return $this->relaySQLConnection->query("SELECT COUNT(*) FROM tblUser WHERE userName LIKE '%$org%'")[0]['computed'];
+			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblUser WHERE userName LIKE '%$org%'")[0]['count'];
 		}
 
 		/**
@@ -207,11 +207,11 @@
 		public function getOrgEmployeeCount($org){
 			$this->verifyOrgAccess($org);
 			$employeeCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*)
+							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['computed'];
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
 			return $employeeCount;
 		}
 

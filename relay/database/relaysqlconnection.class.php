@@ -63,7 +63,7 @@
 			$pass = $this->config['pass'];
 			try {
 				//$connection = new \PDO("mssql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
-				$connection = new PDO("sqlsrv:Server=$host;Database=$db", $user, $pass);
+				$connection = new \PDO("sqlsrv:Server=$host;Database=$db", $user, $pass);
 				$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				Utils::log("DB CONNECTED");
 				return $connection;

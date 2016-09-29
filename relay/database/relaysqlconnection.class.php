@@ -1,8 +1,10 @@
 <?php
 	namespace Relay\Database;
+
+	use Relay\Conf\Config;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
-	use Relay\Conf\Config;
+
 	/**
 	 * Handles DB Connection and queries
 	 *
@@ -19,6 +21,59 @@
 		function __construct() {
 			// Get connection conf
 			$this->config = $this->getConfig();
+			$this->connection = NULL;
+		}
+
+		private function getConfig() {
+			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
+			// Sanity
+			if($this->config === false) {
+				Response::error(404, 'Not Found: SQL config.');
+			}
+			// Connect username and pass
+			return json_decode($this->config, true);
+		}
+
+
+		public function query($sql) {
+			$this->connection = $this->getConnection();
+			try{
+				$response = array();
+				Utils::log("Rows returned: " . $query->rowCount());
+				while($row = $this->connection->query($sql, \PDO::FETCH_ASSOC)) {
+					$response[] = $row;
+				}
+				$this->closeConnection();
+				return $response;
+			}catch(\PDOException $e){
+				Response::error(500, 'DB query failed (SQL): ' . $e->getMessage());
+			}
+		}
+
+		/**
+		 * 29.09.2016: Rewrite class to use PDO (mssql is deprecated starting with PHP7)
+		 * @return \PDO
+		 */
+		private function getConnection() {
+			if(!is_null($this->connection))return $this->connection;
+			$connection = NULL;
+			$host = $this->config['host'];
+			$db   = $this->config['db'];
+			$user = $this->config['user'];
+			$pass = $this->config['pass'];
+			try {
+				$connection = new \PDO("mssql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
+				$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				Utils::log("DB CONNECTED");
+				return $connection;
+			} catch(\PDOException $e) {
+				Response::error(500, 'DB connection failed (SQL): ' . $e->getMessage());
+			}
+		}
+
+		private function closeConnection() {
+			$this->connection = NULL;
+			Utils::log("DB CLOSED");
 		}
 
 		/**
@@ -26,7 +81,7 @@
 		 *
 		 * @return array
 		 */
-		public function query($sql) {
+		public function _query($sql) {
 			//
 			$this->connection = $this->getConnection();
 			// Run query
@@ -64,9 +119,19 @@
 		}
 
 		/**
+		 *    Close MSSQL connection
+		 */
+		private function _closeConnection() {
+			if($this->connection !== false) {
+				mssql_close($this->connection);
+			}
+			Utils::log("DB CLOSED");
+		}
+
+		/**
 		 *    Open MSSQL connection
 		 */
-		private function getConnection() {
+		private function _getConnection() {
 			//
 			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
 			//
@@ -79,24 +144,7 @@
 			}
 
 			Utils::log("DB CONNECTED");
+
 			return $connection;
-		}
-
-		/**
-		 *    Close MSSQL connection
-		 */
-		private function closeConnection() {
-			if($this->connection !== false) {
-				mssql_close($this->connection);
-			}
-			Utils::log("DB CLOSED");
-		}
-
-		private function getConfig(){
-			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
-			// Sanity
-			if($this->config === false) { Response::error(404, 'Not Found: SQL config.'); }
-			// Connect username and pass
-			return json_decode($this->config, true);
 		}
 	}

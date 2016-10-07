@@ -226,7 +226,7 @@
 
 		public function getGlobalPresentationStats() {
 			(array("visits.payment" => array('$lt' => 30)));
-			return $this->relayMongoConnection->findOne('presentations', [ 'created_date.sec' =>  ['$lt' => 1475645575]   ]);
+			return $this->relayMongoConnection->findOne('presentations', [ 'created_date.sec' =>  ['$gt' => 1475645575]   ]);
 
 
 			return $this->relayMongoConnection->findOne('presentations', ['created_date.sec' =>  ['$lte' => '1475645575']   ]);

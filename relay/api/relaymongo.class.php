@@ -225,8 +225,8 @@
 
 
 		public function getGlobalPresentationStats() {
-			
-			return $this->relayMongoConnection->findOne('presentations', ['username' => 'simon@uninett.no']);
+
+			return $this->relayMongoConnection->findOne('presentations', ['created_date.sec' =>  ['$lte' => '1475645575']   ]);
 			$stats = [];
 			//array('x' => array( '$gt' => 5, '$lt' => 20 ));
 			$criteria = ['sec' =>

@@ -226,9 +226,9 @@
 
 		public function getGlobalPresentationStats() {
 			$stats = [];
-
-			$stats['yesterday'] = $this->relayMongoConnection->count('presentations', ['created_date.sec' => ['$lte' => time() - 300*60*60 ]]);
-			$stats['lastweek']  = $this->relayMongoConnection->count('presentations', [['created_date' => 'sec'] => ['$gte' => date("Y-m-d", strtotime("-7 days", time()))]]);
+			//array('x' => array( '$gt' => 5, '$lt' => 20 ));
+			$stats['yesterday'] = $this->relayMongoConnection->count('presentations', ['created_date.sec' => ['$lte' => (time() - 300*60*60) ]]);
+			$stats['lastweek']  = $this->relayMongoConnection->count('presentations', ['created_date.sec' => ['$gt' => '30' ]]);
 			$stats['lastmonth'] = $this->relayMongoConnection->count('presentations', [['created_date' => 'sec'] => ['$gte' => date("Y-m-d", strtotime("-30 days", time()))]]);
 			$stats['thisyear']  = $this->relayMongoConnection->count('presentations', [['created_date' => 'sec'] => ['$gte' => date("Y-01-01")]]);
 			$stats['prevyear']  = $this->relayMongoConnection->count('presentations', [['created_date' => 'sec'] => ['$gte' => date("Y-01-01", strtotime("-1 year", time())), '$lt' => date("Y-01-01")]]);

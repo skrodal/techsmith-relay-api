@@ -225,6 +225,7 @@
 
 
 		public function getGlobalPresentationStats() {
+			return $this->relayMongoConnection->findOne('presentations');
 			$stats = [];
 			//array('x' => array( '$gt' => 5, '$lt' => 20 ));
 			$criteria = ['sec' =>

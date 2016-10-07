@@ -85,9 +85,8 @@
 			return $this->relayMongoConnection->findOne('users', array('username' => $feideUserName));
 		}
 
-		// User presentations on disk (new Sep. 2016: also fetching hits from IIS logparser)
 		/**
-		 *
+		 * User presentationson disk (new Sep. 2016: also fetching hits from IIS logparser as well as deleted presentations)
 		 *
 		 * @param null $feideUserName
 		 * @return array
@@ -190,7 +189,7 @@
 		}
 
 		###
-		# PRESENTATIONS (only content on disk - SQL provides a view of all, inc. deleted content)
+		# PRESENTATIONS (use Mongo to get only content on disk since Relay MSSQL provides a view of all, inc. deleted content)
 		###
 
 
@@ -204,6 +203,18 @@
 		 */
 		public function getGlobalPresentations() {
 			return $this->relayMongoConnection->findAll('presentations');
+		}
+
+		public function getGlobalPresentationStats() {
+			$stats = ['yesterday', 'lastweek', 'lastmonth', 'thisyear', 'prevyear', 'total'];
+
+			$stats['yesterday'] = $this->relayMongoConnection->count('presentations', ['created' => ['$gte' => date("Y-m-d", strtotime("-1 day", time()))]]);
+			$stats['lastweek'] = $this->relayMongoConnection->count('presentations', ['created' => ['$gte' => date("Y-m-d", strtotime("-7 days", time()))]]);
+			$stats['lastmonth'] = $this->relayMongoConnection->count('presentations', ['created' => ['$gte' => date("Y-m-d", strtotime("-30 days", time()))]]);
+			$stats['thisyear'] = $this->relayMongoConnection->count('presentations', ['created' => ['$gte' => date("Y-01-01")]]);
+			$stats['prevyear'] = $this->relayMongoConnection->count('presentations', ['created' => ['$gte' => date("Y-01-01", strtotime("-1 year", time())), '$lt' =>  date("Y-01-01")]]);
+			$stats['total'] = $this->getGlobalPresentationCount();
+			return $stats;
 		}
 
 		public function getGlobalPresentationCount() {

@@ -63,6 +63,7 @@
 		array('GET','/service/users/employees/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeeCount())); }, 						'Total employee count (Scope: basic).'),
 		array('GET','/service/users/students/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentCount())); }, 						    'Total student count (Scope: basic).'),
 		// presentations (mongo)
+		array('GET','/service/presentations/stats/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentationStats())); }, 				    'Presentation counts at different time ranges (on disk) (Scope: basic).'),
 		array('GET','/service/presentations/count/', 			        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalPresentationCount())); }, 				    'Total presentation count (on disk) (Scope: basic).'),
 		array('GET','/service/presentations/employees/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalEmployeePresentationCount())); }, 			'Total employee presentation count (on disk) (Scope: basic).'),
 		array('GET','/service/presentations/students/count/', 	        function(){ global $relay; Response::result(array('status' => true, 'data' => $relay->mongo()->getGlobalStudentPresentationCount())); }, 			'Total student presentation count (on disk) (Scope: basic).'),

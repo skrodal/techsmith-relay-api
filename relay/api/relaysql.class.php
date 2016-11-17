@@ -11,7 +11,7 @@
 	 * @author Simon Skrodal
 	 * @since  September 2015
 	 */
-	class RelaySQL {
+	class RelaySQL extends Relay  {
 		private $relaySQLConnection, $dataporten, $relay;
 
 		function __construct(Relay $relay) {
@@ -78,6 +78,16 @@
 
 		//data.org, data.org.users, data.org.presentations, data.org.total_mib, data.org.storage[]
 		public function getOrgsInfo() {
+			$orgsObj = $this->getOrgs();
+			$response = [];
+			foreach($orgsObj as $org => $count){
+				$response['$org'] = [];
+				$response['$org']['users'] = $count;
+				$response['$org']['presentations'] = $this->getOrgPresentationCount($org);
+				$storage = $this->mongo()->getOrgDiskusage($org);
+				$response['$org']['storage'] = $storage['storage'];
+				$response['$org']['total_mib'] = $storage['total_mib'];
+			}
 
 		}
 

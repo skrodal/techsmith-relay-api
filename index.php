@@ -50,13 +50,20 @@
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion()));
 		}, 'Service version'),
-
 		array('GET', '/service/info/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getServiceInfo()));
-		}, 'All-in-one; workers, version, queue.'),
-		// ORGS
+		}, 'Version and workers'),
+		array('GET', '/service/queue/', function () {
+			global $relay;
+			Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueue()));
+		}, 'Queue on server.'),
+		array('GET', '/service/queue/failed/', function () {
+			global $relay;
+			Response::result(array('status' => true, 'data' => $relay->sql()->getServiceQueueFailed()));
+		}, 'Failed jobs in queue on server.'),
 
+		// ORGS
 		// TODO in client:
 		array('GET', '/service/orgs/', function () {
 			global $relay;

@@ -34,14 +34,18 @@
 			$response                = [];
 			$response['version']     = $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0];
 			$response['workers']     = $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint");
-			$response['queueFailed'] = $this->relaySQLConnection->query("SELECT jobId, jobType, jobState, jobPresentation_PresId, jobQueuedTime, jobPercentComplete, jobFailureReason, jobNumberOfFailures, jobTitle  FROM tblJob WHERE jobState = 3");
-			$response['queue']       = $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, CONVERT(VARCHAR(26), jobQueuedTime, 106) AS jobQueuedDate, CONVERT(VARCHAR(26), jobQueuedTime, 108) AS jobQueuedTime, presPresenterName, presDuration FROM tblJob
-													    					INNER JOIN tblPresentation
-										                					ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
-
 			return $response;
 		}
 
+		public function getServiceQueueFailed() {
+			return $this->relaySQLConnection->query("SELECT jobId, jobType, jobState, jobPresentation_PresId, jobQueuedTime, jobPercentComplete, jobFailureReason, jobNumberOfFailures, jobTitle  FROM tblJob WHERE jobState = 3");
+		}
+
+		public function getServiceQueue() {
+			return $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, CONVERT(VARCHAR(26), jobQueuedTime, 106) AS jobQueuedDate, CONVERT(VARCHAR(26), jobQueuedTime, 108) AS jobQueuedTime, presPresenterName, presDuration FROM tblJob
+													    					INNER JOIN tblPresentation
+										                					ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
+		}
 
 		/**
 		 * List of distinct orgs (domain names in username) and user count at each

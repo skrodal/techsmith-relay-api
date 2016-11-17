@@ -81,12 +81,13 @@
 			$orgsObj = $this->getOrgs();
 			$response = [];
 			foreach($orgsObj as $org => $count){
-				$response['$org'] = [];
-				$response['$org']['users'] = $count;
-				$response['$org']['presentations'] = $this->getOrgPresentationCount($org);
+				$response[$org] = [];
+				//$response[$org]['users'] = $count;
+				$response[$org]['users'] = $this->getOrgUserCount($org);
+				// $response[$org]['presentations'] = $this->getOrgPresentationCount($org);
 				$storage = $this->mongo()->getOrgDiskusage($org);
-				$response['$org']['storage'] = $storage['storage'];
-				$response['$org']['total_mib'] = $storage['total_mib'];
+				$response[$org]['storage'] = $storage['storage'];
+				$response[$org]['total_mib'] = $storage['total_mib'];
 			}
 			return $response;
 		}

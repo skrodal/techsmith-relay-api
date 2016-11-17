@@ -63,7 +63,6 @@
 					$response[] = $row;
 				}
 				$query->closeCursor();
-				$this->closeConnection();
 				return $response;
 			}catch(PDOException $e){
 				Response::error(500, 'DB query failed (SQL): ' . $e->getMessage());
@@ -93,59 +92,4 @@
 			}
 		}
 
-		/**
-		 *
-		 */
-		private function closeConnection() {
-			$this->connection = NULL;
-			Utils::log("DB CLOSED");
-		}
-
-
-		###
-		# 29.09.2016: OLD mssql DB implementation below. Got some random connection errors with it, and
-		# it is also DEPRECATED in PHP7. Hence, testing with PDO implementation above for a while.
-		#
-		###
-
-		/**
-		 *
-		 * @param $sql
-		 * @return array
-		 */
-		public function _query($sql) {
-			$this->connection = $this->getConnection();
-			// Run query
-			$query = mssql_query($sql, $this->connection);
-			if($query === false) { Response::error(500, 'DB query failed (SQL).'); }
-			$response = array();
-			Utils::log("Rows returned: " . mssql_num_rows($query));
-			// Loop rows and add to response array
-			if(mssql_num_rows($query) > 0) {
-				while($row = mssql_fetch_assoc($query)) {
-					$response[] = $row;
-					// Utils::log(print_r($row, true), __CLASS__ , __FUNCTION__, __LINE__);
-				}
-			}
-			mssql_free_result($query);
-			$this->closeConnection();
-			return $response;
-		}
-		/**
-		 *    Close MSSQL connection
-		 */
-		private function _closeConnection() {
-			if($this->connection !== false) {mssql_close($this->connection);}
-			Utils::log("DB CLOSED");
-		}
-		/**
-		 *    Open MSSQL connection
-		 */
-		private function _getConnection() {
-			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
-			if(!$connection) { Response::error(500, 'DB connection failed (SQL).'); }
-			if(!mssql_select_db($this->config['db'])) { Response::error(500, 'DB table connection failed (SQL).'); }
-			Utils::log("DB CONNECTED");
-			return $connection;
-		}
 	}

@@ -88,7 +88,7 @@
 				$response['$org']['storage'] = $storage['storage'];
 				$response['$org']['total_mib'] = $storage['total_mib'];
 			}
-
+			return $response;
 		}
 
 		#
@@ -289,16 +289,16 @@
 		public function getOrgPresentationCount($org) {
 			$this->verifyOrgAccess($org);
 			$employeeCount = $this->relaySQLConnection->query("
-						SELECT COUNT(*)
+						SELECT COUNT(*) as total
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
-						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
+						AND presPresenterEmail LIKE '%$org%'")[0]['total'];
 
 			$studentCount = $this->relaySQLConnection->query("
-						SELECT COUNT(*) AS 'count'
+						SELECT COUNT(*) AS total
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
-						AND presPresenterEmail LIKE '%$org%'")[0]['count'];
+						AND presPresenterEmail LIKE '%$org%'")[0]['total'];
 
 			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}

@@ -169,7 +169,7 @@
 		 */
 		public function getOrgTotalHitsByUser($org){
 			$this->init();
-			$result = $this->sql->query("SELECT username, sum(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org%' GROUP BY username");
+			$result = $this->sql->query("SELECT username, sum(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org' GROUP BY username");
 			$response = [];
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			$response['total_hits'] = 0;
@@ -194,32 +194,6 @@
 			$response = [];
 			while($row = $result->fetch_assoc()) {
 				$response[$row['path']] = $row['hits'];
-			}
-			return $response;
-		}
-
-		#
-		# USER (ME) ENDPOINTS (requires user-scope)
-		#
-		# /me/presentations/hits/*/
-
-		/**
-		 * Get an keyed array with one obj per presentation path (hits, timestamp, username)
-		 *
-		 * @param null $feideUserName
-		 * @return array
-		 */
-		public function getHitsMe($feideUserName = NULL) {
-			$feideUserName = is_null($feideUserName) ? $this->dataporten->userName() : $feideUserName;
-			// Hits table does not ever use the ampersand in username (as username was generated from the presentation path)
-			$username = str_replace("@","",$feideUserName);
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->tableHits WHERE username LIKE '$username'");
-			$response = [];
-			while($row = $result->fetch_assoc()) {
-				$path = $row['path'];
-				unset($row['path']);
-				$response[$path] = $row;
 			}
 			return $response;
 		}

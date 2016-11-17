@@ -49,7 +49,7 @@
 		array('GET', '/service/version/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getServiceVersion()));
-		}, 'All-in-one; workers, version, queue.'),
+		}, 'Service version'),
 
 		array('GET', '/service/info/', function () {
 			global $relay;

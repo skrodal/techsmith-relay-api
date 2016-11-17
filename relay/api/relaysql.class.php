@@ -4,14 +4,13 @@
 
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
+
 	/**
 	 * Serves API routes requesting data from the TechSmith RelaySQL SQL DB.
 	 *
 	 * @author Simon Skrodal
 	 * @since  September 2015
 	 */
-
-
 	class RelaySQL {
 		private $relaySQLConnection, $dataporten, $relay;
 
@@ -26,17 +25,56 @@
 		#
 		# /service/*/
 		#
-		public function getServiceVersion() { return $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0]; }
-		// public function getServiceWorkers() { return $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked, edptServicePid, edptNumEncodings, edptActivationStatus, edptVersion, edptLicensedNumEncodings, createdOn, edptWindowsName, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
-		public function getServiceWorkers() { return $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint"); }
-		//
-		public function getServiceQueueFailedJobs() { return $this->relaySQLConnection->query("SELECT jobId, jobType, jobState, jobPresentation_PresId, jobQueuedTime, jobPercentComplete, jobFailureReason, jobNumberOfFailures, jobTitle  FROM tblJob WHERE jobState = 3"); }
-		// public function getServiceQueue() { return $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, jobQueuedTime  FROM tblJob WHERE jobStartProcessingTime IS NULL AND jobType = 0 AND jobState = 0"); }
-		public function getServiceQueue() {
-			return $this->relaySQLConnection->query(
-			"SELECT jobId, jobPresentation_PresId, CONVERT(VARCHAR(26), jobQueuedTime, 106) AS jobQueuedDate, CONVERT(VARCHAR(26), jobQueuedTime, 108) AS jobQueuedTime, presPresenterName, presDuration FROM tblJob
-			 INNER JOIN tblPresentation
-        	 ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
+
+		public function getServiceVersion() {
+			return $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0];
+		}
+
+		public function getServiceInfo() {
+			$response                = [];
+			$response['version']     = $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0];
+			$response['workers']     = $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint");
+			$response['queueFailed'] = $this->relaySQLConnection->query("SELECT jobId, jobType, jobState, jobPresentation_PresId, jobQueuedTime, jobPercentComplete, jobFailureReason, jobNumberOfFailures, jobTitle  FROM tblJob WHERE jobState = 3");
+			$response['queue']       = $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, CONVERT(VARCHAR(26), jobQueuedTime, 106) AS jobQueuedDate, CONVERT(VARCHAR(26), jobQueuedTime, 108) AS jobQueuedTime, presPresenterName, presDuration FROM tblJob
+													    					INNER JOIN tblPresentation
+										                					ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
+
+			return $response;
+		}
+
+
+		/**
+		 * List of distinct orgs (domain names in username) and user count at each
+		 * @return array
+		 */
+		public function getOrgs() {
+			// Best query I could come up with... returns all domain names from username.
+			$sqlResponse = $this->relaySQLConnection->query("
+				SELECT SUBSTRING(userName, CHARINDEX('@', userName) + 1, LEN(userName) - CHARINDEX('@', userName) + 1) AS org
+				FROM tblUser
+				ORDER BY org DESC
+
+			");
+			// Now run a count for each reoccurring domain ({"uninett.no":26,"uit.no":191, ...}
+			$orgCount = array_count_values(array_map(function ($foo) {
+				return $foo['org'];
+			}, $sqlResponse));
+			// We have a few accounts (for internal use) that don't follow user@org.no format - get rid of these
+			foreach($orgCount as $org => $count) {
+				// We expect org.something, if no dot, remove from list
+				if(strpos($org, '.') == false) {
+					unset($orgCount[$org]);
+				}
+			}
+			// We have one testaccount with this domain, which annoys me... Get rid of it!
+			unset($orgCount['outlook.com']);
+
+			return $orgCount;
+		}
+
+		//data.org, data.org.users, data.org.presentations, data.org.total_mib, data.org.storage[]
+		public function getOrgsInfo() {
+
 		}
 
 		#
@@ -44,55 +82,47 @@
 		#
 		# /global/users/*/
 		#
-		public function getGlobalUsers() {
-			return $this->relaySQLConnection->query("SELECT userId, userName, userDisplayName, userEmail FROM tblUser");
-		}
 
 		public function getGlobalUserCount() {
-			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblUser")[0]['count'];
-		}
-
-		public function getGlobalUserCountByAffiliation() {
-			$employeeCount = $this->getGlobalEmployeeCount()['count'];
-			$studentCount = $this->getGlobalStudentCount()['count'];
-			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
-		}
-
-	    public function getGlobalEmployees() {
-		    $employees = $this->relaySQLConnection->query("
-							SELECT userId, userName, userDisplayName, userEmail
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
-		    return $employees;
-	    }
-
-		public function getGlobalEmployeeCount() {
+			// Employees
 			$employeeCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*) AS 'count'
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
-			return $employeeCount[0];
-		}
+				SELECT COUNT(*) as total
+				FROM tblUserProfile
+				WHERE usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId()
+			);
+			$employeeCount = empty($employeeCount) ? 0 : (int)$employeeCount[0]['total'];
 
-		public function getGlobalStudents() {
-			$students = $this->relaySQLConnection->query("
-							SELECT userId, userName, userDisplayName, userEmail
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
-			return $students;
-		}
-
-		public function getGlobalStudentCount() {
 			$studentCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*) AS 'count'
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
-			return $studentCount[0];
+				SELECT COUNT(*) as total
+				FROM tblUserProfile
+				WHERE usprProfile_profId = " . $this->relaySQLConnection->studentProfileId()
+			);
+			$studentCount = empty($studentCount) ? 0 : (int)$studentCount[0]['total'];
+
+			// Employees with content
+			$employeeActiveCount = $this->relaySQLConnection->query("
+				SELECT COUNT(DISTINCT presUser_userId) AS total
+				FROM tblPresentation 
+				WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId()
+			);
+			$employeeActiveCount = empty($employeeActiveCount) ? 0 : (int)$employeeActiveCount[0]['total'];
+
+			// Employees with content
+			$studentActiveCount = $this->relaySQLConnection->query("
+				SELECT COUNT(DISTINCT presUser_userId) AS total
+				FROM tblPresentation 
+				WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId()
+			);
+			$studentActiveCount = empty($studentActiveCount) ? 0 : (int)$studentActiveCount[0]['total'];
+
+			return [
+				'total'     => ($employeeCount + $studentCount),
+				'active'    => ($employeeActiveCount + $studentActiveCount),
+				'employees' => ['total' => $employeeCount, 'active' => $employeeActiveCount],
+				'students'  => ['total' => $studentCount, 'active' => $studentActiveCount]
+			];
 		}
+
 
 		#
 		# GLOBAL PRESENTATIONS ENDPOINTS (requires admin-scope)
@@ -100,39 +130,19 @@
 		# /global/presentations/*/
 		#
 
-		// NOTE: presUser_userId is sometimes NULL - not ideal to try to match userId with presentations...
-		public function getGlobalPresentations() {
-			return $this->relaySQLConnection->query("SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser FROM tblPresentation");
-		}
 		public function getGlobalPresentationCount() {
 			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation")[0]['count'];
 		}
 
-		// GLOBALS EMPLOYEE
 
-		public function getGlobalEmployeePresentations() {
-			return $this->relaySQLConnection->query("
-						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
-						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
-		}
-
-		public function getGlobalEmployeePresentationCount(){
+		public function getGlobalEmployeePresentationCount() {
 			return $this->relaySQLConnection->query("
 						SELECT COUNT(*) AS 'count'
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
 		}
 
-		// GLOBALS STUDENT
-		public function getGlobalStudentPresentations() {
-			return $this->relaySQLConnection->query("
-						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser
-						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId());
-		}
-
-		public function getGlobalStudentPresentationCount(){
+		public function getGlobalStudentPresentationCount() {
 			return $this->relaySQLConnection->query("
 						SELECT COUNT(*) AS 'count'
 						FROM tblPresentation
@@ -156,9 +166,9 @@
 			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
 			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and delete any entries
 			// that don't match our requested profiles.
-			if(!empty($query)){
+			if(!empty($query)) {
 				foreach($query as $key => $info) {
-					switch($query[$key]['userAffiliation']){
+					switch($query[$key]['userAffiliation']) {
 						case $this->relaySQLConnection->employeeProfileId():
 							$query[$key]['userAffiliation'] = 'employee';
 							break;
@@ -172,13 +182,21 @@
 			} else {
 				return [];
 			}
+
 			// Re-index array
 			return array_values($query);
 		}
 
-		public function getOrgUserCount($org) {
-			$this->verifyOrgAccess($org);
-			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblUser WHERE userName LIKE '%$org%'")[0]['count'];
+		/**
+		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
+		 *
+		 * @param $orgName
+		 */
+		function verifyOrgAccess($orgName) {
+			// If NOT superadmin AND requested org data is not for home org
+			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
+				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
+			}
 		}
 
 		/**
@@ -186,9 +204,10 @@
 		 * Note that both users with and without content will be fetched.
 		 *
 		 * @param $org
+		 *
 		 * @return array
 		 */
-		public function getOrgEmployees($org){
+		public function getOrgEmployees($org) {
 			$this->verifyOrgAccess($org);
 			// Join user/profiles table and get those users from $org with employeeProfileId only
 			$query = $this->relaySQLConnection->query("
@@ -198,24 +217,14 @@
 								AND 	tblUser.userName LIKE '%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
 			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
-			foreach($query as $key => $info){
+			foreach($query as $key => $info) {
 				$query[$key]['userAffiliation'] = 'employee';
 			}
+
 			return $query;
 		}
 
-		public function getOrgEmployeeCount($org){
-			$this->verifyOrgAccess($org);
-			$employeeCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*) AS 'count'
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
-			return $employeeCount;
-		}
-
-		public function getOrgStudents($org){
+		public function getOrgStudents($org) {
 			$this->verifyOrgAccess($org);
 			// Join user/profiles table and get those users from $org with employeeProfileId only
 			$query = $this->relaySQLConnection->query("
@@ -225,82 +234,68 @@
 								AND 	tblUser.userName LIKE '%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
 			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
-			foreach($query as $key => $info){
+			foreach($query as $key => $info) {
 				$query[$key]['userAffiliation'] = 'student';
 			}
+
 			return $query;
 		}
 
-		public function getOrgStudentCount($org){
+		public function getOrgUserCount($org) {
 			$this->verifyOrgAccess($org);
+
+			$employeeCount = $this->relaySQLConnection->query("
+							SELECT COUNT(*) AS 'count'
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
+
 			$studentCount = $this->relaySQLConnection->query("
 							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
 								AND 	tblUser.userName LIKE '%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
-			return $studentCount;
+
+			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
-		/**
-		 * Gets affiliation count (students and employees) for requested org.
-		 *
-		 * @param $org
-		 * @return array
-		 */
-		public function getOrgUserCountByAffiliation($org) {
-			$employeeCount = $this->getOrgEmployeeCount($org);
-			$studentCount = $this->getOrgStudentCount($org);
-			return array('total' => $employeeCount+$studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
-		}
 
-		#
-		# ORG PRESENTATIONS ENDPOINTS (requires minimum org-scope)
-		#
-		# /org/{org.no}/presentations/*/
-		#
 		public function getOrgPresentations($org) {
 			$this->verifyOrgAccess($org);
+
 			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
 						FROM tblPresentation
 						WHERE presPresenterEmail LIKE '%$org%' ");
 		}
 
+
 		public function getOrgPresentationCount($org) {
 			$this->verifyOrgAccess($org);
-			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation WHERE presPresenterEmail LIKE '%$org%'")[0]['count'];
-		}
-
-		public function getOrgEmployeePresentationCount($org){
-			$this->verifyOrgAccess($org);
-			return $this->relaySQLConnection->query("
+			$employeeCount = $this->relaySQLConnection->query("
 						SELECT COUNT(*)
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
 						AND presPresenterEmail LIKE '%$org%'")[0]['computed'];
-		}
 
-		public function getOrgStudentPresentationCount($org){
-			$this->verifyOrgAccess($org);
-			return $this->relaySQLConnection->query("
+			$studentCount = $this->relaySQLConnection->query("
 						SELECT COUNT(*) AS 'count'
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
 						AND presPresenterEmail LIKE '%$org%'")[0]['count'];
+
+			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}
 
-		#
-		# USER ENDPOINTS  (requires minimum user-scope)
-		#
-		# /me/*/
-		# /user/*/
-		#
 
 		/**
 		 * /me/
 		 * /user/[*:userName]/
+		 *
 		 * @param $feideUserName
+		 *
 		 * @return array
 		 */
 		public function getUser($feideUserName) {
@@ -314,14 +309,16 @@
 			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
 			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and return entry
 			// as soon as we have a match.
-			if(!empty($query)){
+			if(!empty($query)) {
 				foreach($query as $key => $info) {
-					switch($query[$key]['userAffiliation']){
+					switch($query[$key]['userAffiliation']) {
 						case $this->relaySQLConnection->employeeProfileId():
 							$query[$key]['userAffiliation'] = 'employee';
+
 							return $query[$key];
 						case $this->relaySQLConnection->studentProfileId():
 							$query[$key]['userAffiliation'] = 'student';
+
 							return $query[$key];
 					}
 				}
@@ -336,6 +333,7 @@
 		 *
 		 *
 		 * @param $feideUserName
+		 *
 		 * @return array
 		 */
 		public function getUserPresentations($feideUserName) {
@@ -350,36 +348,13 @@
 		}
 
 		/**
-		 * /me/presentations/count/
-		 * /user/[*:userName]/presentations/count/
-		 *
-		 * @param $feideUserName
-		 * @return int
-		 */
-		public function getUserPresentationCount($feideUserName) {
-			// $userId = $this->relaySQLConnection->query("SELECT userId FROM tblUser WHERE userName = '$feideUserName'");
-			$userEmail = $this->relaySQLConnection->query("SELECT userEmail FROM tblUser WHERE userName = '$feideUserName'");
-			if(empty($userEmail)) return [];
-			$userEmail = $userEmail[0]['userEmail'];
-			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation WHERE presPresenterEmail = '$userEmail'")[0]['count'];
-		}
-
-
-
-
-
-
-
-
-
-
-		/**
 		 * For dev purposes only. Requires Admin scope and superadmin role (i.e. uninett employee).
 		 *
 		 * @param $table_name
+		 *
 		 * @return array
 		 */
-		public function getTableSchema($table_name){
+		public function getTableSchema($table_name) {
 			if($this->dataporten->isSuperAdmin() && $this->dataporten->hasOauthScopeAdmin()) {
 				return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
 			}
@@ -387,31 +362,15 @@
 			Response::error(401, 'Unauthorized!');
 		}
 
-		public function getTableDump($table_name, $top){
+
+		// ---------------------------- UTILS ----------------------------
+
+		public function getTableDump($table_name, $top) {
 			if($this->dataporten->isSuperAdmin() && $this->dataporten->hasOauthScopeAdmin()) {
 				return $this->relaySQLConnection->query("SELECT TOP($top) * FROM $table_name");
 			}
 			// Else
 			Response::error(401, 'Unauthorized!');
-		}
-
-
-
-
-
-
-		// ---------------------------- UTILS ----------------------------
-
-
-		/**
-		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
-		* @param $orgName
-		*/
-		function verifyOrgAccess($orgName){
-			// If NOT superadmin AND requested org data is not for home org
-			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
-				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
-			}
 		}
 
 

@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Utilising RelayFS, RelaySQL and RelayMongo, this class provides responses for all routes.
+	 * Utilising RelaySQL/MySQL and RelayMongo, this class provides responses for all routes.
 	 *
 	 * @author Simon Skrødal
 	 * @date   29/10/2015
@@ -14,7 +14,7 @@
 	class Relay {
 
 		private $dataporten;
-		private $mongo, $sql, $fs, $presDelete, $presHits;
+		private $mongo, $sql, $presDelete, $presHits;
 
 		function __construct(Dataporten $dataporten) {
 			$this->dataporten = $dataporten;
@@ -28,11 +28,6 @@
 		public function sql() {
 			if(!isset($this->sql)) $this->sql = new RelaySQL($this);
 			return $this->sql;
-		}
-
-		public function fs() {
-			if(!isset($this->fs)) $this->fs = new RelayFS($this);
-			return $this->fs;
 		}
 
 		public function presDelete() {

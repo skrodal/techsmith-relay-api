@@ -3,8 +3,6 @@
 	namespace Relay\Api;
 
 	use Relay\Database\RelayMySQLConnection;
-	use Relay\Utils\Response;
-	use Relay\Utils\Utils;
 
 	/**
 	 * Serves API `user-scope` routes requesting a user presentation to be deleted/undeleted.
@@ -25,6 +23,20 @@
 			$this->relay         = $relay;
 		}
 
+		/**
+		 *
+		 * @param $org
+		 *
+		 * @return array
+		 */
+		public function getDeletedPresentationsOrgCount($org) {
+			$this->init();
+			// Only checking on moved (i.e. unavailable)
+			$result = $this->sql->query("SELECT COUNT(*) AS count FROM $this->table_name WHERE username LIKE '%$org' AND moved = 1");
+
+			return !empty($result) ? $result['count'] : [];
+		}
+
 		private function init() {
 			if(!$this->relayMySQLConnection) {
 				$this->relayMySQLConnection = new RelayMySQLConnection($this->configKey);
@@ -33,39 +45,6 @@
 			}
 		}
 
-		/**
-		 * Not implemented in route, but rather used to supplement presentation list from mongo
-		 * when it is built.
-		 * @param $org
-		 * @return array
-		 */
-		public function getDeletedPresentationsOrg($org) {
-			$this->init();
-			// Only checking on moved (i.e. unavailable)
-			$result = $this->sql->query("SELECT path FROM $this->table_name WHERE username LIKE '%$org' AND moved = 1");
-			$response = [];
-			while($row = $result->fetch_assoc()) {
-				$response[$row['path']] = 'deleted';
-			}
-			return $response;
-		}
-
-		/**
-		 * Not implemented in route, but rather used to supplement presentation list from mongo
-		 * when it is built.
-		 * @param $username
-		 * @return array
-		 */
-		public function getDeletedPresentationsUser($username) {
-			$this->init();
-			// Only checking on moved (i.e. unavailable)
-			$result = $this->sql->query("SELECT path FROM $this->table_name WHERE username LIKE '$username' AND moved = 1");
-			$response = [];
-			while($row = $result->fetch_assoc()) {
-				$response[$row['path']] = 'deleted';
-			}
-			return $response;
-		}
 
 		#
 		# ADMIN ENDPOINTS (requires admin-scope) AND Role of Superadmin
@@ -84,156 +63,6 @@
 			return $this->_sqlResultToArray($result);
 		}
 
-		/**
-		 * List of all permanently deleted presentations.
-		 * @return array
-		 */
-		public function getDeletedPresentationsAdmin() {
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE deleted = 1");
-
-			return $this->_sqlResultToArray($result);
-		}
-
-		/**
-		 * Presentations in the deletelist that have been moved, but not yet deleted (may be restored)
-		 * Note! Will also return presentations where a restore has been requested already!
-		 * @return array
-		 */
-		public function getMovedPresentationsAdmin() {
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE moved = 1 AND deleted <> 1");
-
-			return $this->_sqlResultToArray($result);
-		}
-
-
-		#
-		# USER (ME) ENDPOINTS (requires user-scope)
-		#
-		# GET /me/presentations/deletelist/*/
-
-		/**
-		 * All presentations in the deletelist (client can choose to determine which is which).
-		 * @return array
-		 */
-		public function getAllDeletelistPresentationsMe() {
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName'");
-
-			return $this->_sqlResultToArray($result);
-		}
-
-		/**
-		 * Presentations recently added to deletelist that have not yet been moved (may be cancelled)
-		 *
-		 * @return array
-		 */
-		public function getNotMovedPresentationsMe() {
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName' AND moved = 0");
-
-			return $this->_sqlResultToArray($result);
-		}
-
-		/***
-		 * Presentations in the deletelist that have been deleted (thus cannot be restored)
-		 */
-		public function getMovedPresentationsMe() {
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName' AND moved = 1 AND deleted <> 1");
-
-			return $this->_sqlResultToArray($result);
-		}
-
-		/**
-		 * List of permanently deleted presentations.
-		 * @return array
-		 */
-		public function getDeletedPresentationsMe() {
-			$this->init();
-			$result = $this->sql->query("SELECT * FROM $this->table_name WHERE username = '$this->feideUserName' AND deleted = 1");
-
-			return $this->_sqlResultToArray($result);
-		}
-
-
-		# POST /me/presentation/deletelist/*/
-
-		/**
-		 * Add a single presentation to the deletelist
-		 * @return string
-		 */
-		public function deletePresentationMe() {
-			// Will exit on errors
-			$requestBody = Utils::getPresentationRequestBody();
-			$this->init();
-			$presPath = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
-			// Double check that the username in request equals Dataporten user
-			if(strcasecmp($requestBody['presentation']['username'], $this->feideUserName) !== 0) {
-				Response::error(400, 'Bad request: Client/API user mismatch.');
-			}
-			// If the presentation is already in the table, exit
-			if($result = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presPath'")->fetch_assoc()) {
-				Response::result(array('info' => 'Presentation is already in the deletelist'));
-			} else {
-				// Do the insert
-				$query = "INSERT INTO $this->table_name (path, username) VALUES ('$presPath', '$this->feideUserName')";
-				// Exit on error
-				if(!$result = $this->sql->query($query)) {
-					Response::error(500, "500 Internal Server Error (DB INSERT failed): " . $this->sql->error);
-				}
-
-				return 'Request to delete presentation OK.';
-			}
-		}
-
-		/**
-		 * Remove a single presentation from the deletelist (prior to it being moved).
-		 * @return string
-		 */
-		public function restorePresentationMe() {
-			// Will exit on errors
-			$requestBody = Utils::getPresentationRequestBody();
-			$this->init();
-			$presentationPath = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
-			// See if entry is in table and that it is not already moved/deleted
-			if($presToDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presentationPath' AND moved <> 1 AND deleted <> 1")->fetch_assoc()) {
-				$query = "DELETE FROM $this->table_name WHERE path='$presentationPath'";
-				// Exit on error
-				if(!$result = $this->sql->query($query)) {
-					Response::error(500, "500 Internal Server Error (DB DELETE FROM table failed): " . $this->sql->error);//. $mysqli->error
-				}
-
-				return 'Request to cancel presentation delete OK.';
-			} else {
-				// The requested presentation record does not exist in the table
-				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted/moved.');
-			}
-		}
-
-		/**
-		 * Request a moved presentation to be moved back.
-		 * @return string
-		 */
-		public function undeletePresentationMe() {
-			// Will exit on errors
-			$requestBody = Utils::getPresentationRequestBody();
-			$this->init();
-			$presentationPath = isset($requestBody['presentation']['path']) ? $this->sql->real_escape_string($requestBody['presentation']['path']) : Response::error(400, 'Bad request: Missing required data in request body.');
-			// See if entry is in table and that it is already marked as moved (and not deleted)
-			if($presToUnDelete = $this->sql->query("SELECT * FROM $this->table_name WHERE path='$presentationPath' AND moved = 1 AND deleted <> 1")->fetch_assoc()) {
-				$query = "UPDATE $this->table_name SET undelete=1 WHERE path='$presentationPath'";
-				// Exit on error
-				if(!$result = $this->sql->query($query)) {
-					Response::error(500, "500 Internal Server Error (DB UPDATE table failed): " . $this->sql->error);//. $mysqli->error
-				}
-				return 'Request to undelete presentation OK.';
-			} else {
-				// The requested presentation record does not exist in the table
-				Response::error(400, 'Bad request: The requested presentation does not exist in the table, or it is already deleted.');
-			}
-		}
 
 		private function _sqlResultToArray($result) {
 			$response = array();
@@ -241,6 +70,7 @@
 			while($row = $result->fetch_assoc()) {
 				array_push($response, $row);
 			}
+
 			return $response;
 		}
 

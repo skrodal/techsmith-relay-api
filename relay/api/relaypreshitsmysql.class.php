@@ -169,6 +169,7 @@
 		 */
 		public function getOrgTotalHitsByUser($org){
 			$this->init();
+			error_log($org);
 			$result = $this->sql->query("SELECT username, sum(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org' GROUP BY username");
 			$response = [];
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();

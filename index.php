@@ -239,6 +239,7 @@
 				verifyOrgAndUserAccess($orgId);
 				Response::result(array('status' => true, 'data' => $relay->presHits()->getOrgTotalHits($orgId)));
 			}, 'Total number of hits on this orgs content (Scope: admin/org).'),
+
 			array('GET', '/org/[org:orgId]/presentations/hits/users/', function ($orgId) {
 				global $relay;
 				verifyOrgAndUserAccess($orgId);

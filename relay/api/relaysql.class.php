@@ -84,6 +84,7 @@
 				$response[$org]['users'] = $this->getOrgUserCount($org);
 				$storage = $this->mongo()->getOrgDiskusage($org);
 				$response[$org]['storage'] = $storage['storage'];
+				$response[$org]['presentations'] = $this->getOrgPresentationCount($org);
 				$response[$org]['total_mib'] = $storage['total_mib'];
 			}
 			return $response;

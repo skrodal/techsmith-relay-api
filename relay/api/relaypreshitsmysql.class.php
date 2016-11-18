@@ -199,7 +199,6 @@
 			$response['total_hits']      = 0;
 			$users                       = [];
 			while($row = $result->fetch_assoc()) {
-				error_log(json_encode($row));
 				$users[$row['username']] = $row['hits'];
 				$response['total_hits'] += $row['hits'];
 			}

@@ -218,8 +218,8 @@
 				Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUserCount($orgId)));
 			}, 'Count users at org (Scope: admin/org).'),
 
-			// sql (all users in DB, active *and* inactive)
-			/* DONE */ // array('GET','/org/[org:orgId]/users/', 			    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sql()->getOrgUsers($orgId))); }, 							                    'All users at org (Scope: admin/org).'),
+			// sqlConn (all users in DB, active *and* inactive)
+			/* DONE */ // array('GET','/org/[org:orgId]/users/', 			    function($orgId){ global $relay; Response::result(array('status' => true, 'data' => $relay->sqlConn()->getOrgUsers($orgId))); }, 							                    'All users at org (Scope: admin/org).'),
 
 			### PRESENTATIONS
 			array('GET', '/org/[org:orgId]/presentations/', function ($orgId) {

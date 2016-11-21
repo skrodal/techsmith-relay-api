@@ -13,15 +13,13 @@
 	 * @author Simon Skrodal
 	 * @since  September 2016
 	 */
-	class RelayPresHitsMySQL {
+	class RelayPresHitsMySQL extends Relay {
 		private $relayMySQLConnection = false;
-		private $sqlConn, $tableHits, $tableDaily, $tableInfo, $dataporten, $feideUserName, $firstRecordTimestamp, $relay;
+		private $sqlConn, $tableHits, $tableDaily, $tableInfo, $feideUserName, $firstRecordTimestamp;
 		private $configKey = 'relay_mysql_preshits';
 
-		function __construct(Relay $relay) {
-			$this->dataporten    = $relay->dataporten();
-			$this->feideUserName = $this->dataporten->userName();
-			$this->relay         = $relay;
+		function __construct() {
+			$this->feideUserName = $this->dataporten()->userName();
 		}
 
 		public function getTotalHits() {
@@ -129,12 +127,12 @@
 		public function getOrgsTotalHitsAnonymised() {
 			$this->init();
 			// Sorted list of org names (org.no)
-			$orgs                        = $this->relay->mongo()->getOrgs();
+			$orgs                        = $this->sql()->getOrgs();
 			$response                    = [];
 			$response['hits']            = [];
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			//
-			foreach($orgs as $index => $org) {
+			foreach($orgs as $org => $userCount) {
 				$result             = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
 				$hits               = $result->fetch_assoc();
 				$response['hits'][] = $hits['hits'] ? $hits['hits'] : "0";
@@ -163,7 +161,7 @@
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			//
 			foreach($orgs as $index => $org) {
-				$result                 = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org'");
+				$result                 = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
 				$hits                   = $result->fetch_assoc();
 				$response['hits'][$org] = $hits['hits'] ? $hits['hits'] : 0;
 			}
@@ -173,7 +171,7 @@
 
 		public function getOrgTotalHits($org) {
 			$this->init();
-			$result                      = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org'");
+			$result                      = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
 			$hits                        = $result->fetch_assoc();
 			$response                    = [];
 			$response['hits']            = $hits['hits'] ? $hits['hits'] : 0;
@@ -193,7 +191,7 @@
 		public function getOrgTotalHitsByUser($org) {
 			$this->init();
 
-			$result = $this->sqlConn->query("SELECT username, SUM(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org' GROUP BY username");
+			$result                      = $this->sqlConn->query("SELECT username, SUM(hits) AS 'hits' FROM $this->tableHits WHERE username LIKE '%$org' GROUP BY username");
 			$response                    = [];
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			$response['total_hits']      = 0;
@@ -234,7 +232,7 @@
 		 */
 		function verifyOrgAccess($orgName) {
 			// If NOT superadmin AND requested org data is not for home org
-			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
+			if(!$this->dataporten()->isSuperAdmin() && strcasecmp($orgName, $this->dataporten()->userOrg()) !== 0) {
 				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
 			}
 		}

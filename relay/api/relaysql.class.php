@@ -2,7 +2,6 @@
 
 	namespace Relay\Api;
 
-	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
 
 	/**
@@ -11,13 +10,11 @@
 	 * @author Simon Skrodal
 	 * @since  September 2015
 	 */
-	class RelaySQL extends Relay  {
-		private $relaySQLConnection, $dataporten, $relay;
+	class RelaySQL extends Relay {
+		private $relaySQLConnection;
 
-		function __construct(Relay $relay) {
-			$this->relaySQLConnection = new RelaySQLConnection();
-			$this->dataporten         = $relay->dataporten();
-			$this->relay              = $relay;
+		function __construct() {
+			$this->relaySQLConnection = $this->sql();
 		}
 
 		#
@@ -31,9 +28,10 @@
 		}
 
 		public function getServiceInfo() {
-			$response                = [];
-			$response['version']     = $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0];
-			$response['workers']     = $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint");
+			$response            = [];
+			$response['version'] = $this->relaySQLConnection->query("SELECT * FROM tblVersion")[0];
+			$response['workers'] = $this->relaySQLConnection->query("SELECT edptId, edptUrl, edptStatus, edptLastChecked,  edptNumEncodings, edptVersion, edptLicensedNumEncodings, edptRemainingMediaDiskSpaceInMB FROM tblEndpoint");
+
 			return $response;
 		}
 
@@ -43,8 +41,24 @@
 
 		public function getServiceQueue() {
 			return $this->relaySQLConnection->query("SELECT jobId, jobPresentation_PresId, CONVERT(VARCHAR(26), jobQueuedTime, 106) AS jobQueuedDate, CONVERT(VARCHAR(26), jobQueuedTime, 108) AS jobQueuedTime, presPresenterName, presDuration FROM tblJob
-													    					INNER JOIN tblPresentation
-										                					ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
+							                        INNER JOIN tblPresentation
+				                                    ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
+		}
+
+		public function getOrgsInfo() {
+			$orgsObj  = $this->getOrgs();
+			$response = [];
+			foreach($orgsObj as $org => $count) {
+				$response[$org]                  = [];
+				$response[$org]['users']         = $this->getOrgUserCount($org);
+				$response[$org]['hits']          = $this->presHits()->getOrgTotalHits($org)['hits'];
+				$storage                         = $this->mongo()->getOrgDiskusage($org);
+				$response[$org]['storage']       = $storage['storage'];
+				$response[$org]['presentations'] = $this->getOrgPresentationCount($org);
+				$response[$org]['total_mib']     = $storage['total_mib'];
+			}
+
+			return $response;
 		}
 
 		/**
@@ -76,26 +90,67 @@
 			return $orgCount;
 		}
 
-		public function getOrgsInfo() {
-			$orgsObj = $this->getOrgs();
-			$response = [];
-			foreach($orgsObj as $org => $count){
-				$response[$org] = [];
-				$response[$org]['users'] = $this->getOrgUserCount($org);
-				$response[$org]['hits'] = $this->presHits()->getOrgTotalHits($org)['hits'];
-				$storage = $this->mongo()->getOrgDiskusage($org);
-				$response[$org]['storage'] = $storage['storage'];
-				$response[$org]['presentations'] = $this->getOrgPresentationCount($org);
-				$response[$org]['total_mib'] = $storage['total_mib'];
-			}
-			return $response;
-		}
-
 		#
 		# GLOBAL USERS ENDPOINTS (requires admin-scope) AND Role of Superadmin
 		#
 		# /global/users/*/
 		#
+
+		public function getOrgUserCount($org) {
+			$this->verifyOrgAccess($org);
+
+			$employeeCount = $this->relaySQLConnection->query("
+							SELECT COUNT(*) AS 'count'
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
+
+			$studentCount = $this->relaySQLConnection->query("
+							SELECT COUNT(*) AS 'count'
+								FROM   	tblUser, tblUserProfile
+								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
+								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
+
+			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
+		}
+
+
+		#
+		# GLOBAL PRESENTATIONS ENDPOINTS (requires admin-scope)
+		#
+		# /global/presentations/*/
+		#
+
+		/**
+		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
+		 *
+		 * @param $orgName
+		 */
+		function verifyOrgAccess($orgName) {
+			// If NOT superadmin AND requested org data is not for home org
+			if(!$this->dataporten()->isSuperAdmin() && strcasecmp($orgName, $this->dataporten()->userOrg()) !== 0) {
+				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
+			}
+		}
+
+		public function getOrgPresentationCount($org) {
+			$this->verifyOrgAccess($org);
+			$employeeCount = $this->relaySQLConnection->query("
+						SELECT COUNT(*) as total
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
+						AND presPresenterEmail LIKE '%$org'")[0]['total'];
+
+			$studentCount = $this->relaySQLConnection->query("
+						SELECT COUNT(*) AS total
+						FROM tblPresentation
+						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
+						AND presPresenterEmail LIKE '%$org'")[0]['total'];
+
+			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
+		}
 
 		public function getGlobalUserCount() {
 			// Employees
@@ -137,17 +192,15 @@
 			];
 		}
 
-
 		#
-		# GLOBAL PRESENTATIONS ENDPOINTS (requires admin-scope)
+		# ORG USERS ENDPOINTS (requires minimum org-scope)
 		#
-		# /global/presentations/*/
+		# /org/{org.no}/users/*/
 		#
 
 		public function getGlobalPresentationCount() {
 			return $this->relaySQLConnection->query("SELECT COUNT(*) AS 'count' FROM tblPresentation")[0]['count'];
 		}
-
 
 		public function getGlobalEmployeePresentationCount() {
 			return $this->relaySQLConnection->query("
@@ -163,11 +216,6 @@
 						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
 		}
 
-		#
-		# ORG USERS ENDPOINTS (requires minimum org-scope)
-		#
-		# /org/{org.no}/users/*/
-		#
 		public function getOrgUsers($org) {
 			$this->verifyOrgAccess($org);
 			$query = $this->relaySQLConnection->query("
@@ -200,18 +248,6 @@
 
 			// Re-index array
 			return array_values($query);
-		}
-
-		/**
-		 * Prevent orgAdmin to request data for other orgs than what he belongs to.
-		 *
-		 * @param $orgName
-		 */
-		function verifyOrgAccess($orgName) {
-			// If NOT superadmin AND requested org data is not for home org
-			if(!$this->dataporten->isSuperAdmin() && strcasecmp($orgName, $this->dataporten->userOrg()) !== 0) {
-				Response::error(401, '401 Unauthorized (request mismatch org/user). ');
-			}
 		}
 
 		/**
@@ -256,27 +292,6 @@
 			return $query;
 		}
 
-		public function getOrgUserCount($org) {
-			$this->verifyOrgAccess($org);
-
-			$employeeCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*) AS 'count'
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
-
-			$studentCount = $this->relaySQLConnection->query("
-							SELECT COUNT(*) AS 'count'
-								FROM   	tblUser, tblUserProfile
-								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
-								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
-
-			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
-		}
-
-
 		public function getOrgPresentations($org) {
 			$this->verifyOrgAccess($org);
 
@@ -285,25 +300,6 @@
 						FROM tblPresentation
 						WHERE presPresenterEmail LIKE '%$org' ");
 		}
-
-
-		public function getOrgPresentationCount($org) {
-			$this->verifyOrgAccess($org);
-			$employeeCount = $this->relaySQLConnection->query("
-						SELECT COUNT(*) as total
-						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
-						AND presPresenterEmail LIKE '%$org'")[0]['total'];
-
-			$studentCount = $this->relaySQLConnection->query("
-						SELECT COUNT(*) AS total
-						FROM tblPresentation
-						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
-						AND presPresenterEmail LIKE '%$org'")[0]['total'];
-
-			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
-		}
-
 
 		/**
 		 * /me/
@@ -370,7 +366,7 @@
 		 * @return array
 		 */
 		public function getTableSchema($table_name) {
-			if($this->dataporten->isSuperAdmin() && $this->dataporten->hasOauthScopeAdmin()) {
+			if($this->dataporten()->isSuperAdmin() && $this->dataporten()->hasOauthScopeAdmin()) {
 				return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name' ");
 			}
 			// Else
@@ -381,7 +377,7 @@
 		// ---------------------------- UTILS ----------------------------
 
 		public function getTableDump($table_name, $top) {
-			if($this->dataporten->isSuperAdmin() && $this->dataporten->hasOauthScopeAdmin()) {
+			if($this->dataporten()->isSuperAdmin() && $this->dataporten()->hasOauthScopeAdmin()) {
 				return $this->relaySQLConnection->query("SELECT TOP($top) * FROM $table_name");
 			}
 			// Else

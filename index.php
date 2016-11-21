@@ -206,7 +206,6 @@
 
 			### USERS
 
-			// mongo (active == user has produced content)
 			array('GET', '/org/[org:orgId]/users/', function ($orgId) {
 				global $relay;
 				verifyOrgAndUserAccess($orgId);

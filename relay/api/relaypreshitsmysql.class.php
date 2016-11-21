@@ -163,7 +163,7 @@
 			$response['first_timestamp'] = $this->getFirstRecordedTimestamp();
 			//
 			foreach($orgs as $index => $org) {
-				$result                 = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
+				$result                 = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org'");
 				$hits                   = $result->fetch_assoc();
 				$response['hits'][$org] = $hits['hits'] ? $hits['hits'] : 0;
 			}
@@ -173,7 +173,7 @@
 
 		public function getOrgTotalHits($org) {
 			$this->init();
-			$result                      = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org%'");
+			$result                      = $this->sqlConn->query("SELECT SUM(hits) AS 'hits' FROM $this->tableHits WHERE path LIKE '%$org'");
 			$hits                        = $result->fetch_assoc();
 			$response                    = [];
 			$response['hits']            = $hits['hits'] ? $hits['hits'] : 0;

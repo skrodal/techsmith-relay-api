@@ -82,6 +82,7 @@
 			foreach($orgsObj as $org => $count){
 				$response[$org] = [];
 				$response[$org]['users'] = $this->getOrgUserCount($org);
+				$response[$org]['hits'] = $this->presHits()->getOrgTotalHits($org)['hits'];
 				$storage = $this->mongo()->getOrgDiskusage($org);
 				$response[$org]['storage'] = $storage['storage'];
 				$response[$org]['presentations'] = $this->getOrgPresentationCount($org);
@@ -282,7 +283,7 @@
 			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
 						FROM tblPresentation
-						WHERE presPresenterEmail LIKE '%$org%' ");
+						WHERE presPresenterEmail LIKE '%$org' ");
 		}
 
 
@@ -292,13 +293,13 @@
 						SELECT COUNT(*) as total
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
-						AND presPresenterEmail LIKE '%$org%'")[0]['total'];
+						AND presPresenterEmail LIKE '%$org'")[0]['total'];
 
 			$studentCount = $this->relaySQLConnection->query("
 						SELECT COUNT(*) AS total
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
-						AND presPresenterEmail LIKE '%$org%'")[0]['total'];
+						AND presPresenterEmail LIKE '%$org'")[0]['total'];
 
 			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}

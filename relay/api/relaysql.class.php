@@ -69,12 +69,25 @@
 		 * @return array
 		 */
 		public function getOrgs() {
-			// Best query I could come up with... returns all domain names from username.
+			$response = [];
+			// Best query I could come up with... returns all domain names from username + count, while at the same time
+			// filtering out all non-conforming usernames (admin/test-accounts)
+			$sqlResponse = $this->relaySQLConnection->query("
+				SELECT SUBSTRING(userName,charindex('@',userName)+1,len(userName)) AS org,COUNT(userName) AS orgCount
+				FROM tblUser
+				WHERE len(userName)>0
+				AND userName LIKE '%@%.%'
+				AND userName NOT LIKE '%outlook.com'
+				GROUP BY SUBSTRING(userName,charindex('@',userName)+1,len(userName))
+				ORDER BY org ASC
+			");
+			/*
 			$sqlResponse = $this->relaySQLConnection->query("
 			    SELECT RIGHT(userName, LEN(userName) - CHARINDEX('@', userName)) AS org
 				FROM tblUser
 				ORDER BY org DESC
 			");
+
 			//SELECT SUBSTRING(userName, CHARINDEX('@', userName) + 1, LEN(userName) - CHARINDEX('@', userName) + 1) AS org
 			// Now run a count for each reoccurring domain ({"uninett.no":26,"uit.no":191, ...}
 			$orgCount = array_count_values(array_map(function ($foo) {
@@ -91,6 +104,12 @@
 			unset($orgCount['outlook.com']);
 
 			return $orgCount;
+
+			*/
+			foreach($sqlResponse as $index => $orgObj) {
+				$response[$orgObj['org']] = $orgObj['orgCount'];
+			}
+			return $response;
 		}
 
 		#

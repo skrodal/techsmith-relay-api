@@ -71,7 +71,7 @@
 		public function getOrgs() {
 			// Best query I could come up with... returns all domain names from username.
 			$sqlResponse = $this->relaySQLConnection->query("
-				SELECT RIGHT(userName, CHARINDEX('@', REVERSE(userName))-1) 
+				SELECT RIGHT(userName, CHARINDEX('@', REVERSE(userName))-1) AS org
 				FROM tblUser
 				ORDER BY org DESC
 			");

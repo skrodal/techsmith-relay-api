@@ -81,34 +81,11 @@
 				GROUP BY SUBSTRING(userName,charindex('@',userName)+1,len(userName))
 				ORDER BY org ASC
 			");
-			/*
-			$sqlResponse = $this->relaySQLConnection->query("
-			    SELECT RIGHT(userName, LEN(userName) - CHARINDEX('@', userName)) AS org
-				FROM tblUser
-				ORDER BY org DESC
-			");
 
-			//SELECT SUBSTRING(userName, CHARINDEX('@', userName) + 1, LEN(userName) - CHARINDEX('@', userName) + 1) AS org
-			// Now run a count for each reoccurring domain ({"uninett.no":26,"uit.no":191, ...}
-			$orgCount = array_count_values(array_map(function ($foo) {
-				return $foo['org'];
-			}, $sqlResponse));
-			// We have a few accounts (for internal use) that don't follow user@org.no format - get rid of these
-			foreach($orgCount as $org => $count) {
-				// We expect org.something, if no dot, remove from list
-				if(strpos($org, '.') == false) {
-					unset($orgCount[$org]);
-				}
-			}
-			// We have one testaccount with this domain, which annoys me... Get rid of it!
-			unset($orgCount['outlook.com']);
-
-			return $orgCount;
-
-			*/
 			foreach($sqlResponse as $index => $orgObj) {
 				$response[$orgObj['org']] = $orgObj['userCount'];
 			}
+
 			return $response;
 		}
 
@@ -161,6 +138,22 @@
 			$this->verifyOrgAccess($org);
 			$employeeCount = $this->relaySQLConnection->query("
 						SELECT COUNT(*) as total
+							FROM tblPresentation
+							INNER JOIN tblUser
+							ON tblPresentation.presUser_userId = tblUser.userId
+							WHERE tblPresentation.presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
+							AND tblUser.userName LIKE '%@$org'")[0]['total'];
+
+			$studentCount = $this->relaySQLConnection->query("
+						SELECT COUNT(*) as total
+							FROM tblPresentation
+							INNER JOIN tblUser
+							ON tblPresentation.presUser_userId = tblUser.userId
+							WHERE tblPresentation.presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
+							AND tblUser.userName LIKE '%@$org'")[0]['total'];
+			/*
+			$employeeCount = $this->relaySQLConnection->query("
+						SELECT COUNT(*) as total
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->employeeProfileId() . "
 						AND presPresenterEmail LIKE '%$org'")[0]['total'];
@@ -170,6 +163,7 @@
 						FROM tblPresentation
 						WHERE presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
 						AND presPresenterEmail LIKE '%$org'")[0]['total'];
+			*/
 
 			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);
 		}

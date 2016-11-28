@@ -73,7 +73,7 @@
 			// Best query I could come up with... returns all domain names from username + count, while at the same time
 			// filtering out all non-conforming usernames (admin/test-accounts)
 			$sqlResponse = $this->relaySQLConnection->query("
-				SELECT SUBSTRING(userName,charindex('@',userName)+1,len(userName)) AS org,COUNT(userName) AS orgCount
+				SELECT SUBSTRING(userName,charindex('@',userName)+1,len(userName)) AS org,COUNT(userName) AS userCount
 				FROM tblUser
 				WHERE len(userName)>0
 				AND userName LIKE '%@%.%'
@@ -107,7 +107,7 @@
 
 			*/
 			foreach($sqlResponse as $index => $orgObj) {
-				$response[$orgObj['org']] = $orgObj['orgCount'];
+				$response[$orgObj['org']] = $orgObj['userCount'];
 			}
 			return $response;
 		}
@@ -125,14 +125,14 @@
 							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUser.userName LIKE '%@%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId())[0]['count'];
 
 			$studentCount = $this->relaySQLConnection->query("
 							SELECT COUNT(*) AS 'count'
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUser.userName LIKE '%@%$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId())[0]['count'];
 
 			return array('total' => $employeeCount + $studentCount, 'employees' => $employeeCount, 'students' => $studentCount);

@@ -238,7 +238,7 @@
 				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 				FROM tblUser, tblUserProfile
 				WHERE tblUser.userId = tblUserProfile.usprUser_userId
-				AND userName LIKE '%$org%' ");
+				AND userName LIKE '%@$org%' ");
 
 			// Convert affiliation code to text
 			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
@@ -281,7 +281,7 @@
 							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUser.userName LIKE '%@$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->employeeProfileId());
 			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
 			foreach($query as $key => $info) {
@@ -298,7 +298,7 @@
 							SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 								FROM   	tblUser, tblUserProfile
 								WHERE 	tblUser.userId = tblUserProfile.usprUser_userId
-								AND 	tblUser.userName LIKE '%$org%'
+								AND 	tblUser.userName LIKE '%@$org%'
 								AND 	tblUserProfile.usprProfile_profId = " . $this->relaySQLConnection->studentProfileId());
 			// Note: this replacement could be done in the query itself, if one could be bothered working it out...
 			foreach($query as $key => $info) {
@@ -314,7 +314,17 @@
 			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
 						FROM tblPresentation
+							INNER JOIN tblUser
+							ON tblPresentation.presUser_userId = tblUser.userId
+							WHERE tblUser.userName LIKE '%@$org'");
+			/*
+			return $this->relaySQLConnection->query("
+						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
+						FROM tblPresentation
 						WHERE presPresenterEmail LIKE '%$org' ");
+			*/
+			
+			
 		}
 
 		/**
@@ -371,7 +381,7 @@
 						FROM 	tblPresentation,
 								tblUser
 						WHERE 	tblUser.userName = '$feideUserName'
-						AND 	tblPresentation.presPresenterEmail = tblUser.userEmail");
+						AND 	tblPresentation.presUser_userId = tblUser.userId");
 		}
 
 		/**

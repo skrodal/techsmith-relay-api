@@ -322,12 +322,6 @@
 						AND tblPresentation.presDeleted = 0
  						AND tblUser.userName LIKE '%$org' 
 			");
-			/*
-			return $this->relaySQLConnection->query("
-						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
-						FROM tblPresentation
-						WHERE presPresenterEmail LIKE '%$org' ");
-			*/
 		}
 
 		/**

@@ -313,7 +313,7 @@
 			$this->verifyOrgAccess($org);
 
 			return $this->relaySQLConnection->query("
-						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
+						SELECT presUser_userId
 						FROM tblPresentation
 						LEFT JOIN tblUser
 						ON tblPresentation.presUser_userId = tblUser.userId

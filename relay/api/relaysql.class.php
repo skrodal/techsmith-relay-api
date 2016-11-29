@@ -317,7 +317,7 @@
 						FROM tblPresentation
 						LEFT JOIN tblUser
 						ON tblPresentation.presUser_userId = tblUser.userId
-						WHERE tblUser.userName LIKE '%@$org' 
+						WHERE tblUser.userName LIKE '%$org' 
 			");
 			/*
 			return $this->relaySQLConnection->query("

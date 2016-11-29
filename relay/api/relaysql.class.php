@@ -151,6 +151,7 @@
 							ON tblPresentation.presUser_userId = tblUser.userId
 							WHERE tblPresentation.presProfile_profId = " . $this->relaySQLConnection->studentProfileId() . "
 							AND tblUser.userName LIKE '%@$org'")[0]['total'];
+
 			/*
 			$employeeCount = $this->relaySQLConnection->query("
 						SELECT COUNT(*) as total
@@ -313,18 +314,16 @@
 
 			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
-						FROM tblPresentation
-							INNER JOIN tblUser
-							ON tblPresentation.presUser_userId = tblUser.userId
-							WHERE tblUser.userName LIKE '%@$org'");
+						FROM tblPresentation, tblUser
+						WHERE tblPresentation.presUser_userId = tblUser.userId
+						AND tblUser.userName LIKE '%@$org'
+			");
 			/*
 			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
 						FROM tblPresentation
 						WHERE presPresenterEmail LIKE '%$org' ");
 			*/
-			
-			
 		}
 
 		/**

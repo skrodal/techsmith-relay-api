@@ -314,7 +314,7 @@
 
 
 			return $this->relaySQLConnection->query("
-						SELECT presId, presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presMaxResolution, presPlatform, createdOn, presProfile_profId
+						SELECT tblPresentation.presId, tblPresentation.presUser_userId, tblPresentation.presPresenterName, tblPresentation.presPresenterEmail, tblPresentation.presTitle, tblPresentation.presDescription, tblPresentation.presDuration, tblPresentation.presMaxResolution, tblPresentation.presPlatform, tblPresentation.createdOn, tblPresentation.presProfile_profId
 						FROM tblPresentation
 						LEFT JOIN tblUser
 						ON tblPresentation.presUser_userId = tblUser.userId

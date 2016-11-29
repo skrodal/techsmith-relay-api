@@ -314,9 +314,10 @@
 
 			return $this->relaySQLConnection->query("
 						SELECT presUser_userId, presPresenterName, presPresenterEmail, presTitle, presDescription, presDuration, presNumberOfFiles, presMaxResolution, presPlatform, presUploaded, createdOn, createdByUser, presProfile_profId
-						FROM tblPresentation, tblUser
-						WHERE tblPresentation.presUser_userId = tblUser.userId
-						AND tblUser.userName LIKE '%@$org'
+						FROM tblPresentation
+						INNER JOIN tblUser
+						ON tblPresentation.presUser_userId = tblUser.userId
+						WHERE tblUser.userName LIKE '%@$org' 
 			");
 			/*
 			return $this->relaySQLConnection->query("

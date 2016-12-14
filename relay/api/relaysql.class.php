@@ -95,11 +95,19 @@
 				ORDER BY org ASC
 			");
 
+			// Subscriber list from relay-register service (will also include orgnames that no longer exist in Relay DB, i.e. due to 'fusjonering')
+			$relaySubscribers = $this->relay->subscribers()->getSubscribers();
+			$relaySubscribersAssociative = [];
+			// Make associative for easier merging with Relay DB list
+			foreach($relaySubscribers as $index => $orgObj) {
+				$relaySubscribersAssociative[$orgObj['org']] = $orgObj;
+			}
+
 			foreach($sqlResponse as $index => $orgObj) {
 				$response[$orgObj['org']] = $orgObj['userCount'];
 			}
 
-			return $response;
+			return $relaySubscribersAssociative + $response;
 		}
 
 		#

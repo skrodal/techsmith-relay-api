@@ -14,7 +14,7 @@
 	class Relay {
 
 		private $dataporten;
-		private $mongo, $sql, $presDelete, $presHits;
+		private $mongo, $sql, $presDelete, $presHits, $subscribers;
 
 		function __construct(Dataporten $dataporten) {
 			$this->dataporten = $dataporten;
@@ -38,6 +38,11 @@
 		public function presHits() {
 			if(!isset($this->presHits)) $this->presHits = new RelayPresHitsMySQL($this);
 			return $this->presHits;
+		}
+
+		public function subscribers() {
+			if(!isset($this->subscribers)) $this->subscribers = new RelaySubscribersMySQL($this);
+			return $this->subscribers;
 		}
 
 		public function dataporten() {

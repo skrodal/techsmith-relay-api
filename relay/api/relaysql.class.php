@@ -48,6 +48,11 @@
 										                					ON tblJob.jobPresentation_PresId = tblPresentation.presId WHERE tblJob.jobStartProcessingTime IS NULL AND tblJob.jobType = 0 AND tblJob.jobState = 0");
 		}
 
+		/**
+		 * simon@14DES2016 - TODO: DENNE FUNKSJONEN HENTER INFO FRA Mongo - BURDE ERSTATTES SLIK AT VI KAN BLI KVITT AVHENGIGHET TIL https://github.com/skrodal/relay-mediasite-harvest
+		 *
+		 * @return array
+		 */
 		public function getOrgsInfo() {
 			$orgsObj  = $this->getOrgs();
 			$response = [];
@@ -66,6 +71,14 @@
 
 		/**
 		 * List of distinct orgs (domain names in username) and user count at each
+		 *
+		 * simon@14DES2016: Fusjonerte læresteder (eks. hinesna) vil ikke plukkes opp av denne (siden det ikke finnes noen
+		 * hinesna brukere i systemet lenger). På filserver/screencast, derimot, ligger det jo brukermapper med 'bruker@hinesna.no'.
+		 *
+		 * Har ikke hatt tid til å ferdigstille dette, så en klient (eks RelayAdmin) vil per i dag ikke liste utfasede læresteder (og dermed
+		 * heller ikke diskforbruk/hits knyttet til disse). En ny service som logger diskforbruk er ferdigstilt, men ikke satt opp i dette APIet/klient.
+		 * Den mottar heller ikke noe data (siden noen i 4etg. må sette opp et script som pusher dette, på samme måte som for Mediasite).
+		 *
 		 * @return array
 		 */
 		public function getOrgs() {

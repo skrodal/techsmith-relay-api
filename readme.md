@@ -36,6 +36,11 @@ September 2016: APIet snakker nå med flere services for å komplettere presenta
 - UNINETT Dataporten GateKeeper
 - Alto Router
 - FreeTDS/PDO (MSSQL)
+- https://github.com/skrodal/relay-mediasite-harvest
+    - Denne burde vi kvitte oss med, og vi er nesten der. Scanning av diskforbruk er den eneste funksjonalitet i dette systemet som fortsatt brukes.
+    - Ruter som fortsatt er avhengig av systemet: `/service/diskusage/` og `/admin/orgs/info/`
+     
+     
 
 ## Brukes av ##
 

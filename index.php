@@ -67,15 +67,15 @@
 		// TODO in client:
 		array('GET', '/service/orgs/', function () {
 			global $relay;
-			Response::result(array('status' => true, 'data' => $relay->sql()->getOrgs()));
+			Response::result(array('status' => true, 'data' => $relay->subscribers()->getSubscribers()));
 		}, 'List all orgs : usercount'),
 		// STORAGE (mongo)
 		array('GET', '/service/diskusage/', function () {
 			global $relay;
+			// simon@14DES2016 - TODO: DENNE FUNKSJONEN HENTER INFO FRA Mongo - BURDE ERSTATTES SLIK AT VI KAN BLI KVITT AVHENGIGHET TIL https://github.com/skrodal/relay-mediasite-harvest
 			Response::result(array('status' => true, 'data' => $relay->mongo()->getServiceDiskusage()));
 		}, 'Total service diskusage (in MiB)'),
 		// USERS (mssql)
-		// TODO in client:
 		array('GET', '/service/users/count/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalUserCount()));
@@ -85,18 +85,15 @@
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalPresentationCount()));
 		}, 'Total presentation count (inc. deleted)'),
-		// Todo in client
 		array('GET', '/service/presentations/employees/count/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalEmployeePresentationCount()));
 		}, 'Total employee presentation count (inc. deleted)'),
-		// Todo in client
 		array('GET', '/service/presentations/students/count/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->sql()->getGlobalStudentPresentationCount()));
 		}, 'Total student presentation count (inc. deleted)'),
 		// DELETED PRESENTATIONS (mysql)
-		// Todo in client
 		array('GET', '/service/presentations/deleted/count/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => count($relay->presDelete()->getAllPresentationRecordsAdmin())));
@@ -153,12 +150,16 @@
 			### ORGS
 			array('GET', '/admin/orgs/info/', function () {
 				global $relay;
+				// simon@14DES2016 - TODO: DENNE FUNKSJONEN HENTER INFO FRA Mongo - BURDE ERSTATTES SLIK AT VI KAN BLI KVITT AVHENGIGHET TIL https://github.com/skrodal/relay-mediasite-harvest
 				Response::result(array('status' => true, 'data' => $relay->sql()->getOrgsInfo()));
 			}, 'List all orgs with user/presentation/diskusage info (Scope: admin).'),
+
+			/*
 			array('GET', '/admin/orgs/diskusage/', function () {
 				global $relay;
 				Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgsDiskusage()));
 			}, 'Total service diskusage (in MiB) plus per org (Scope: admin).'),
+			*/
 		]);
 	}
 
@@ -181,12 +182,13 @@
 				Response::result(array('status' => true, 'data' => $dataporten->adminGroupInviteLink()));
 			}, 'Get invitation link to MediasiteAdmin group (Scope: admin/org).'),
 			### DISKUSAGE
+			/*
 			array('GET', '/org/[org:orgId]/diskusage/', function ($orgId) {
 				global $relay;
 				verifyOrgAndUserAccess($orgId);
 				Response::result(array('status' => true, 'data' => $relay->mongo()->getOrgDiskusage($orgId)));
 			}, 'Org diskusage history (in MiB) and total (Scope: admin/org).'),
-
+			*/
 			### SINGLE USER
 			array('GET', '/org/[org:orgId]/user/[user:userName]/', function ($orgId, $userName) {
 				global $relay;
@@ -198,11 +200,14 @@
 				verifyOrgAndUserAccess($orgId, $userName);
 				Response::result(array('status' => true, 'data' => $relay->sql()->getUserPresentations($userName)));
 			}, 'Presentations for specific user at org (Scope: admin/org).'),
+
+			/*
 			array('GET', '/org/[org:orgId]/user/[user:userName]/diskusage/', function ($orgId, $userName) {
 				global $relay;
 				verifyOrgAndUserAccess($orgId, $userName);
 				Response::result(array('status' => true, 'data' => $relay->mongo()->getUserDiskusage($userName)));
 			}, 'Diskusage for specific user at org (Scope: admin/org).'),
+			*/
 
 			### USERS
 

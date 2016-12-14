@@ -64,8 +64,7 @@
 		}, 'Failed jobs in queue on server.'),
 
 		// ORGS
-		// TODO in client:
-		array('GET', '/service/orgs/', function () {
+		array('GET', '/service/subscribers/', function () {
 			global $relay;
 			Response::result(array('status' => true, 'data' => $relay->subscribers()->getSubscribers()));
 		}, 'List all orgs : usercount'),

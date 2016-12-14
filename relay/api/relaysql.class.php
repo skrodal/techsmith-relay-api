@@ -56,14 +56,17 @@
 		public function getOrgsInfo() {
 			$orgsObj  = $this->getOrgs();
 			$response = [];
-			foreach($orgsObj as $org => $count) {
-				$response[$org]                  = [];
-				$response[$org]['users']         = $this->getOrgUserCount($org);
-				$response[$org]['hits']          = $this->relay->presHits()->getOrgTotalHits($org);
-				$storage                         = $this->relay->mongo()->getOrgDiskusage($org);
-				$response[$org]['storage']       = $storage['storage'];
-				$response[$org]['presentations'] = $this->getOrgPresentationCount($org);
-				$response[$org]['total_mib']     = $storage['total_mib'];
+			foreach($orgsObj as $org => $orgObj) {
+				$response[$org]                       = [];
+				$response[$org]['users']              = $this->getOrgUserCount($org);
+				$response[$org]['hits']               = $this->relay->presHits()->getOrgTotalHits($org);
+				$response[$org]['active']             = isset($orgObj['active']) ? $orgObj['active'] : 0;
+				$response[$org]['affiliation_access'] = isset($orgObj['affiliation_access']) ? $orgObj['affiliation_access'] : NULL;
+				$storage                              = $this->relay->mongo()->getOrgDiskusage($org);
+				$response[$org]['storage']            = $storage['storage'];
+				$response[$org]['presentations']      = $this->getOrgPresentationCount($org);
+				$response[$org]['total_mib']          = $storage['total_mib'];
+
 			}
 
 			return $response;
@@ -96,7 +99,7 @@
 			");
 
 			// Subscriber list from relay-register service (will also include orgnames that no longer exist in Relay DB, i.e. due to 'fusjonering')
-			$relaySubscribers = $this->relay->subscribers()->getSubscribers();
+			$relaySubscribers            = $this->relay->subscribers()->getSubscribers();
 			$relaySubscribersAssociative = [];
 			// Make associative for easier merging with Relay DB list
 			foreach($relaySubscribers as $index => $orgObj) {

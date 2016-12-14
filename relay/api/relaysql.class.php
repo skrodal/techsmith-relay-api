@@ -49,7 +49,8 @@
 		}
 
 		/**
-		 * simon@14DES2016 - TODO: DENNE FUNKSJONEN HENTER INFO FRA Mongo - BURDE ERSTATTES SLIK AT VI KAN BLI KVITT AVHENGIGHET TIL https://github.com/skrodal/relay-mediasite-harvest
+		 * simon@14DES2016 - TODO: DENNE FUNKSJONEN HENTER INFO (diskusage) FRA Mongo
+		 * BURDE ERSTATTES SLIK AT VI KAN BLI KVITT AVHENGIGHET TIL https://github.com/skrodal/relay-mediasite-harvest
 		 *
 		 * @return array
 		 */
@@ -57,18 +58,20 @@
 			$orgsObj  = $this->getOrgs();
 			$response = [];
 			foreach($orgsObj as $org => $orgObj) {
+				// Data from Relay DB
 				$response[$org]                       = [];
 				$response[$org]['users']              = $this->getOrgUserCount($org);
+				$response[$org]['presentations']      = $this->getOrgPresentationCount($org);
+				// From Hits service
 				$response[$org]['hits']               = $this->relay->presHits()->getOrgTotalHits($org);
+				// From Mongo
+				$storage                              = $this->relay->mongo()->getOrgDiskusage($org); // DENNE BURDE ERSTATTES MED NOE ANNET
+				$response[$org]['storage']            = $storage['storage'];
+				$response[$org]['total_mib']          = $storage['total_mib'];
+				// From relay-register (MySQL) DB
 				$response[$org]['active']             = isset($orgObj['active']) ? $orgObj['active'] : 0;
 				$response[$org]['affiliation_access'] = isset($orgObj['affiliation_access']) ? $orgObj['affiliation_access'] : NULL;
-				$storage                              = $this->relay->mongo()->getOrgDiskusage($org);
-				$response[$org]['storage']            = $storage['storage'];
-				$response[$org]['presentations']      = $this->getOrgPresentationCount($org);
-				$response[$org]['total_mib']          = $storage['total_mib'];
-
 			}
-
 			return $response;
 		}
 
@@ -76,11 +79,8 @@
 		 * List of distinct orgs (domain names in username) and user count at each
 		 *
 		 * simon@14DES2016: Fusjonerte læresteder (eks. hinesna) vil ikke plukkes opp av denne (siden det ikke finnes noen
-		 * hinesna brukere i systemet lenger). På filserver/screencast, derimot, ligger det jo brukermapper med 'bruker@hinesna.no'.
-		 *
-		 * Har ikke hatt tid til å ferdigstille dette, så en klient (eks RelayAdmin) vil per i dag ikke liste utfasede læresteder (og dermed
-		 * heller ikke diskforbruk/hits knyttet til disse). En ny service som logger diskforbruk er ferdigstilt, men ikke satt opp i dette APIet/klient.
-		 * Den mottar heller ikke noe data (siden noen i 4etg. må sette opp et script som pusher dette, på samme måte som for Mediasite).
+		 * hinesna brukere i systemet lenger). På filserver/screencast, derimot, ligger det jo brukermapper med 'bruker@hinesna.no'. Har
+		 * derfor lagt til uttrekk fra aksessliste (styrt av tjeneste/API relay-register, aka. kontooppretter). Dette gir et mer fullstendig bilde.
 		 *
 		 * @return array
 		 */
@@ -97,19 +97,18 @@
 				GROUP BY SUBSTRING(userName,charindex('@',userName)+1,len(userName))
 				ORDER BY org ASC
 			");
-
-			// Subscriber list from relay-register service (will also include orgnames that no longer exist in Relay DB, i.e. due to 'fusjonering')
+			// Make Relay DB response associative and add user count
+			foreach($sqlResponse as $index => $orgObj) {
+				$response[$orgObj['org']] = $orgObj['userCount'];
+			}
+			// 14.12.2016: Subscriber list from relay-register service (bonus, since adding orgnames that no longer exist in Relay DB, i.e. due to 'fusjonering')
 			$relaySubscribers            = $this->relay->subscribers()->getSubscribers();
 			$relaySubscribersAssociative = [];
 			// Make associative for easier merging with Relay DB list
 			foreach($relaySubscribers as $index => $orgObj) {
 				$relaySubscribersAssociative[$orgObj['org']] = $orgObj;
 			}
-
-			foreach($sqlResponse as $index => $orgObj) {
-				$response[$orgObj['org']] = $orgObj['userCount'];
-			}
-
+			// Merge the two arrays (one from Relay DB and one from relay-register)
 			return $relaySubscribersAssociative + $response;
 		}
 

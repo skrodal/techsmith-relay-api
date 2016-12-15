@@ -45,3 +45,7 @@ September 2016: APIet snakker nå med flere services for å komplettere presenta
 ## Brukes av ##
 
 RelayAdmin (klient)
+
+## Annet ##
+
+Utviklet av Simon Skrødal for UNINETT
